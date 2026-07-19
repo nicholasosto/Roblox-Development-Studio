@@ -1,0 +1,737 @@
+{
+  "generatedBy": "tools/build-packages-registry.mjs@1",
+  "schemaVersion": 1,
+  "built": "2026-07-19",
+  "builtMs": 1784458392725,
+  "monorepo": {
+    "name": "roblox-packages-mono",
+    "path": "external-locations/code/roblox-packages-mono",
+    "packageManager": "pnpm",
+    "scope": "@trembus"
+  },
+  "counts": {
+    "packages": 15,
+    "byStatus": {
+      "rc": 1,
+      "stable": 14
+    },
+    "byTier": {
+      "composite": 7,
+      "foundation": 6,
+      "standalone": 2
+    },
+    "internalEdges": 11,
+    "optionalEdges": 4,
+    "consumers": 2,
+    "claudeTableDrift": 0,
+    "unbuilt": 0
+  },
+  "packages": [
+    {
+      "id": "animation-catalog",
+      "name": "@trembus/animation-catalog",
+      "version": "0.1.0",
+      "description": "Typed composable animation catalog for roblox-ts — logical names → catalog entries with assetId, rig compatibility, length, priority, and status",
+      "dir": "packages/animation-catalog",
+      "status": "stable",
+      "tier": "foundation",
+      "internalDeps": [],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        }
+      ],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [
+          "pets-and-mounts"
+        ],
+        "external": []
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/animation-catalog"
+    },
+    {
+      "id": "audio",
+      "name": "@trembus/audio",
+      "version": "0.1.0",
+      "description": "Unified audio manager for roblox-ts games — SFX, music, volume control, and crossfading",
+      "dir": "packages/audio",
+      "status": "stable",
+      "tier": "composite",
+      "internalDeps": [
+        {
+          "id": "logger",
+          "range": "^0.1.0",
+          "optional": false
+        }
+      ],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        }
+      ],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/audio"
+    },
+    {
+      "id": "currency",
+      "name": "@trembus/currency",
+      "version": "0.1.0",
+      "description": "Currency system for roblox-ts — open registry, pure transactions, Wallet runtime, and composable persistence slice",
+      "dir": "packages/currency",
+      "status": "stable",
+      "tier": "composite",
+      "internalDeps": [
+        {
+          "id": "persistent-data",
+          "range": "^0.1.0",
+          "optional": true
+        }
+      ],
+      "externalPeerDeps": [],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/currency"
+    },
+    {
+      "id": "input-actions",
+      "name": "@trembus/input-actions",
+      "version": "0.1.0",
+      "description": "Framework-agnostic multi-device input architecture for roblox-ts — Actions (logical names), Contexts (priority-stacked binding sets), and a Bus (signal-based event fan-out). KBM + Gamepad + Touch, multi-key chord support, modal sink contexts.",
+      "dir": "packages/input-actions",
+      "status": "stable",
+      "tier": "standalone",
+      "internalDeps": [],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        },
+        {
+          "name": "@rbxts/signal",
+          "range": "^1.1.1"
+        }
+      ],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/input-actions"
+    },
+    {
+      "id": "logger",
+      "name": "@trembus/logger",
+      "version": "0.1.0",
+      "description": "Structured, tag-based logging for roblox-ts games",
+      "dir": "packages/logger",
+      "status": "stable",
+      "tier": "foundation",
+      "internalDeps": [],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        }
+      ],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [
+          "audio",
+          "pets-and-mounts"
+        ],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/logger"
+    },
+    {
+      "id": "persistent-data",
+      "name": "@trembus/persistent-data",
+      "version": "0.1.0",
+      "description": "Type-safe player data persistence for roblox-ts games, wrapping @rbxts/profile-store",
+      "dir": "packages/persistent-data",
+      "status": "stable",
+      "tier": "foundation",
+      "internalDeps": [],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/profile-store",
+          "range": "^1.0.3"
+        },
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        }
+      ],
+      "runtimeDeps": [
+        {
+          "name": "@rbxts/t",
+          "range": "^3.2.1"
+        }
+      ],
+      "consumedBy": {
+        "internal": [
+          "currency",
+          "pets-and-mounts",
+          "slotable-items",
+          "slotable-items-dissolved",
+          "stats"
+        ],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/persistent-data"
+    },
+    {
+      "id": "pets-and-mounts",
+      "name": "@trembus/pets-and-mounts",
+      "version": "0.1.0",
+      "description": "Pet and mount summoning, follow behavior, ride mechanics, and ownership persistence for roblox-ts games",
+      "dir": "packages/pets-and-mounts",
+      "status": "stable",
+      "tier": "composite",
+      "internalDeps": [
+        {
+          "id": "animation-catalog",
+          "range": "^0.1.0",
+          "optional": false
+        },
+        {
+          "id": "logger",
+          "range": "^0.1.0",
+          "optional": false
+        },
+        {
+          "id": "persistent-data",
+          "range": "^0.1.0",
+          "optional": false
+        },
+        {
+          "id": "rig-spawner",
+          "range": "^0.1.0",
+          "optional": false
+        },
+        {
+          "id": "status-effects",
+          "range": "^0.1.0",
+          "optional": false
+        }
+      ],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        },
+        {
+          "name": "@rbxts/signal",
+          "range": "^1.1.1"
+        }
+      ],
+      "runtimeDeps": [
+        {
+          "name": "@rbxts/t",
+          "range": "^3.2.1"
+        }
+      ],
+      "consumedBy": {
+        "internal": [],
+        "external": []
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "docs": [
+        {
+          "label": "Overview",
+          "path": "docs/pets-and-mounts-overview.md"
+        }
+      ],
+      "npmUrl": "https://www.npmjs.com/package/@trembus/pets-and-mounts"
+    },
+    {
+      "id": "rbx-ui",
+      "name": "@trembus/rbx-ui",
+      "version": "0.1.0",
+      "description": "Roblox React UI component library — design tokens, atoms, molecules, organisms, and screen-level game UIs",
+      "dir": "packages/rbx-ui",
+      "status": "stable",
+      "tier": "standalone",
+      "internalDeps": [],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/react",
+          "range": "17.3.7-ts.1"
+        },
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        }
+      ],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": true,
+        "react": true,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/rbx-ui"
+    },
+    {
+      "id": "rig-spawner",
+      "name": "@trembus/rig-spawner",
+      "version": "0.1.0",
+      "description": "Rig catalog and spawn service for character rigs in roblox-ts games",
+      "dir": "packages/rig-spawner",
+      "status": "stable",
+      "tier": "foundation",
+      "internalDeps": [],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        }
+      ],
+      "runtimeDeps": [
+        {
+          "name": "@rbxts/t",
+          "range": "^3.2.1"
+        }
+      ],
+      "consumedBy": {
+        "internal": [
+          "pets-and-mounts"
+        ],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/rig-spawner"
+    },
+    {
+      "id": "slotable-items",
+      "name": "@trembus/slotable-items",
+      "version": "0.1.0",
+      "description": "Unified RPG inventory system for roblox-ts — item types, slot management, loadouts, and network operations",
+      "dir": "packages/slotable-items",
+      "status": "stable",
+      "statusNote": "superseded at cutover by slotable-items-dissolved",
+      "tier": "composite",
+      "internalDeps": [
+        {
+          "id": "persistent-data",
+          "range": "^0.1.0",
+          "optional": true
+        }
+      ],
+      "externalPeerDeps": [],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": true,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/slotable-items"
+    },
+    {
+      "id": "slotable-items-dissolved",
+      "name": "@trembus/slotable-items-dissolved",
+      "version": "0.2.0-rc.0",
+      "description": "OPEN-TAXONOMY rebuild (ADR 0005) of @trembus/slotable-items — runtime Category Registry; awaiting cutover. Rename back to @trembus/slotable-items at cutover.",
+      "dir": "packages/slotable-items-dissolved",
+      "status": "rc",
+      "statusNote": "awaiting cutover → @trembus/slotable-items",
+      "supersedes": "slotable-items",
+      "tier": "composite",
+      "internalDeps": [
+        {
+          "id": "persistent-data",
+          "range": "^0.1.0",
+          "optional": true
+        }
+      ],
+      "externalPeerDeps": [],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "roblox-testing-environment"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": true,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/slotable-items-dissolved"
+    },
+    {
+      "id": "stats",
+      "name": "@trembus/stats",
+      "version": "0.1.0",
+      "description": "Two-tier stat system for roblox-ts — primary attributes, derived stats, resource pools, and persistence slice",
+      "dir": "packages/stats",
+      "status": "stable",
+      "tier": "composite",
+      "internalDeps": [
+        {
+          "id": "persistent-data",
+          "range": "^0.1.0",
+          "optional": true
+        }
+      ],
+      "externalPeerDeps": [],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/stats"
+    },
+    {
+      "id": "status-effects",
+      "name": "@trembus/status-effects",
+      "version": "0.1.0",
+      "description": "Generic status effect system for roblox-ts — shields, damage calcs, buff tracking, effect aggregation",
+      "dir": "packages/status-effects",
+      "status": "stable",
+      "tier": "foundation",
+      "internalDeps": [],
+      "externalPeerDeps": [],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [
+          "pets-and-mounts"
+        ],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/status-effects"
+    },
+    {
+      "id": "timer",
+      "name": "@trembus/timer",
+      "version": "0.1.0",
+      "description": "Framework-agnostic timer system for roblox-ts — state machine, formatting, thresholds, and global signal bus",
+      "dir": "packages/timer",
+      "status": "stable",
+      "tier": "foundation",
+      "internalDeps": [],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        },
+        {
+          "name": "@rbxts/signal",
+          "range": "^1.1.1"
+        }
+      ],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [
+          "timer-ui"
+        ],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": true,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/timer"
+    },
+    {
+      "id": "timer-ui",
+      "name": "@trembus/timer-ui",
+      "version": "0.1.0",
+      "description": "Roblox ScreenGui display and visual effects for @trembus/timer — anchoring, color shift, pulse, shake, fade, and more",
+      "dir": "packages/timer-ui",
+      "status": "stable",
+      "tier": "composite",
+      "internalDeps": [
+        {
+          "id": "timer",
+          "range": "^0.1.0",
+          "optional": false
+        }
+      ],
+      "externalPeerDeps": [
+        {
+          "name": "@rbxts/services",
+          "range": "^1.5.0"
+        }
+      ],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "roblox-testing-environment",
+          "soul-steel-official"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/timer-ui"
+    }
+  ],
+  "consumers": [
+    {
+      "id": "roblox-testing-environment",
+      "name": "roblox-testing-environment",
+      "linkStyle": "link:",
+      "uses": [
+        "audio",
+        "logger",
+        "persistent-data",
+        "rbx-ui",
+        "rig-spawner",
+        "slotable-items",
+        "slotable-items-dissolved",
+        "stats",
+        "status-effects",
+        "timer",
+        "timer-ui"
+      ]
+    },
+    {
+      "id": "soul-steel-official",
+      "name": "@trembus/steel-city",
+      "linkStyle": "link:",
+      "uses": [
+        "audio",
+        "currency",
+        "input-actions",
+        "logger",
+        "persistent-data",
+        "rbx-ui",
+        "rig-spawner",
+        "slotable-items",
+        "stats",
+        "status-effects",
+        "timer",
+        "timer-ui"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "audio",
+      "to": "logger",
+      "range": "^0.1.0",
+      "optional": false
+    },
+    {
+      "from": "currency",
+      "to": "persistent-data",
+      "range": "^0.1.0",
+      "optional": true
+    },
+    {
+      "from": "pets-and-mounts",
+      "to": "animation-catalog",
+      "range": "^0.1.0",
+      "optional": false
+    },
+    {
+      "from": "pets-and-mounts",
+      "to": "logger",
+      "range": "^0.1.0",
+      "optional": false
+    },
+    {
+      "from": "pets-and-mounts",
+      "to": "persistent-data",
+      "range": "^0.1.0",
+      "optional": false
+    },
+    {
+      "from": "pets-and-mounts",
+      "to": "rig-spawner",
+      "range": "^0.1.0",
+      "optional": false
+    },
+    {
+      "from": "pets-and-mounts",
+      "to": "status-effects",
+      "range": "^0.1.0",
+      "optional": false
+    },
+    {
+      "from": "slotable-items",
+      "to": "persistent-data",
+      "range": "^0.1.0",
+      "optional": true
+    },
+    {
+      "from": "slotable-items-dissolved",
+      "to": "persistent-data",
+      "range": "^0.1.0",
+      "optional": true
+    },
+    {
+      "from": "stats",
+      "to": "persistent-data",
+      "range": "^0.1.0",
+      "optional": true
+    },
+    {
+      "from": "timer-ui",
+      "to": "timer",
+      "range": "^0.1.0",
+      "optional": false
+    }
+  ]
+}

@@ -4,7 +4,11 @@
       "Bash(node .project-system/tools/init-config.mjs:*)",
       "Bash(node .project-system/tools/new-entity.mjs:*)",
       "Bash(node .project-system/tools/validate.mjs:*)",
-      "Bash(node .project-system/tools/render-hub.mjs:*)"
+      "Bash(node .project-system/tools/render-hub.mjs:*)",
+      "Bash(node tools/build-packages-registry.mjs:*)",
+      "Bash(node tools/check-dashboard-drift.mjs:*)",
+      "Bash(pnpm --dir apps/command-center run:*)",
+      "Bash(pnpm --dir apps/command-center build:*)"
     ]
   },
   "hooks": {
@@ -25,6 +29,20 @@
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/.project-system/tools/validate.mjs\" --summary"
+          },
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/check-dashboard-drift.mjs\" --quiet"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/check-dashboard-drift.mjs\" --quiet"
           }
         ]
       }
