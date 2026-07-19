@@ -27,7 +27,9 @@
 //               sibling "<X>" -> supersedes:"<X>" + statusNote "awaiting
 //               cutover → @trembus/<X>"; the sibling gets statusNote
 //               "superseded at cutover by <X>-dissolved"
-//   flags       built (out/init.lua|init.luau AND out/index.d.ts) · flamework
+//   flags       built (out/init.lua|init.luau AND out/index.d.ts; for
+//               plugin-shaped packages — those with a build:plugin script —
+//               out/main.server.luau|lua instead) · flamework
 //               (flamework.build) · rojo (default.project.json) · react
 //               (@rbxts/react peer) · examples (examples/ dir) · readme
 //               (README.md)
@@ -155,10 +157,15 @@ function scanPackages(monoRoot) {
     const prerelease = version.includes("-");
     const status = version.includes("-rc.") ? "rc" : prerelease ? "prerelease" : "stable";
 
+    // Plugin-shaped packages (a `build:plugin` script) compile with `rbxtsc --type model` —
+    // no out/init.lua or index.d.ts ever exists; their built signal is the compiled plugin
+    // entry instead.
+    const isPlugin = Boolean(pkg.scripts && pkg.scripts["build:plugin"]);
     const flags = {
-      built:
-        (existsSync(join(dir, "out", "init.lua")) || existsSync(join(dir, "out", "init.luau"))) &&
-        existsSync(join(dir, "out", "index.d.ts")),
+      built: isPlugin
+        ? existsSync(join(dir, "out", "main.server.luau")) || existsSync(join(dir, "out", "main.server.lua"))
+        : (existsSync(join(dir, "out", "init.lua")) || existsSync(join(dir, "out", "init.luau"))) &&
+          existsSync(join(dir, "out", "index.d.ts")),
       flamework: existsSync(join(dir, "flamework.build")),
       rojo: existsSync(join(dir, "default.project.json")),
       react: Object.prototype.hasOwnProperty.call(peers, "@rbxts/react"),

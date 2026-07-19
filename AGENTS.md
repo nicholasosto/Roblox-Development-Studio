@@ -1,12 +1,12 @@
 # Roblox-Development-Studio (Project-System consumer)
 
-Planning space for the `@trembus` Roblox package platform. Wraps `roblox-packages-mono` and the Studio-lab repo `roblox-labs` via `external-locations/code/`. **Code work happens in the repos; planning happens here.**
+Planning space for the `@trembus` Roblox package platform. Wraps `roblox-packages-mono` via `external-locations/code/`. **Code work happens in the repo; planning happens here.**
 
 ## Hard rules
 
 1. **Entities only via tooling** — create `_project/` files with `/new <kind> "<title>"` (or `node .project-system/tools/new-entity.mjs`). Never hand-write frontmatter; fill scaffolded sections with Edit afterward. A PreToolUse guard validates every `_project/` write.
 2. **Never edit `.project-system/`** — it is the vendored framework, drift-checked against `Project-Spaces/Project-System`. If it needs a change, change canonical and re-vendor.
-3. **Never mutate code through `external-locations/`** — those are read-through windows. Edit `roblox-packages-mono` / `roblox-labs` in their own repos/workspaces.
+3. **Never mutate code through `external-locations/`** — those are read-through windows. Edit `roblox-packages-mono` in its own repo/workspace.
 4. **Decisions are serial** — `_project/decisions/0001…0007` exist; ADR 0005 is the slotable-items open-taxonomy decision cited by the repo. Do not renumber.
 
 ## Kinds
@@ -19,13 +19,11 @@ Tags: `lane: ts | luau` on package entities. The Luau lane is **reserved** — n
 
 - `node .project-system/tools/render-hub.mjs` → `previews/dashboards/roblox-development-studio-{graph,hub}.json`
 - `node tools/build-packages-registry.mjs` → `previews/dashboards/packages.json` (reads the monorepo through `external-locations/code/`; run after any package.json change; `--check` probes staleness)
-- `node tools/build-labs-status.mjs` → `previews/dashboards/labs-status.json` (probes the labs repo through `external-locations/code/`; time-based status — re-run for fresh state, no `--check`)
 - `pnpm --dir apps/command-center build` → `previews/app/` (static explorer; JSON is inlined at build time, so rebuild after regenerating)
-- Serve locally via `.claude/launch.json` → `previews-static` (port 4319) or `command-center` (vite dev, port 5176)
+- Serve locally via `.Codex/launch.json` → `previews-static` (port 4319) or `command-center` (vite dev, port 5176)
 
 ## Related
 
 - Canonical framework: `~/Master-Managed/Project-Spaces/Project-System/`
 - Reference consumer: `~/Master-Managed/Project-Spaces/Asset-Studio/`
-- The wrapped repo's own instructions: `external-locations/code/roblox-packages-mono/CLAUDE.md`
-- Labs repo (decision 0008): `external-locations/code/roblox-labs/` — Rojo 7.7 syncback serialization of the Studio lab experiences; the loop is in its README
+- The wrapped repo's own instructions: `external-locations/code/roblox-packages-mono/AGENTS.md`

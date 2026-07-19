@@ -99,9 +99,9 @@ footer code { color: var(--text-dim); background: var(--surface); padding: 1px 6
 
   <div class="stats">
     <!-- Hand-authored snapshot of hub.json + packages.json stats — refresh alongside render-hub.mjs / build-packages-registry.mjs runs. -->
-    <div class="stat"><span class="n">15</span><span class="l">Packages</span></div>
+    <div class="stat"><span class="n">16</span><span class="l">Packages</span></div>
     <div class="stat"><span class="n">2</span><span class="l">Consumers</span></div>
-    <div class="stat"><span class="n">25</span><span class="l">Entities</span></div>
+    <div class="stat"><span class="n">33</span><span class="l">Entities</span></div>
     <div class="stat"><span class="n" style="color:#43AA8B">0</span><span class="l">Errors</span></div>
   </div>
 
@@ -116,10 +116,15 @@ footer code { color: var(--text-dim); background: var(--surface); padding: 1px 6
       <h2><span class="dot" style="background:#d4af37"></span>Packages Explorer</h2>
       <p>Browse the @trembus monorepo — 15 packages by tier and status, internal dep edges, flags, and the consumer <code>link:</code> graph.</p>
     </a>
+    <a class="lens live" href="app/#tools">
+      <span class="tag">Live</span>
+      <h2><span class="dot" style="background:#E8A33D"></span>Tools</h2>
+      <p>Lab tooling status — Rojo toolchain + syncback freshness for the <code>roblox-labs</code> experiences, with copy-ready loop commands.</p>
+    </a>
     <a class="lens" href="dashboards/">
       <span class="tag">JSON</span>
       <h2><span class="dot" style="background:#7BD88F"></span>Dashboards JSON</h2>
-      <p>The raw emitted contracts — <code>packages.json</code> plus the planning <code>graph</code>/<code>hub</code> JSON the Command Center renders.</p>
+      <p>The raw emitted contracts — <code>packages.json</code> + <code>labs-status.json</code> plus the planning <code>graph</code>/<code>hub</code> JSON the Command Center renders.</p>
     </a>
   </nav>
 

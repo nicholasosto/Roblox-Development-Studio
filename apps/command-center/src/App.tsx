@@ -3,15 +3,17 @@ import { Brief, Card, Hub, Tabs } from '@trembus/ui';
 import type { BriefContract, SectionKind } from '@trembus/ui';
 import { domainById, entities, entitiesOfKinds, hub, hubData, kinds, prettify } from './contract';
 import { PackagesExplorer } from './PackagesExplorer';
+import { ToolsPanel } from './ToolsPanel';
 import { groupByStatus } from './status';
 
-// The two areas: the Hub overview (the Project-System contract made legible) and the Packages
-// explorer (the registry surface). Per-kind auto-tabs are deliberately omitted — the hex drawer
-// already lists every kind's entities, and the explorer is the deliverable.
-type NavEntry = { value: 'overview' | 'packages'; label: string };
+// The three areas: the Hub overview (the Project-System contract made legible), the Packages
+// explorer (the registry surface), and the Tools lens (lab toolchain + syncback status). Per-kind
+// auto-tabs are deliberately omitted — the hex drawer already lists every kind's entities.
+type NavEntry = { value: 'overview' | 'packages' | 'tools'; label: string };
 const AREAS: NavEntry[] = [
   { value: 'overview', label: 'Overview' },
   { value: 'packages', label: 'Packages' },
+  { value: 'tools', label: 'Tools' },
 ];
 
 // Deep-link support: the static landing shell links to `app/#packages`. Honor a leading hash that
@@ -181,6 +183,9 @@ export function App() {
         </Tabs.Panel>
         <Tabs.Panel value="packages" className="cc-panel">
           <PackagesExplorer />
+        </Tabs.Panel>
+        <Tabs.Panel value="tools" className="cc-panel">
+          <ToolsPanel />
         </Tabs.Panel>
       </Tabs>
     </div>

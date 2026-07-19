@@ -1,0 +1,105 @@
+{
+  "generatedBy": "tools/build-labs-status.mjs",
+  "schemaVersion": 1,
+  "built": "2026-07-19T13:29:55.782Z",
+  "builtMs": 199,
+  "labs": {
+    "name": "roblox-labs",
+    "path": "external-locations/code/roblox-labs",
+    "present": true,
+    "branch": "main",
+    "head": {
+      "sha": "cb40049",
+      "when": "2026-07-19T08:13:08-04:00",
+      "subject": "First syncback: serialize both lab experiences from Studio snapshots"
+    },
+    "dirty": 0,
+    "recentCommits": [
+      {
+        "sha": "cb40049",
+        "when": "2026-07-19T08:13:08-04:00",
+        "subject": "First syncback: serialize both lab experiences from Studio snapshots"
+      },
+      {
+        "sha": "4562a5e",
+        "when": "2026-07-19T08:06:52-04:00",
+        "subject": "Found roblox-labs: Rojo 7.7 syncback projects for the Studio lab experiences"
+      }
+    ]
+  },
+  "toolchain": {
+    "rojoPinLabs": "rojo-rbx/rojo@7.7.0",
+    "rojoResolved": "Rojo 7.7.0",
+    "rokitResolved": "rokit 1.2.0",
+    "syncbackAvailable": true
+  },
+  "counts": {
+    "projects": 2,
+    "luau": 13,
+    "rbxm": 53,
+    "modelJson": 14,
+    "metaJson": 27,
+    "dirty": 0,
+    "syncbackDue": 0
+  },
+  "projects": [
+    {
+      "id": "part-textures",
+      "projectFile": "part-textures/default.project.json",
+      "snapshot": {
+        "present": true,
+        "file": "places/part-textures.rbxl",
+        "bytes": 122963,
+        "savedAt": "2026-07-19T12:11:02.355Z"
+      },
+      "serialization": {
+        "files": {
+          "luau": 0,
+          "rbxm": 10,
+          "modelJson": 5,
+          "metaJson": 0,
+          "other": 0
+        },
+        "lastSync": {
+          "sha": "cb40049",
+          "when": "2026-07-19T08:13:08-04:00",
+          "subject": "First syncback: serialize both lab experiences from Studio snapshots"
+        }
+      },
+      "sync": "in-sync",
+      "commands": {
+        "dryRun": "rojo syncback part-textures --input places/part-textures.rbxl --dry-run",
+        "apply": "rojo syncback part-textures --input places/part-textures.rbxl -y"
+      }
+    },
+    {
+      "id": "user-interface-development",
+      "projectFile": "user-interface-development/default.project.json",
+      "snapshot": {
+        "present": true,
+        "file": "places/user-interface-development.rbxl",
+        "bytes": 488540,
+        "savedAt": "2026-07-19T12:10:23.479Z"
+      },
+      "serialization": {
+        "files": {
+          "luau": 13,
+          "rbxm": 43,
+          "modelJson": 9,
+          "metaJson": 27,
+          "other": 0
+        },
+        "lastSync": {
+          "sha": "cb40049",
+          "when": "2026-07-19T08:13:08-04:00",
+          "subject": "First syncback: serialize both lab experiences from Studio snapshots"
+        }
+      },
+      "sync": "in-sync",
+      "commands": {
+        "dryRun": "rojo syncback user-interface-development --input places/user-interface-development.rbxl --dry-run",
+        "apply": "rojo syncback user-interface-development --input places/user-interface-development.rbxl -y"
+      }
+    }
+  ]
+}

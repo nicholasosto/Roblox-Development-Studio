@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 29,
-  "migrated": 29,
+  "entities": 33,
+  "migrated": 33,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -112,6 +112,15 @@
       "excerpt": "ADR [[0005-open-taxonomy-slotable-items]] shipped the open-taxonomy rebuild as @trembus/slotable-items-dissolved (0.2.0-rc.0) on branch feat/slotable-items-open-taxonomy. The platform is in a temporary dual-package stat…"
     },
     {
+      "id": "studio-telemetry-modernization",
+      "kind": "pipeline",
+      "title": "studio-telemetry modernization",
+      "status": "build",
+      "updated": "2026-07-19",
+      "file": "_project/pipeline/studio-telemetry-modernization.md",
+      "excerpt": "The [[studio-telemetry]] plugin was rescued from the soul-steel archive with its 2026-03 shape intact: soul-steel payloads (Workspace.Zones / Workspace.NPCs) and the legacy localhost:3001 dashboard endpoint. Meanwhile […"
+    },
+    {
       "id": "package-platform-roadmap",
       "kind": "roadmap",
       "title": "Package platform roadmap",
@@ -119,6 +128,24 @@
       "updated": "2026-07-19",
       "file": "_project/roadmap/package-platform-roadmap.md",
       "excerpt": "The package platform now has a planning layer (this space). This roadmap is the ordered spine for its first phase: the founding, the in-flight slotable-items cutover, the packages-explorer dashboard, and the reserved Lu…"
+    },
+    {
+      "id": "2026-07-19-roblox-labs-setup",
+      "kind": "session",
+      "title": "roblox-labs setup",
+      "status": "completed",
+      "updated": "2026-07-19",
+      "file": "_project/sessions/2026-07-19-roblox-labs-setup.md",
+      "excerpt": "Stand up the roblox-labs repo ([CF-1] of [[2026-07-19-studio-labs-audit]]) so both Studio lab experiences serialize to git via Rojo syncback."
+    },
+    {
+      "id": "2026-07-19-studio-telemetry-rescue",
+      "kind": "session",
+      "title": "studio-telemetry rescue",
+      "status": "completed",
+      "updated": "2026-07-19",
+      "file": "_project/sessions/2026-07-19-studio-telemetry-rescue.md",
+      "excerpt": "Rescue the archived Soul Steel Studio telemetry plugin into the monorepo as @trembus/studio-telemetry and open the modernization pipeline aimed at lab telemetry."
     },
     {
       "id": "add-a-package",
@@ -295,6 +322,18 @@
       "excerpt": "Generic status effect system — shields, damage calcs, buff tracking, effect aggregation."
     },
     {
+      "id": "studio-telemetry",
+      "kind": "package",
+      "title": "@trembus/studio-telemetry",
+      "status": "incubating",
+      "updated": "2026-07-19",
+      "file": "_project/packages/studio-telemetry.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Roblox Studio plugin — batched telemetry relay from Studio to a local collector over four channels: console log relay, game-state snapshots (5s), performance metrics — FPS/memory/instance count (2s), and entity data (10…"
+    },
+    {
       "id": "timer-ui",
       "kind": "package",
       "title": "@trembus/timer-ui",
@@ -370,12 +409,13 @@
       ]
     },
     "pipeline": {
-      "total": 1,
+      "total": 2,
       "byStatus": {
-        "build": 1
+        "build": 2
       },
       "ids": [
-        "slotable-items-cutover"
+        "slotable-items-cutover",
+        "studio-telemetry-modernization"
       ],
       "tone": "success",
       "statusOrder": [
@@ -404,9 +444,14 @@
       ]
     },
     "session": {
-      "total": 0,
-      "byStatus": {},
-      "ids": [],
+      "total": 2,
+      "byStatus": {
+        "completed": 2
+      },
+      "ids": [
+        "2026-07-19-roblox-labs-setup",
+        "2026-07-19-studio-telemetry-rescue"
+      ],
       "tone": "warning",
       "statusOrder": [
         "planned",
@@ -433,10 +478,10 @@
       ]
     },
     "package": {
-      "total": 16,
+      "total": 17,
       "byStatus": {
         "active": 14,
-        "incubating": 1,
+        "incubating": 2,
         "proposed": 1
       },
       "ids": [
@@ -453,6 +498,7 @@
         "slotable-items",
         "stats",
         "status-effects",
+        "studio-telemetry",
         "timer-ui",
         "timer",
         "ui-studio-harness"
@@ -499,6 +545,24 @@
       "target": "decisions/0005-open-taxonomy-slotable-items"
     },
     {
+      "from": "studio-telemetry-modernization",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
+      "from": "2026-07-19-roblox-labs-setup",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
+      "from": "2026-07-19-studio-telemetry-rescue",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
       "from": "add-a-package",
       "fromKind": "workflow",
       "rel": "references",
@@ -523,6 +587,12 @@
       "target": "decisions/0005-open-taxonomy-slotable-items"
     },
     {
+      "from": "studio-telemetry",
+      "fromKind": "package",
+      "rel": "decided-in",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
       "from": "ui-studio-harness",
       "fromKind": "package",
       "rel": "decided-in",
@@ -530,8 +600,8 @@
     }
   ],
   "edgesByRel": {
-    "references": 6,
-    "decided-in": 3,
+    "references": 9,
+    "decided-in": 4,
     "supersedes": 1
   },
   "workflows": {

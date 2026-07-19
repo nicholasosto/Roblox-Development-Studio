@@ -2,7 +2,7 @@
   "generatedBy": "tools/build-packages-registry.mjs@1",
   "schemaVersion": 1,
   "built": "2026-07-19",
-  "builtMs": 1784458392725,
+  "builtMs": 1784468690752,
   "monorepo": {
     "name": "roblox-packages-mono",
     "path": "external-locations/code/roblox-packages-mono",
@@ -10,15 +10,15 @@
     "scope": "@trembus"
   },
   "counts": {
-    "packages": 15,
+    "packages": 16,
     "byStatus": {
       "rc": 1,
-      "stable": 14
+      "stable": 15
     },
     "byTier": {
       "composite": 7,
       "foundation": 6,
-      "standalone": 2
+      "standalone": 3
     },
     "internalEdges": 11,
     "optionalEdges": 4,
@@ -545,6 +545,32 @@
       },
       "inClaudeTable": true,
       "npmUrl": "https://www.npmjs.com/package/@trembus/status-effects"
+    },
+    {
+      "id": "studio-telemetry",
+      "name": "@trembus/studio-telemetry",
+      "version": "0.1.0",
+      "description": "Roblox Studio plugin — batched telemetry relay from Studio to a local collector; log, game-state, performance, and entity channels",
+      "dir": "packages/studio-telemetry",
+      "status": "stable",
+      "tier": "standalone",
+      "internalDeps": [],
+      "externalPeerDeps": [],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": []
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": true,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/studio-telemetry"
     },
     {
       "id": "timer",

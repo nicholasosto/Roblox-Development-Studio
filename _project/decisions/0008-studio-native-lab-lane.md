@@ -20,7 +20,7 @@ All of it lives only in two place files: no version control, no review, no inven
 
 **The Studio-native lane is the design-and-proving lane; promotion is how work leaves it.**
 
-1. **Home** — labs live in a new `roblox-labs` repo (one Rojo project per experience; Rokit-pinned Rojo 7.6; `rojo syncback` after Studio sessions), wrapped read-only here via `external-locations/`. Labs are experiences, not packages — they stay out of `roblox-packages-mono`.
+1. **Home** — labs live in a new `roblox-labs` repo (one Rojo project per experience; Rokit-pinned Rojo 7.7.0, the first release with `rojo syncback`; syncback after Studio sessions), wrapped read-only here via `external-locations/`. Labs are experiences, not packages — they stay out of `roblox-packages-mono`.
 2. **In-place ledger (contract v1)** — every `UIStudio.Catalog` entry carries attributes `Component`, `State ∈ prototype|proven|promoted`, `SourceGuiPath`, `Variants`, `GeneratedBy`, `HarnessVersion`; every generated kit carries a `GenerationManifest` (TGL status, asset paths, slice/tile specs, promotion authorization). Both agents write this ledger as they generate.
 3. **Visibility** — a generated registry `previews/dashboards/ui-catalog.json`, built from an MCP scan of the places and rendered by the command-center beside `packages.json`.
 4. **Promotion** — prototype (lab, manifest required) → cataloged (attributes complete, master in `UIMockups`) → proven (passed the lab rigs, exported to `roblox-labs`) → productized: an `rbx-ui` React component (TS lane) or an instance-template + Luau-controller package in the monorepo — the first of which triggers the M4 lane scaffold per [[0007-dual-lane-ts-luau]]. Steps in [[ui-component-promotion]].

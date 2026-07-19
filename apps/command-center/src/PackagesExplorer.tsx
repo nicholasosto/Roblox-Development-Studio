@@ -38,6 +38,7 @@ import {
 } from '@trembus/ui';
 import type { DataFilter } from '@trembus/ui';
 import { Lineage } from '@trembus/viz';
+import { copyText } from './clipboard';
 import {
   EMPTY_FILTERS,
   FLAG_GLYPH,
@@ -62,30 +63,6 @@ import {
   tierStyle,
 } from './packages';
 import type { FlagKey, PackageRecord, PkgFilters, Tier } from './packages';
-
-// ── Copy-to-clipboard (the explorer's only side effect — clipboard, never the filesystem) ──
-async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    // Clipboard API needs a secure context; file:// / plain-http static serves fall back to the
-    // legacy execCommand path so copy still works from the built bundle.
-    try {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      const ok = document.execCommand('copy');
-      ta.remove();
-      return ok;
-    } catch {
-      return false;
-    }
-  }
-}
 
 // Status options come from the counts rollup (the statuses actually present), so the Select never
 // offers a value with zero matches; the full vocab stays open (prerelease appears when emitted).
