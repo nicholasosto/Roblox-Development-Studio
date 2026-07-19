@@ -10,8 +10,9 @@
     },
     {
       "name": "previews-static",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4319", "--bind", "127.0.0.1", "--directory", "previews"],
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "exec python3 -m http.server \"${PORT:-4319}\" --bind 127.0.0.1 --directory previews"],
+      "autoPort": true,
       "port": 4319
     }
   ]

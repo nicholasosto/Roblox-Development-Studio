@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 25,
-  "migrated": 25,
+  "entities": 29,
+  "migrated": 29,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -85,6 +85,24 @@
       "excerpt": "The entire Roblox estate is roblox-ts today: all 15 packages and both consumer repos. A survey (2026-07-19) found zero hand-written Luau packages and zero Wally/Selene/StyLua/.luaurc footprint anywhere; the only Luau-si…"
     },
     {
+      "id": "0008-studio-native-lab-lane",
+      "kind": "decision",
+      "title": "Studio-native lab lane",
+      "status": "accepted",
+      "updated": "2026-07-19",
+      "file": "_project/decisions/0008-studio-native-lab-lane.md",
+      "excerpt": "Codex and Claude, both driving Roblox Studio over MCP, have built substantial native work in two experiences. User Interface Development holds six mockup kits in ReplicatedStorage.UIMockups (MiniMap, CharacterPanel, Tex…"
+    },
+    {
+      "id": "2026-07-19-studio-labs-audit",
+      "kind": "report",
+      "title": "Studio labs audit",
+      "status": "complete",
+      "updated": "2026-07-19",
+      "file": "_project/reports/2026-07-19-studio-labs-audit.md",
+      "excerpt": "What shipped"
+    },
+    {
       "id": "slotable-items-cutover",
       "kind": "pipeline",
       "title": "slotable-items open-taxonomy cutover",
@@ -110,6 +128,15 @@
       "updated": "2026-07-19",
       "file": "_project/workflows/add-a-package.md",
       "excerpt": "A new @trembus package goes from proposal to built, linked, and recorded — one concern per package, every time. Swimlane transcription of the repo SOP (external-locations/code/roblox-packages-mono/docs/sops/adding-a-pac…"
+    },
+    {
+      "id": "ui-component-promotion",
+      "kind": "workflow",
+      "title": "UI component promotion",
+      "status": "active",
+      "updated": "2026-07-19",
+      "file": "_project/workflows/ui-component-promotion.md",
+      "excerpt": "The promotion path for Studio-native work, per [[0008-studio-native-lab-lane]]: a component moves lab prototype → cataloged → proven → productized (TS or Luau lane), and its texture assets move BLK → FNL with upload onl…"
     },
     {
       "id": "animation-catalog",
@@ -290,13 +317,25 @@
         "lane": "ts"
       },
       "excerpt": "Framework-agnostic timer system — state machine, formatting, thresholds, and global signal bus."
+    },
+    {
+      "id": "ui-studio-harness",
+      "kind": "package",
+      "title": "@trembus/ui-studio-harness",
+      "status": "proposed",
+      "updated": "2026-07-19",
+      "file": "_project/packages/ui-studio-harness.md",
+      "tags": {
+        "lane": "luau"
+      },
+      "excerpt": "Reusable Studio-lab spine extracted from the \"User Interface Development\" place: versioned request protocol (operation allowlist, payload caps), player profile persistence with DataStore→memory fallback, deterministic f…"
     }
   ],
   "byKind": {
     "decision": {
-      "total": 7,
+      "total": 8,
       "byStatus": {
-        "accepted": 7
+        "accepted": 8
       },
       "ids": [
         "0001-pnpm-monorepo-founding",
@@ -305,7 +344,8 @@
         "0004-one-concern-per-package",
         "0005-open-taxonomy-slotable-items",
         "0006-adopt-project-system",
-        "0007-dual-lane-ts-luau"
+        "0007-dual-lane-ts-luau",
+        "0008-studio-native-lab-lane"
       ],
       "tone": "info",
       "statusOrder": [
@@ -316,9 +356,13 @@
       ]
     },
     "report": {
-      "total": 0,
-      "byStatus": {},
-      "ids": [],
+      "total": 1,
+      "byStatus": {
+        "complete": 1
+      },
+      "ids": [
+        "2026-07-19-studio-labs-audit"
+      ],
       "tone": "warning",
       "statusOrder": [
         "draft",
@@ -373,12 +417,13 @@
       ]
     },
     "workflow": {
-      "total": 1,
+      "total": 2,
       "byStatus": {
-        "active": 1
+        "active": 2
       },
       "ids": [
-        "add-a-package"
+        "add-a-package",
+        "ui-component-promotion"
       ],
       "tone": "neutral",
       "statusOrder": [
@@ -388,10 +433,11 @@
       ]
     },
     "package": {
-      "total": 15,
+      "total": 16,
       "byStatus": {
         "active": 14,
-        "incubating": 1
+        "incubating": 1,
+        "proposed": 1
       },
       "ids": [
         "animation-catalog",
@@ -408,7 +454,8 @@
         "stats",
         "status-effects",
         "timer-ui",
-        "timer"
+        "timer",
+        "ui-studio-harness"
       ],
       "tone": "info",
       "statusOrder": [
@@ -434,6 +481,18 @@
       "target": "decisions/0002-framework-agnostic-packages"
     },
     {
+      "from": "0008-studio-native-lab-lane",
+      "fromKind": "decision",
+      "rel": "references",
+      "target": "decisions/0007-dual-lane-ts-luau"
+    },
+    {
+      "from": "2026-07-19-studio-labs-audit",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
       "from": "slotable-items-cutover",
       "fromKind": "pipeline",
       "rel": "decided-in",
@@ -446,6 +505,12 @@
       "target": "decisions/0004-one-concern-per-package"
     },
     {
+      "from": "ui-component-promotion",
+      "fromKind": "workflow",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
       "from": "slotable-items-dissolved",
       "fromKind": "package",
       "rel": "supersedes",
@@ -456,11 +521,17 @@
       "fromKind": "package",
       "rel": "decided-in",
       "target": "decisions/0005-open-taxonomy-slotable-items"
+    },
+    {
+      "from": "ui-studio-harness",
+      "fromKind": "package",
+      "rel": "decided-in",
+      "target": "decisions/0008-studio-native-lab-lane"
     }
   ],
   "edgesByRel": {
-    "references": 3,
-    "decided-in": 2,
+    "references": 6,
+    "decided-in": 3,
     "supersedes": 1
   },
   "workflows": {
@@ -572,6 +643,116 @@
             {
               "label": "previews/dashboards/packages.json",
               "op": "modify"
+            }
+          ],
+          "to": []
+        }
+      ]
+    },
+    "ui-component-promotion": {
+      "view": "swimlane",
+      "title": "UI component promotion",
+      "code": "workflow.ui-component-promotion",
+      "caption": "A lab prototype becomes a cataloged, proven, productized component with FNL assets.",
+      "lanes": [
+        {
+          "id": "agent",
+          "label": "Agents (Codex / Claude)",
+          "kind": "ai"
+        },
+        {
+          "id": "you",
+          "label": "You",
+          "kind": "human"
+        },
+        {
+          "id": "tooling",
+          "label": "Tooling (Rojo / Open Cloud)",
+          "kind": "tool"
+        }
+      ],
+      "steps": [
+        {
+          "id": "prototype",
+          "lane": "agent",
+          "label": "Build kit in lab place",
+          "status": "done",
+          "detail": "Studio MCP, free-form; GenerationManifest required (TGL status BLK)",
+          "note": "Masters in ReplicatedStorage.UIMockups; previews deployed to StarterGui. No uploads at this stage.",
+          "to": [
+            "catalog"
+          ]
+        },
+        {
+          "id": "catalog",
+          "lane": "agent",
+          "label": "Register catalog entry",
+          "status": "active",
+          "detail": "Attributes: Component, State=prototype, SourceGuiPath, Variants",
+          "note": "UIStudio.Catalog entry + template instance; the in-place ledger both agents maintain (contract v1 in decision 0008).",
+          "to": [
+            "qa"
+          ]
+        },
+        {
+          "id": "qa",
+          "lane": "you",
+          "label": "Prove in lab rigs",
+          "status": "pending",
+          "detail": "Icon / tile-state / motion labs; set State=proven",
+          "note": "The labs are the QA rigs: pixel rulers, tint/state/fallback probes, reduced-motion checks, texture galleries.",
+          "to": [
+            "export",
+            "fnl-assets"
+          ]
+        },
+        {
+          "id": "export",
+          "lane": "tooling",
+          "label": "Syncback to roblox-labs",
+          "status": "pending",
+          "detail": "rojo syncback; git history begins",
+          "outputs": [
+            {
+              "label": "roblox-labs/<experience>/",
+              "op": "modify"
+            }
+          ],
+          "to": [
+            "decide-lane"
+          ]
+        },
+        {
+          "id": "fnl-assets",
+          "lane": "tooling",
+          "label": "Promote assets BLK→FNL",
+          "status": "pending",
+          "detail": "Open Cloud upload at FNL only; record rbxassetid in manifest",
+          "to": [
+            "productize"
+          ]
+        },
+        {
+          "id": "decide-lane",
+          "lane": "you",
+          "label": "Choose production lane",
+          "status": "pending",
+          "detail": "rbx-ui React (ts) vs instance-template + Luau controller (luau)",
+          "note": "First Luau-lane promotion triggers the M4 lane scaffold per decision 0007.",
+          "to": [
+            "productize"
+          ]
+        },
+        {
+          "id": "productize",
+          "lane": "agent",
+          "label": "Implement package in mono",
+          "status": "pending",
+          "detail": "State=promoted; catalog entry links the package",
+          "outputs": [
+            {
+              "label": "roblox-packages-mono/…",
+              "op": "create"
             }
           ],
           "to": []
