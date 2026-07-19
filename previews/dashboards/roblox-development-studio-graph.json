@@ -1,0 +1,1267 @@
+{
+  "generatedBy": "tools/render-hub.mjs",
+  "project": "roblox-development-studio",
+  "folderByKind": {
+    "decision": "decisions",
+    "report": "reports",
+    "pipeline": "pipeline",
+    "roadmap": "roadmap",
+    "session": "sessions",
+    "workflow": "workflows",
+    "package": "packages"
+  },
+  "entities": 25,
+  "migrated": 25,
+  "counts": {
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  },
+  "nodes": [
+    {
+      "id": "0001-pnpm-monorepo-founding",
+      "kind": "decision",
+      "title": "Single pnpm monorepo for @trembus roblox-ts packages",
+      "status": "accepted",
+      "updated": "2026-05-01",
+      "file": "_project/decisions/0001-pnpm-monorepo-founding.md",
+      "excerpt": "Fifteen reusable roblox-ts libraries (logging, persistence, stats, inventory, timers, UI, …) needed a single home with one toolchain. The code predates its git history — the init commit 0a5572a (2026-05-01) is annotated…"
+    },
+    {
+      "id": "0002-framework-agnostic-packages",
+      "kind": "decision",
+      "title": "Packages are framework-agnostic (no Flamework imports)",
+      "status": "accepted",
+      "updated": "2026-05-01",
+      "file": "_project/decisions/0002-framework-agnostic-packages.md",
+      "excerpt": "Consuming games differ in architecture: soul-steel-official uses Flamework DI; other consumers (and any future Luau consumer) do not. A package that imports Flamework forces that framework onto every consumer."
+    },
+    {
+      "id": "0003-peer-dependency-consumption-model",
+      "kind": "decision",
+      "title": "Peer-dependency consumption model",
+      "status": "accepted",
+      "updated": "2026-05-01",
+      "file": "_project/decisions/0003-peer-dependency-consumption-model.md",
+      "excerpt": "Internal @trembus/ and common @rbxts/ libraries must not be bundled twice into a consuming game — duplicate module instances break singleton state (signals, registries) in the Roblox DataModel."
+    },
+    {
+      "id": "0004-one-concern-per-package",
+      "kind": "decision",
+      "title": "One concern per package gate",
+      "status": "accepted",
+      "updated": "2026-05-01",
+      "file": "_project/decisions/0004-one-concern-per-package.md",
+      "excerpt": "Package monorepos accrete grab-bag \"utils\" packages unless there is a gate at creation time. Once a junk-drawer package exists, everything leaks into it."
+    },
+    {
+      "id": "0005-open-taxonomy-slotable-items",
+      "kind": "decision",
+      "title": "Open-taxonomy rebuild of slotable-items",
+      "status": "accepted",
+      "updated": "2026-07-18",
+      "file": "_project/decisions/0005-open-taxonomy-slotable-items.md",
+      "excerpt": "@trembus/slotable-items hard-codes its item-category taxonomy. Adding a category or item kind means editing the package itself — every game's inventory needs fork the platform. This violates the open/closed grain the re…"
+    },
+    {
+      "id": "0006-adopt-project-system",
+      "kind": "decision",
+      "title": "Adopt Project-System for this space",
+      "status": "accepted",
+      "updated": "2026-07-19",
+      "file": "_project/decisions/0006-adopt-project-system.md",
+      "excerpt": "The monorepo had planning signal without a planning layer: CLAUDE.md and two SOP/overview docs, plus a cited-but-nonexistent \"ADR 0005\". The previous Roblox-side Project-System consumer (Soul-Steel-Official) de-migrated…"
+    },
+    {
+      "id": "0007-dual-lane-ts-luau",
+      "kind": "decision",
+      "title": "Dual-lane TypeScript and Luau package strategy",
+      "status": "accepted",
+      "updated": "2026-07-19",
+      "file": "_project/decisions/0007-dual-lane-ts-luau.md",
+      "tags": {
+        "lane": "luau"
+      },
+      "excerpt": "The entire Roblox estate is roblox-ts today: all 15 packages and both consumer repos. A survey (2026-07-19) found zero hand-written Luau packages and zero Wally/Selene/StyLua/.luaurc footprint anywhere; the only Luau-si…"
+    },
+    {
+      "id": "slotable-items-cutover",
+      "kind": "pipeline",
+      "title": "slotable-items open-taxonomy cutover",
+      "status": "build",
+      "updated": "2026-07-18",
+      "file": "_project/pipeline/slotable-items-cutover.md",
+      "excerpt": "ADR [[0005-open-taxonomy-slotable-items]] shipped the open-taxonomy rebuild as @trembus/slotable-items-dissolved (0.2.0-rc.0) on branch feat/slotable-items-open-taxonomy. The platform is in a temporary dual-package stat…"
+    },
+    {
+      "id": "package-platform-roadmap",
+      "kind": "roadmap",
+      "title": "Package platform roadmap",
+      "status": "active",
+      "updated": "2026-07-19",
+      "file": "_project/roadmap/package-platform-roadmap.md",
+      "excerpt": "The package platform now has a planning layer (this space). This roadmap is the ordered spine for its first phase: the founding, the in-flight slotable-items cutover, the packages-explorer dashboard, and the reserved Lu…"
+    },
+    {
+      "id": "add-a-package",
+      "kind": "workflow",
+      "title": "Add a package",
+      "status": "active",
+      "updated": "2026-07-19",
+      "file": "_project/workflows/add-a-package.md",
+      "excerpt": "A new @trembus package goes from proposal to built, linked, and recorded — one concern per package, every time. Swimlane transcription of the repo SOP (external-locations/code/roblox-packages-mono/docs/sops/adding-a-pac…"
+    },
+    {
+      "id": "animation-catalog",
+      "kind": "package",
+      "title": "@trembus/animation-catalog",
+      "status": "active",
+      "updated": "2026-05-16",
+      "file": "_project/packages/animation-catalog.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Typed composable animation catalog — logical names resolve to catalog entries with assetId, rig compatibility, length, priority, and status."
+    },
+    {
+      "id": "audio",
+      "kind": "package",
+      "title": "@trembus/audio",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/audio.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Unified audio manager — SFX pooling, music crossfading, volume/mute control."
+    },
+    {
+      "id": "currency",
+      "kind": "package",
+      "title": "@trembus/currency",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/currency.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Currency system — open registry, pure transactions, Wallet runtime, and composable persistence slice."
+    },
+    {
+      "id": "input-actions",
+      "kind": "package",
+      "title": "@trembus/input-actions",
+      "status": "active",
+      "updated": "2026-05-25",
+      "file": "_project/packages/input-actions.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Multi-device input architecture — Actions, priority-stacked Contexts, and a signal-based Bus; KBM + gamepad + touch with chord support."
+    },
+    {
+      "id": "logger",
+      "kind": "package",
+      "title": "@trembus/logger",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/logger.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Structured, tag-based logging with level filtering and formatting."
+    },
+    {
+      "id": "persistent-data",
+      "kind": "package",
+      "title": "@trembus/persistent-data",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/persistent-data.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Type-safe player data persistence wrapping @rbxts/profile-store."
+    },
+    {
+      "id": "pets-and-mounts",
+      "kind": "package",
+      "title": "@trembus/pets-and-mounts",
+      "status": "active",
+      "updated": "2026-05-17",
+      "file": "_project/packages/pets-and-mounts.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Pet and mount summoning, follow behavior (AlignPosition), ride mechanics (VehicleSeat + network ownership), and ownership persistence slice."
+    },
+    {
+      "id": "rbx-ui",
+      "kind": "package",
+      "title": "@trembus/rbx-ui",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/rbx-ui.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Roblox React UI component library — design tokens, atoms, molecules, organisms, and screen-level game UIs."
+    },
+    {
+      "id": "rig-spawner",
+      "kind": "package",
+      "title": "@trembus/rig-spawner",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/rig-spawner.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Rig catalog and spawn service for character rigs."
+    },
+    {
+      "id": "slotable-items-dissolved",
+      "kind": "package",
+      "title": "@trembus/slotable-items-dissolved",
+      "status": "incubating",
+      "updated": "2026-07-18",
+      "file": "_project/packages/slotable-items-dissolved.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Open-taxonomy rebuild (ADR [[0005-open-taxonomy-slotable-items]]) of slotable-items — runtime slot-category and item-kind registries; every pre-revamp export preserved."
+    },
+    {
+      "id": "slotable-items",
+      "kind": "package",
+      "title": "@trembus/slotable-items",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/slotable-items.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Unified RPG inventory system — item types, slot management, loadouts, and network operations."
+    },
+    {
+      "id": "stats",
+      "kind": "package",
+      "title": "@trembus/stats",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/stats.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Two-tier stat system — primary attributes, derived stats, resource pools, and persistence slice."
+    },
+    {
+      "id": "status-effects",
+      "kind": "package",
+      "title": "@trembus/status-effects",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/status-effects.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Generic status effect system — shields, damage calcs, buff tracking, effect aggregation."
+    },
+    {
+      "id": "timer-ui",
+      "kind": "package",
+      "title": "@trembus/timer-ui",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/timer-ui.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Roblox ScreenGui display and visual effects for @trembus/timer — anchoring, color shift, pulse, shake, fade, and more."
+    },
+    {
+      "id": "timer",
+      "kind": "package",
+      "title": "@trembus/timer",
+      "status": "active",
+      "updated": "2026-05-01",
+      "file": "_project/packages/timer.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Framework-agnostic timer system — state machine, formatting, thresholds, and global signal bus."
+    }
+  ],
+  "byKind": {
+    "decision": {
+      "total": 7,
+      "byStatus": {
+        "accepted": 7
+      },
+      "ids": [
+        "0001-pnpm-monorepo-founding",
+        "0002-framework-agnostic-packages",
+        "0003-peer-dependency-consumption-model",
+        "0004-one-concern-per-package",
+        "0005-open-taxonomy-slotable-items",
+        "0006-adopt-project-system",
+        "0007-dual-lane-ts-luau"
+      ],
+      "tone": "info",
+      "statusOrder": [
+        "proposed",
+        "accepted",
+        "superseded",
+        "rejected"
+      ]
+    },
+    "report": {
+      "total": 0,
+      "byStatus": {},
+      "ids": [],
+      "tone": "warning",
+      "statusOrder": [
+        "draft",
+        "complete"
+      ]
+    },
+    "pipeline": {
+      "total": 1,
+      "byStatus": {
+        "build": 1
+      },
+      "ids": [
+        "slotable-items-cutover"
+      ],
+      "tone": "success",
+      "statusOrder": [
+        "design",
+        "qualify",
+        "build",
+        "ship",
+        "archive",
+        "shelved"
+      ]
+    },
+    "roadmap": {
+      "total": 1,
+      "byStatus": {
+        "active": 1
+      },
+      "ids": [
+        "package-platform-roadmap"
+      ],
+      "tone": "accent",
+      "statusOrder": [
+        "proposed",
+        "active",
+        "superseded",
+        "complete"
+      ]
+    },
+    "session": {
+      "total": 0,
+      "byStatus": {},
+      "ids": [],
+      "tone": "warning",
+      "statusOrder": [
+        "planned",
+        "active",
+        "blocked",
+        "completed",
+        "shelved"
+      ]
+    },
+    "workflow": {
+      "total": 1,
+      "byStatus": {
+        "active": 1
+      },
+      "ids": [
+        "add-a-package"
+      ],
+      "tone": "neutral",
+      "statusOrder": [
+        "draft",
+        "active",
+        "deprecated"
+      ]
+    },
+    "package": {
+      "total": 15,
+      "byStatus": {
+        "active": 14,
+        "incubating": 1
+      },
+      "ids": [
+        "animation-catalog",
+        "audio",
+        "currency",
+        "input-actions",
+        "logger",
+        "persistent-data",
+        "pets-and-mounts",
+        "rbx-ui",
+        "rig-spawner",
+        "slotable-items-dissolved",
+        "slotable-items",
+        "stats",
+        "status-effects",
+        "timer-ui",
+        "timer"
+      ],
+      "tone": "info",
+      "statusOrder": [
+        "proposed",
+        "incubating",
+        "active",
+        "superseded",
+        "retired"
+      ]
+    }
+  },
+  "edges": [
+    {
+      "from": "0005-open-taxonomy-slotable-items",
+      "fromKind": "decision",
+      "rel": "references",
+      "target": "decisions/0004-one-concern-per-package"
+    },
+    {
+      "from": "0007-dual-lane-ts-luau",
+      "fromKind": "decision",
+      "rel": "references",
+      "target": "decisions/0002-framework-agnostic-packages"
+    },
+    {
+      "from": "slotable-items-cutover",
+      "fromKind": "pipeline",
+      "rel": "decided-in",
+      "target": "decisions/0005-open-taxonomy-slotable-items"
+    },
+    {
+      "from": "add-a-package",
+      "fromKind": "workflow",
+      "rel": "references",
+      "target": "decisions/0004-one-concern-per-package"
+    },
+    {
+      "from": "slotable-items-dissolved",
+      "fromKind": "package",
+      "rel": "supersedes",
+      "target": "packages/slotable-items"
+    },
+    {
+      "from": "slotable-items-dissolved",
+      "fromKind": "package",
+      "rel": "decided-in",
+      "target": "decisions/0005-open-taxonomy-slotable-items"
+    }
+  ],
+  "edgesByRel": {
+    "references": 3,
+    "decided-in": 2,
+    "supersedes": 1
+  },
+  "workflows": {
+    "add-a-package": {
+      "view": "swimlane",
+      "title": "Add a package",
+      "code": "workflow.add-a-package",
+      "caption": "A new @trembus package scaffolded, built, consumer-linked, and recorded.",
+      "lanes": [
+        {
+          "id": "you",
+          "label": "You",
+          "kind": "human"
+        },
+        {
+          "id": "tooling",
+          "label": "Repo tooling",
+          "kind": "tool"
+        }
+      ],
+      "steps": [
+        {
+          "id": "gate",
+          "lane": "you",
+          "label": "One-concern proposal gate",
+          "detail": "State the single concern; if the proposal needs an 'and', it is two packages",
+          "note": "Decision 0004. Variants (Flamework / Rojo / React / internal deps) are declared here too.",
+          "to": [
+            "scaffold"
+          ]
+        },
+        {
+          "id": "scaffold",
+          "lane": "you",
+          "label": "Scaffold packages/<name>",
+          "detail": "src/, package.json, tsconfig.json; main out/init.lua, types out/index.d.ts",
+          "outputs": [
+            {
+              "label": "packages/<name>/",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "wire"
+          ]
+        },
+        {
+          "id": "wire",
+          "lane": "you",
+          "label": "Wire dependencies",
+          "detail": "Peers + workspace:* dev mirrors; peerDependenciesMeta for optional integrations",
+          "note": "Decision 0003 — never direct dependencies for shared libs.",
+          "to": [
+            "install"
+          ]
+        },
+        {
+          "id": "install",
+          "lane": "tooling",
+          "label": "pnpm install (workspace root)",
+          "to": [
+            "build"
+          ]
+        },
+        {
+          "id": "build",
+          "lane": "tooling",
+          "label": "pnpm --filter @trembus/<name> build",
+          "detail": "rbxtsc emits out/",
+          "outputs": [
+            {
+              "label": "packages/<name>/out/",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "smoke"
+          ]
+        },
+        {
+          "id": "smoke",
+          "lane": "you",
+          "label": "Consumer link: smoke test",
+          "detail": "Add link: dep in roblox-testing-environment and build it",
+          "to": [
+            "record"
+          ]
+        },
+        {
+          "id": "record",
+          "lane": "you",
+          "label": "Commit + CLAUDE.md table row",
+          "outputs": [
+            {
+              "label": "CLAUDE.md",
+              "op": "modify"
+            }
+          ],
+          "to": [
+            "registry"
+          ]
+        },
+        {
+          "id": "registry",
+          "lane": "tooling",
+          "label": "Regenerate packages registry",
+          "detail": "node tools/build-packages-registry.mjs (this space)",
+          "outputs": [
+            {
+              "label": "previews/dashboards/packages.json",
+              "op": "modify"
+            }
+          ],
+          "to": []
+        }
+      ]
+    }
+  },
+  "runs": {},
+  "phases": {},
+  "swimlaneKinds": [
+    "workflow"
+  ],
+  "guide": {
+    "generatedBy": "tools/render-hub.mjs:buildGuide",
+    "version": 1,
+    "root": {
+      "id": "root",
+      "label": "Roblox-development-studio",
+      "path": ".",
+      "nodeType": "root",
+      "origin": "authored",
+      "brief": "A first-principles, project-agnostic framework for the planning layer of any project. One contract — ProjectEntity — that every planning artifact derives from, plus the zero-dependency tooling that validates, scaffolds, guards, and renders it. This guide is itself derived from the contract: the framework anatomy below is authored, the _project/ surface and conventions are generated live from this project's config, so the guide can't drift from reality.",
+      "children": [
+        {
+          "id": "core",
+          "label": ".project-system/ — the vendored core",
+          "path": null,
+          "nodeType": "concept",
+          "origin": "authored",
+          "brief": "How a consuming project carries the framework: vendor schema/ + lib/ + tools/ verbatim into a reserved .project-system/ at the project root, and never edit or rename a file inside it — updating means re-copying the folder. The only project-specific file an adopter writes is project-system.config.json at the root. This core is universal: identical in every project.",
+          "children": [
+            {
+              "id": "core/schema",
+              "label": "schema/",
+              "path": "schema",
+              "nodeType": "folder",
+              "origin": "authored",
+              "brief": "The contract layer — machine-readable JSON Schema. Holds the universal base contract every consumer mirrors, and the meta-schema that validates a project's config.",
+              "children": [
+                {
+                  "id": "core/schema/base",
+                  "label": "project-entity.base.schema.json",
+                  "path": "schema/project-entity.base.schema.json",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "The universal contract: the three primitives plus the link/rel definitions. Identical across every consuming project — the artifact a consumer mirrors, and what the drift check compares against.",
+                  "facts": [
+                    {
+                      "label": "primitives",
+                      "value": [
+                        "Identity (kind · id · title)",
+                        "State (status · updated)",
+                        "Relation (links[])"
+                      ]
+                    },
+                    {
+                      "label": "required",
+                      "value": [
+                        "kind",
+                        "id",
+                        "title",
+                        "status",
+                        "updated"
+                      ]
+                    },
+                    {
+                      "label": "rel vocabulary",
+                      "value": [
+                        "supersedes",
+                        "superseded-by",
+                        "predecessor",
+                        "successor",
+                        "milestone",
+                        "implements",
+                        "decided-in",
+                        "references"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "core/schema/config",
+                  "label": "project-config.schema.json",
+                  "path": "schema/project-config.schema.json",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "The meta-schema: validates a project's project-system.config.json. The only project-specific file an adopter authors is checked against this."
+                }
+              ]
+            },
+            {
+              "id": "core/lib",
+              "label": "lib/",
+              "path": "lib",
+              "nodeType": "folder",
+              "origin": "authored",
+              "brief": "The shared library every engine reads through — a zero-dependency parser plus the seam that composes the base schema with a project's config. Single source: no tool re-implements either.",
+              "children": [
+                {
+                  "id": "core/lib/md",
+                  "label": "md.mjs",
+                  "path": "lib/md.mjs",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "Zero-dependency frontmatter/markdown parser — the single source all tools read frontmatter and body sections through, so they can never drift on what a file says."
+                },
+                {
+                  "id": "core/lib/contract",
+                  "label": "contract.mjs",
+                  "path": "lib/contract.mjs",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "The seam between the project-agnostic engines and a project's specifics. loadContract() composes base schema + config into the runtime `ctx` every engine consumes; loadEntities() reads the _project/ tree, deriving kind from the folder and id from the filename."
+                }
+              ]
+            },
+            {
+              "id": "core/tools",
+              "label": "tools/",
+              "path": "tools",
+              "nodeType": "folder",
+              "origin": "authored",
+              "brief": "The zero-dependency engines, all reading the one contract via lib/contract.mjs — no check is re-implemented in a second place. The validator is the single check the others reuse.",
+              "children": [
+                {
+                  "id": "core/tools/validate",
+                  "label": "validate.mjs",
+                  "path": "tools/validate.mjs",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "The validator + validateEntity — the single check (per-kind enums, link resolution, prose ↔ frontmatter) that the scaffolder, guard, and renderer all reuse."
+                },
+                {
+                  "id": "core/tools/new-entity",
+                  "label": "new-entity.mjs",
+                  "path": "tools/new-entity.mjs",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "The scaffolder behind the single /new <kind> command. Validates the kind against your config and writes valid frontmatter + the kind's scaffold sections, so there are no per-kind commands to hand-maintain."
+                },
+                {
+                  "id": "core/tools/guard",
+                  "label": "guard.mjs",
+                  "path": "tools/guard.mjs",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "The PreToolUse guard — the only hook that can block. Rejects any _project/ write that would break the contract (exit 2 + reason); read-only and fails open."
+                },
+                {
+                  "id": "core/tools/render-hub",
+                  "label": "render-hub.mjs",
+                  "path": "tools/render-hub.mjs",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "The renderer. Projects the validated entity graph into the two JSON contracts the Command Center consumes (graph.json + hub.json) — including this very guide. Domain-neutral end to end."
+                },
+                {
+                  "id": "core/tools/check-consumer-drift",
+                  "label": "check-consumer-drift.mjs",
+                  "path": "tools/check-consumer-drift.mjs",
+                  "nodeType": "file",
+                  "origin": "authored",
+                  "brief": "The packaging discipline: asserts each consumer mirrors the canonical contract (schema, validator behavior, and hook parity). The gate that keeps the un-published mirror honest."
+                }
+              ]
+            },
+            {
+              "id": "core/hooks",
+              "label": "the two hooks",
+              "path": ".claude/settings.json",
+              "nodeType": "concept",
+              "origin": "authored",
+              "brief": "The contract is enforced by exactly two Claude Code hooks: a BLOCKING PreToolUse(Write|Edit) guard (tools/guard.mjs — the only hook that can block; exit 2 + reason, read-only, fails open) and an ADVISORY SessionStart health summary (validate.mjs --summary, always exit 0). Rendering is NOT a hook — it's the Command Center's Vite dev plugin. Consumers vendor these verbatim.",
+              "facts": [
+                {
+                  "label": "blocking",
+                  "value": "PreToolUse(Write|Edit) → guard.mjs"
+                },
+                {
+                  "label": "advisory",
+                  "value": "SessionStart → validate.mjs --summary"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "project",
+          "label": "_project/ — planning surface",
+          "path": "_project",
+          "nodeType": "folder",
+          "origin": "derived",
+          "brief": "The project's planning surface — every file here is exactly one ProjectEntity. There is one subfolder per declared kind, and the subtree below is generated from THIS project's project-system.config.json, so it reflects exactly the kinds, folders, naming schemes, and status enums this project declares. kind is derived from the folder; id from the filename; the authored surface of a file is just title · status · updated (+ optional links · tags).",
+          "children": [
+            {
+              "id": "project/decision",
+              "label": "decisions/",
+              "path": "_project/decisions",
+              "nodeType": "kind-folder",
+              "origin": "derived",
+              "brief": "Holds entities of kind \"decision\". kind is derived from this folder, id from each filename. Files are named by the serial · 4-digit scheme; a freshly scaffolded file is born \"proposed\" and its status ranges over the per-kind enum below.",
+              "facts": [
+                {
+                  "label": "kind",
+                  "value": "decision"
+                },
+                {
+                  "label": "folder",
+                  "value": "_project/decisions/"
+                },
+                {
+                  "label": "filename scheme",
+                  "value": "serial · 4-digit"
+                },
+                {
+                  "label": "status enum",
+                  "value": [
+                    "proposed",
+                    "accepted",
+                    "superseded",
+                    "rejected"
+                  ]
+                },
+                {
+                  "label": "initial status",
+                  "value": "proposed"
+                },
+                {
+                  "label": "required sections",
+                  "value": [
+                    "Context"
+                  ]
+                },
+                {
+                  "label": "scaffold sections",
+                  "value": [
+                    "Context",
+                    "Decision",
+                    "Consequences",
+                    "Options considered",
+                    "Cites",
+                    "Re-open if"
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "id": "project/decision/example",
+                  "label": "0001-example-title.md",
+                  "path": null,
+                  "nodeType": "kind-file",
+                  "origin": "derived",
+                  "brief": "A representative filename for a decision (synthesized from the serial · 4-digit scheme) — not a live entity. The filename stem becomes the entity id."
+                }
+              ]
+            },
+            {
+              "id": "project/report",
+              "label": "reports/",
+              "path": "_project/reports",
+              "nodeType": "kind-folder",
+              "origin": "derived",
+              "brief": "Holds entities of kind \"report\". kind is derived from this folder, id from each filename. Files are named by the date-slug · <date>-<slug> scheme; a freshly scaffolded file is born \"draft\" and its status ranges over the per-kind enum below.",
+              "facts": [
+                {
+                  "label": "kind",
+                  "value": "report"
+                },
+                {
+                  "label": "folder",
+                  "value": "_project/reports/"
+                },
+                {
+                  "label": "filename scheme",
+                  "value": "date-slug · <date>-<slug>"
+                },
+                {
+                  "label": "status enum",
+                  "value": [
+                    "draft",
+                    "complete"
+                  ]
+                },
+                {
+                  "label": "initial status",
+                  "value": "draft"
+                },
+                {
+                  "label": "scaffold sections",
+                  "value": [
+                    "Outcome",
+                    "Surprises",
+                    "Decisions made",
+                    "Carry-forward",
+                    "Verification evidence"
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "id": "project/report/example",
+                  "label": "YYYY-MM-DD-example-title.md",
+                  "path": null,
+                  "nodeType": "kind-file",
+                  "origin": "derived",
+                  "brief": "A representative filename for a report (synthesized from the date-slug · <date>-<slug> scheme) — not a live entity. The filename stem becomes the entity id."
+                }
+              ]
+            },
+            {
+              "id": "project/pipeline",
+              "label": "pipeline/",
+              "path": "_project/pipeline",
+              "nodeType": "kind-folder",
+              "origin": "derived",
+              "brief": "Holds entities of kind \"pipeline\". kind is derived from this folder, id from each filename. Files are named by the slug scheme; a freshly scaffolded file is born \"design\" and its status ranges over the per-kind enum below.",
+              "facts": [
+                {
+                  "label": "kind",
+                  "value": "pipeline"
+                },
+                {
+                  "label": "folder",
+                  "value": "_project/pipeline/"
+                },
+                {
+                  "label": "filename scheme",
+                  "value": "slug"
+                },
+                {
+                  "label": "status enum",
+                  "value": [
+                    "design",
+                    "qualify",
+                    "build",
+                    "ship",
+                    "archive",
+                    "shelved"
+                  ]
+                },
+                {
+                  "label": "initial status",
+                  "value": "design"
+                },
+                {
+                  "label": "scaffold sections",
+                  "value": [
+                    "Context",
+                    "Build plan",
+                    "Exit criteria"
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "id": "project/pipeline/example",
+                  "label": "example-title.md",
+                  "path": null,
+                  "nodeType": "kind-file",
+                  "origin": "derived",
+                  "brief": "A representative filename for a pipeline (synthesized from the slug scheme) — not a live entity. The filename stem becomes the entity id."
+                }
+              ]
+            },
+            {
+              "id": "project/roadmap",
+              "label": "roadmap/",
+              "path": "_project/roadmap",
+              "nodeType": "kind-folder",
+              "origin": "derived",
+              "brief": "Holds entities of kind \"roadmap\". kind is derived from this folder, id from each filename. Files are named by the slug scheme; a freshly scaffolded file is born \"proposed\" and its status ranges over the per-kind enum below.",
+              "facts": [
+                {
+                  "label": "kind",
+                  "value": "roadmap"
+                },
+                {
+                  "label": "folder",
+                  "value": "_project/roadmap/"
+                },
+                {
+                  "label": "filename scheme",
+                  "value": "slug"
+                },
+                {
+                  "label": "status enum",
+                  "value": [
+                    "proposed",
+                    "active",
+                    "superseded",
+                    "complete"
+                  ]
+                },
+                {
+                  "label": "initial status",
+                  "value": "proposed"
+                },
+                {
+                  "label": "required sections",
+                  "value": [
+                    "Context"
+                  ]
+                },
+                {
+                  "label": "scaffold sections",
+                  "value": [
+                    "Context",
+                    "Plan",
+                    "Open questions"
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "id": "project/roadmap/example",
+                  "label": "example-title.md",
+                  "path": null,
+                  "nodeType": "kind-file",
+                  "origin": "derived",
+                  "brief": "A representative filename for a roadmap (synthesized from the slug scheme) — not a live entity. The filename stem becomes the entity id."
+                }
+              ]
+            },
+            {
+              "id": "project/session",
+              "label": "sessions/",
+              "path": "_project/sessions",
+              "nodeType": "kind-folder",
+              "origin": "derived",
+              "brief": "Holds entities of kind \"session\". kind is derived from this folder, id from each filename. Files are named by the date-slug · <date>-<slug> scheme; a freshly scaffolded file is born \"planned\" and its status ranges over the per-kind enum below.",
+              "facts": [
+                {
+                  "label": "kind",
+                  "value": "session"
+                },
+                {
+                  "label": "folder",
+                  "value": "_project/sessions/"
+                },
+                {
+                  "label": "filename scheme",
+                  "value": "date-slug · <date>-<slug>"
+                },
+                {
+                  "label": "status enum",
+                  "value": [
+                    "planned",
+                    "active",
+                    "blocked",
+                    "completed",
+                    "shelved"
+                  ]
+                },
+                {
+                  "label": "initial status",
+                  "value": "planned"
+                },
+                {
+                  "label": "required sections",
+                  "value": [
+                    "Goal",
+                    "Success Criteria",
+                    "Source References",
+                    "Decisions",
+                    "Outputs",
+                    "Blockers",
+                    "Next Action",
+                    "Handoff Notes"
+                  ]
+                },
+                {
+                  "label": "scaffold sections",
+                  "value": [
+                    "Goal",
+                    "Success Criteria",
+                    "Source References",
+                    "Decisions",
+                    "Outputs",
+                    "Blockers",
+                    "Next Action",
+                    "Handoff Notes"
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "id": "project/session/example",
+                  "label": "YYYY-MM-DD-example-title.md",
+                  "path": null,
+                  "nodeType": "kind-file",
+                  "origin": "derived",
+                  "brief": "A representative filename for a session (synthesized from the date-slug · <date>-<slug> scheme) — not a live entity. The filename stem becomes the entity id."
+                }
+              ]
+            },
+            {
+              "id": "project/workflow",
+              "label": "workflows/",
+              "path": "_project/workflows",
+              "nodeType": "kind-folder",
+              "origin": "derived",
+              "brief": "Holds entities of kind \"workflow\". kind is derived from this folder, id from each filename. Files are named by the slug scheme; a freshly scaffolded file is born \"draft\" and its status ranges over the per-kind enum below.",
+              "facts": [
+                {
+                  "label": "kind",
+                  "value": "workflow"
+                },
+                {
+                  "label": "folder",
+                  "value": "_project/workflows/"
+                },
+                {
+                  "label": "filename scheme",
+                  "value": "slug"
+                },
+                {
+                  "label": "status enum",
+                  "value": [
+                    "draft",
+                    "active",
+                    "deprecated"
+                  ]
+                },
+                {
+                  "label": "initial status",
+                  "value": "draft"
+                },
+                {
+                  "label": "required sections",
+                  "value": [
+                    "Workflow"
+                  ]
+                },
+                {
+                  "label": "scaffold sections",
+                  "value": [
+                    "Purpose",
+                    "Workflow"
+                  ]
+                },
+                {
+                  "label": "carries swimlanes",
+                  "value": "yes"
+                }
+              ],
+              "children": [
+                {
+                  "id": "project/workflow/example",
+                  "label": "example-title.md",
+                  "path": null,
+                  "nodeType": "kind-file",
+                  "origin": "derived",
+                  "brief": "A representative filename for a workflow (synthesized from the slug scheme) — not a live entity. The filename stem becomes the entity id."
+                }
+              ]
+            },
+            {
+              "id": "project/package",
+              "label": "packages/",
+              "path": "_project/packages",
+              "nodeType": "kind-folder",
+              "origin": "derived",
+              "brief": "Holds entities of kind \"package\". kind is derived from this folder, id from each filename. Files are named by the slug scheme; a freshly scaffolded file is born \"proposed\" and its status ranges over the per-kind enum below.",
+              "facts": [
+                {
+                  "label": "kind",
+                  "value": "package"
+                },
+                {
+                  "label": "folder",
+                  "value": "_project/packages/"
+                },
+                {
+                  "label": "filename scheme",
+                  "value": "slug"
+                },
+                {
+                  "label": "status enum",
+                  "value": [
+                    "proposed",
+                    "incubating",
+                    "active",
+                    "superseded",
+                    "retired"
+                  ]
+                },
+                {
+                  "label": "initial status",
+                  "value": "proposed"
+                },
+                {
+                  "label": "required sections",
+                  "value": [
+                    "Purpose"
+                  ]
+                },
+                {
+                  "label": "scaffold sections",
+                  "value": [
+                    "Purpose",
+                    "Public API",
+                    "Dependencies",
+                    "Consumers",
+                    "Notes"
+                  ]
+                }
+              ],
+              "children": [
+                {
+                  "id": "project/package/example",
+                  "label": "example-title.md",
+                  "path": null,
+                  "nodeType": "kind-file",
+                  "origin": "derived",
+                  "brief": "A representative filename for a package (synthesized from the slug scheme) — not a live entity. The filename stem becomes the entity id."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "concept/primitives",
+          "label": "The three primitives",
+          "path": null,
+          "nodeType": "concept",
+          "origin": "derived",
+          "brief": "Everything reduces to three primitives — Identity (kind · id · title) · State (status · updated) · Relation (links[]). kind and id are loader-derived from the file's path; the rest is the authored frontmatter. Everything else a file might carry is an optional `tags` facet. A good reduction deletes fields; this one dropped many per-kind interfaces to one shape.",
+          "facts": [
+            {
+              "label": "authored",
+              "value": [
+                "title",
+                "status",
+                "updated",
+                "links",
+                "tags"
+              ]
+            },
+            {
+              "label": "derived",
+              "value": [
+                "kind",
+                "id"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "concept/rels",
+          "label": "Relation vocabulary",
+          "path": null,
+          "nodeType": "concept",
+          "origin": "derived",
+          "brief": "The universal vocabulary for the typed edges between entities (links[].rel), defined once in the base schema and shared by every project. WHICH kinds each rel may point at is this project's config (relTargetKinds) — the facts below are that resolution. A link target is a `<folder>/<id>` path, a milestone marker, or an external ref.",
+          "facts": [
+            {
+              "label": "supersedes",
+              "value": "→ decision · roadmap · package"
+            },
+            {
+              "label": "superseded-by",
+              "value": "→ decision · roadmap · package"
+            },
+            {
+              "label": "predecessor",
+              "value": "→ pipeline · report"
+            },
+            {
+              "label": "successor",
+              "value": "→ pipeline · report"
+            },
+            {
+              "label": "milestone",
+              "value": "→ marker"
+            },
+            {
+              "label": "implements",
+              "value": "→ external"
+            },
+            {
+              "label": "decided-in",
+              "value": "→ decision"
+            },
+            {
+              "label": "references",
+              "value": "→ any"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
