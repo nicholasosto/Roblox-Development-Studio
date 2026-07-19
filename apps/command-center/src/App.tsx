@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { Brief, Card, Hub, Tabs } from '@trembus/ui';
 import type { BriefContract, SectionKind } from '@trembus/ui';
 import { domainById, entities, entitiesOfKinds, hub, hubData, kinds, prettify } from './contract';
+import { CatalogPanel } from './CatalogPanel';
 import { PackagesExplorer } from './PackagesExplorer';
 import { ToolsPanel } from './ToolsPanel';
 import { groupByStatus } from './status';
 
-// The three areas: the Hub overview (the Project-System contract made legible), the Packages
-// explorer (the registry surface), and the Tools lens (lab toolchain + syncback status). Per-kind
-// auto-tabs are deliberately omitted — the hex drawer already lists every kind's entities.
-type NavEntry = { value: 'overview' | 'packages' | 'tools'; label: string };
+// The four areas: the Hub overview (the Project-System contract made legible), the Packages
+// explorer (the registry surface), the Catalog lens (the decision-0008 lab ledger feed), and the
+// Tools lens (lab toolchain + syncback status). Per-kind auto-tabs are deliberately omitted — the
+// hex drawer already lists every kind's entities.
+type NavEntry = { value: 'overview' | 'packages' | 'catalog' | 'tools'; label: string };
 const AREAS: NavEntry[] = [
   { value: 'overview', label: 'Overview' },
   { value: 'packages', label: 'Packages' },
+  { value: 'catalog', label: 'Catalog' },
   { value: 'tools', label: 'Tools' },
 ];
 
@@ -183,6 +186,9 @@ export function App() {
         </Tabs.Panel>
         <Tabs.Panel value="packages" className="cc-panel">
           <PackagesExplorer />
+        </Tabs.Panel>
+        <Tabs.Panel value="catalog" className="cc-panel">
+          <CatalogPanel />
         </Tabs.Panel>
         <Tabs.Panel value="tools" className="cc-panel">
           <ToolsPanel />

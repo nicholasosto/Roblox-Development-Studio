@@ -10,6 +10,8 @@
 import { useEffect, useState } from 'react';
 import { Badge, Callout, Card, EmptyState, Inline, Stat, Table, Toolbar } from '@trembus/ui';
 import { copyText } from './clipboard';
+import { LIVE_POLL_MS, fetchLive, fmtUptime, isFresh, sessionLabel } from './live';
+import type { LiveFeed } from './live';
 import {
   built,
   censusLine,
@@ -89,7 +91,12 @@ export function ToolsPanel() {
         </div>
       </section>
 
-      {/* 2 — TOOLCHAIN + REPO */}
+      {/* 2 — STUDIO NOW (live heartbeats via the collector's /live endpoint) */}
+      <section className="cc-section">
+        <StudioNow />
+      </section>
+
+      {/* 3 — TOOLCHAIN + REPO */}
       <section className="cc-section">
         <div className="cc-tools-grid">
           <Card className="cc-tools-card">
@@ -214,7 +221,7 @@ export function ToolsPanel() {
         </div>
       </section>
 
-      {/* 3 — EXPERIENCES */}
+      {/* 4 — EXPERIENCES */}
       <section className="cc-section">
         <h3 className="cc-section-title">Experiences</h3>
         <div className="cc-pkg-grid">
@@ -224,7 +231,7 @@ export function ToolsPanel() {
         </div>
       </section>
 
-      {/* 4 — THE LOOP */}
+      {/* 5 — THE LOOP */}
       <section className="cc-section">
         <Callout tone="info" title="The serialization loop (decision 0008)">
           Work in Studio → <strong>File → Save to File As…</strong> into{' '}
@@ -236,6 +243,93 @@ export function ToolsPanel() {
         </Callout>
       </section>
     </div>
+  );
+}
+
+// ── "Studio now" — polls the collector's /live endpoint while the lens is mounted. Collector
+// offline is a NORMAL state (the collector is a dev-time process), rendered as a quiet note, so
+// the static build stays fully functional without it. ──
+function StudioNow() {
+  const [feed, setFeed] = useState<LiveFeed | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const poll = () => {
+      void fetchLive().then((f) => {
+        if (!cancelled) setFeed(f);
+      });
+    };
+    poll();
+    const t = window.setInterval(poll, LIVE_POLL_MS);
+    return () => {
+      cancelled = true;
+      window.clearInterval(t);
+    };
+  }, []);
+
+  return (
+    <>
+      <h3 className="cc-section-title">
+        Studio now{' '}
+        {feed?.up ? (
+          <Badge tone="success" variant="soft" size="sm" dot>
+            collector up
+          </Badge>
+        ) : (
+          <Badge tone="neutral" variant="outline" size="sm">
+            collector offline
+          </Badge>
+        )}
+      </h3>
+      {!feed?.up ? (
+        <p className="cc-pkg-card__desc">
+          Start <code className="cc-explorer__mono">node tools/telemetry-collector.mjs</code> to see
+          live Studio session heartbeats here.
+        </p>
+      ) : feed.sessions.length === 0 ? (
+        <p className="cc-pkg-card__desc">
+          No Studio heartbeats — open a lab place with the{' '}
+          <code className="cc-explorer__mono">@trembus/studio-telemetry</code> plugin installed
+          (loads on Studio start).
+        </p>
+      ) : (
+        <div className="cc-pkg-grid">
+          {feed.sessions.map((s) => {
+            const fresh = isFresh(s, feed.staleAfterSeconds);
+            return (
+              <Card key={`${s.placeId}:${s.place}`} className="cc-tools-card">
+                <div className="cc-pkg-card__head">
+                  <span className="cc-pkg-card__name">{sessionLabel(s)}</span>
+                  <Badge tone={fresh ? 'success' : 'warning'} variant="soft" size="sm" dot>
+                    {fresh ? 'live' : 'stale'}
+                  </Badge>
+                  <Badge tone={s.mode === 'play' ? 'accent' : 'neutral'} variant="outline" size="sm">
+                    {s.mode}
+                  </Badge>
+                </div>
+                <dl className="cc-explorer__facts">
+                  <div>
+                    <dt>Session uptime</dt>
+                    <dd>{fmtUptime(s.uptimeSeconds)}</dd>
+                  </div>
+                  <div>
+                    <dt>Instances</dt>
+                    <dd>{s.instanceCount.toLocaleString()}</dd>
+                  </div>
+                  {s.placeId > 0 && (
+                    <div>
+                      <dt>Place id</dt>
+                      <dd>
+                        <code className="cc-explorer__mono">{s.placeId}</code>
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 }
 

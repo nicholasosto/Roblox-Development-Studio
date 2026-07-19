@@ -17,8 +17,8 @@ The [[studio-telemetry]] plugin was rescued from the soul-steel archive with its
 ## Build plan
 
 1. **M0 — Rescue** (done 2026-07-19): source into `packages/studio-telemetry`, rebranded, builds `TrembusStudioTelemetry.rbxm` clean via rbxtsc + rojo.
-2. **M1 — Catalog channel + collector** (closes audit CF-2): new `catalog` channel posting `UIStudio.Catalog` entry attributes, `UIMockups` kit inventory, and `GenerationManifest` values; a small dev-time collector (`tools/telemetry-collector.mjs`, this space) receives and writes `previews/dashboards/ui-catalog.json`; the command-center gains a catalog lens. Deploy decision (retire `SoulSteelStudioPlugin.rbxm`) lands here.
-3. **M2 — Session heartbeat**: `session` channel (open place name, session uptime, instance count) → collector writes `labs-live.json` → the Tools lens gains a "Studio now" card.
+2. **M1 — Catalog channel + collector** (done 2026-07-19, [[2026-07-19-telemetry-m1-catalog-feed]]): `catalog` channel + `tools/telemetry-collector.mjs` (port 4320) → `previews/dashboards/ui-catalog.json`; command-center Catalog lens at `app/#catalog`; plugin deployed and `SoulSteelStudioPlugin.rbxm` retired. Wire proven end-to-end with real ledger data; the plugin's autonomous 30s feed begins on the next Studio restart.
+3. **M2 — Session heartbeat** (done 2026-07-19, [[2026-07-19-telemetry-m2-studio-now-heartbeat]]): `session` channel (5s: place, placeId, mode, uptime, instances) → collector serves `GET /live` (in-memory, CORS) → the Tools lens "Studio now" card polls it at runtime. Design deviation, deliberate: no `labs-live.json` file — a 5s heartbeat would churn a committed file; live state belongs to the live endpoint. Proven from both Studio windows; autonomous once Studio restarts.
 4. **M3 — QA channel**: the lab rigs (tile-state / motion / icon labs) emit probe results as QA evidence, attached to the [[ui-component-promotion]] prove step so `State=proven` carries data.
 5. **M4 — Retire soul-steel shapes**: generalize or drop the Zones/NPCs payloads (entity channel becomes opt-in), endpoint made configurable via plugin settings.
 

@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 33,
-  "migrated": 33,
+  "entities": 35,
+  "migrated": 35,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -146,6 +146,24 @@
       "updated": "2026-07-19",
       "file": "_project/sessions/2026-07-19-studio-telemetry-rescue.md",
       "excerpt": "Rescue the archived Soul Steel Studio telemetry plugin into the monorepo as @trembus/studio-telemetry and open the modernization pipeline aimed at lab telemetry."
+    },
+    {
+      "id": "2026-07-19-telemetry-m1-catalog-feed",
+      "kind": "session",
+      "title": "telemetry M1 catalog feed",
+      "status": "completed",
+      "updated": "2026-07-19",
+      "file": "_project/sessions/2026-07-19-telemetry-m1-catalog-feed.md",
+      "excerpt": "Pipeline M1: the catalog channel + local collector, turning the decision-0008 in-place ledger into the automatic ui-catalog.json feed (closes audit CF-2's plumbing)."
+    },
+    {
+      "id": "2026-07-19-telemetry-m2-studio-now-heartbeat",
+      "kind": "session",
+      "title": "telemetry M2 studio-now heartbeat",
+      "status": "completed",
+      "updated": "2026-07-19",
+      "file": "_project/sessions/2026-07-19-telemetry-m2-studio-now-heartbeat.md",
+      "excerpt": "Pipeline M2: the session heartbeat channel and the Tools lens \"Studio now\" card — the command center sees which Studio windows are open, live."
     },
     {
       "id": "add-a-package",
@@ -444,13 +462,15 @@
       ]
     },
     "session": {
-      "total": 2,
+      "total": 4,
       "byStatus": {
-        "completed": 2
+        "completed": 4
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
-        "2026-07-19-studio-telemetry-rescue"
+        "2026-07-19-studio-telemetry-rescue",
+        "2026-07-19-telemetry-m1-catalog-feed",
+        "2026-07-19-telemetry-m2-studio-now-heartbeat"
       ],
       "tone": "warning",
       "statusOrder": [
@@ -563,6 +583,18 @@
       "target": "decisions/0008-studio-native-lab-lane"
     },
     {
+      "from": "2026-07-19-telemetry-m1-catalog-feed",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "pipeline/studio-telemetry-modernization"
+    },
+    {
+      "from": "2026-07-19-telemetry-m2-studio-now-heartbeat",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "pipeline/studio-telemetry-modernization"
+    },
+    {
       "from": "add-a-package",
       "fromKind": "workflow",
       "rel": "references",
@@ -600,7 +632,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 9,
+    "references": 11,
     "decided-in": 4,
     "supersedes": 1
   },

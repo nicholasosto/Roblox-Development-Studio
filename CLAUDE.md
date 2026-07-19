@@ -20,6 +20,7 @@ Tags: `lane: ts | luau` on package entities. The Luau lane is **reserved** — n
 - `node .project-system/tools/render-hub.mjs` → `previews/dashboards/roblox-development-studio-{graph,hub}.json`
 - `node tools/build-packages-registry.mjs` → `previews/dashboards/packages.json` (reads the monorepo through `external-locations/code/`; run after any package.json change; `--check` probes staleness)
 - `node tools/build-labs-status.mjs` → `previews/dashboards/labs-status.json` (probes the labs repo through `external-locations/code/`; time-based status — re-run for fresh state, no `--check`)
+- `node tools/telemetry-collector.mjs` → long-running collector on `127.0.0.1:4320`; receives `@trembus/studio-telemetry` envelopes from Studio, rewrites `previews/dashboards/ui-catalog.json` on ledger change (M1), and serves live session heartbeats at `GET /live` for the Tools lens's "Studio now" card (M2 — in-memory by design, never a committed file)
 - `pnpm --dir apps/command-center build` → `previews/app/` (static explorer; JSON is inlined at build time, so rebuild after regenerating)
 - Serve locally via `.claude/launch.json` → `previews-static` (port 4319) or `command-center` (vite dev, port 5176)
 

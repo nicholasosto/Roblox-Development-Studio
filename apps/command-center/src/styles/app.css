@@ -670,3 +670,17 @@ body,
 .cc-tools-card__bar {
   margin-top: auto;
 }
+
+/* ── Catalog lens ── */
+.cc-catalog-pre {
+  margin: 0;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}

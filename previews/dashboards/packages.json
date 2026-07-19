@@ -2,7 +2,7 @@
   "generatedBy": "tools/build-packages-registry.mjs@1",
   "schemaVersion": 1,
   "built": "2026-07-19",
-  "builtMs": 1784468690752,
+  "builtMs": 1784469907847,
   "monorepo": {
     "name": "roblox-packages-mono",
     "path": "external-locations/code/roblox-packages-mono",
