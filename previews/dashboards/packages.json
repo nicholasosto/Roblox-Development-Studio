@@ -1,8 +1,8 @@
 {
   "generatedBy": "tools/build-packages-registry.mjs@1",
   "schemaVersion": 1,
-  "built": "2026-07-19",
-  "builtMs": 1784469907847,
+  "built": "2026-07-20",
+  "builtMs": 1784547362578,
   "monorepo": {
     "name": "roblox-packages-mono",
     "path": "external-locations/code/roblox-packages-mono",
@@ -10,17 +10,17 @@
     "scope": "@trembus"
   },
   "counts": {
-    "packages": 16,
+    "packages": 17,
     "byStatus": {
       "rc": 1,
-      "stable": 15
+      "stable": 16
     },
     "byTier": {
-      "composite": 7,
+      "composite": 8,
       "foundation": 6,
       "standalone": 3
     },
-    "internalEdges": 11,
+    "internalEdges": 12,
     "optionalEdges": 4,
     "consumers": 2,
     "claudeTableDrift": 0,
@@ -99,6 +99,38 @@
       },
       "inClaudeTable": true,
       "npmUrl": "https://www.npmjs.com/package/@trembus/audio"
+    },
+    {
+      "id": "camera",
+      "name": "@trembus/camera",
+      "version": "0.1.0",
+      "description": "State-machine camera system for roblox-ts games — follow, orbit, fixed, free-cam, and cinematic states with smooth transitions and shake presets",
+      "dir": "packages/camera",
+      "status": "stable",
+      "tier": "composite",
+      "internalDeps": [
+        {
+          "id": "logger",
+          "range": "^0.1.0",
+          "optional": false
+        }
+      ],
+      "externalPeerDeps": [],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": []
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": true,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/camera"
     },
     {
       "id": "currency",
@@ -190,6 +222,7 @@
       "consumedBy": {
         "internal": [
           "audio",
+          "camera",
           "pets-and-mounts"
         ],
         "external": [
@@ -695,6 +728,12 @@
   "edges": [
     {
       "from": "audio",
+      "to": "logger",
+      "range": "^0.1.0",
+      "optional": false
+    },
+    {
+      "from": "camera",
       "to": "logger",
       "range": "^0.1.0",
       "optional": false
