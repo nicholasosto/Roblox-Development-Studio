@@ -1,20 +1,25 @@
 {
   "generatedBy": "tools/build-labs-status.mjs",
   "schemaVersion": 1,
-  "built": "2026-07-20T11:02:08.413Z",
-  "builtMs": 135,
+  "built": "2026-07-20T12:40:13.091Z",
+  "builtMs": 106,
   "labs": {
     "name": "roblox-labs",
     "path": "external-locations/code/roblox-labs",
     "present": true,
     "branch": "main",
     "head": {
-      "sha": "cb40049",
-      "when": "2026-07-19T08:13:08-04:00",
-      "subject": "First syncback: serialize both lab experiences from Studio snapshots"
+      "sha": "afbc10a",
+      "when": "2026-07-20T08:40:12-04:00",
+      "subject": "Record run-2 slice spec: TallPanel Rect(120, 115, 136, 141) @ 0.4 proven"
     },
     "dirty": 0,
     "recentCommits": [
+      {
+        "sha": "afbc10a",
+        "when": "2026-07-20T08:40:12-04:00",
+        "subject": "Record run-2 slice spec: TallPanel Rect(120, 115, 136, 141) @ 0.4 proven"
+      },
       {
         "sha": "cb40049",
         "when": "2026-07-19T08:13:08-04:00",
@@ -78,8 +83,8 @@
       "snapshot": {
         "present": true,
         "file": "places/user-interface-development.rbxl",
-        "bytes": 488540,
-        "savedAt": "2026-07-19T12:10:23.479Z"
+        "bytes": 488814,
+        "savedAt": "2026-07-20T12:32:06.599Z"
       },
       "serialization": {
         "files": {
@@ -90,9 +95,9 @@
           "other": 0
         },
         "lastSync": {
-          "sha": "cb40049",
-          "when": "2026-07-19T08:13:08-04:00",
-          "subject": "First syncback: serialize both lab experiences from Studio snapshots"
+          "sha": "afbc10a",
+          "when": "2026-07-20T08:40:12-04:00",
+          "subject": "Record run-2 slice spec: TallPanel Rect(120, 115, 136, 141) @ 0.4 proven"
         }
       },
       "sync": "in-sync",

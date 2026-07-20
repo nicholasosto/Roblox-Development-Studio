@@ -1,8 +1,8 @@
 {
   "generatedBy": "@trembus/studio-telemetry catalog channel via tools/telemetry-collector.mjs",
   "schemaVersion": 1,
-  "receivedAt": "2026-07-20T12:08:05.219Z",
-  "channelTimestamp": 1784549284,
+  "receivedAt": "2026-07-20T12:30:04.895Z",
+  "channelTimestamp": 1784550604,
   "place": "Place1",
   "placeId": 75067279879490,
   "catalog": [
@@ -75,7 +75,7 @@
   ],
   "manifests": [
     {
-      "value": "Textured UI Reference Kit / run-1\nStatus: BLK / local proof only\nPanel: rbxasset://trembus/ui/frames/graphite-cyan-reference-panel_BLK.png\nTile: rbxasset://trembus/ui/backgrounds/graphite-cyan-reference-tile_BLK.png\nAtlas: rbxasset://trembus/ui/sprites/graphite-cyan-reference-controls_BLK.png\nSliceCenter: Rect.new(48, 48, 208, 208)\nSliceScale test: 0.48 / 0.56 / 0.58\nTileSize test: 64 / 128 / 256\nAtlas cells: 128x128 offsets 0,0 / 128,0 / 0,128 / 128,128\nNo FNL promotion or upload authorized",
+      "value": "Textured UI Reference Kit / run-2\nStatus: BLK / local proof only\nPanel: rbxasset://trembus/templates/ui-style/graphite-cyan/graphite-cyan-reference-panel_BLK.png\nTile: rbxasset://trembus/ui/backgrounds/graphite-cyan-reference-tile_BLK.png\nAtlas: rbxasset://trembus/ui/sprites/graphite-cyan-reference-controls_BLK.png\nSliceCenter: Rect.new(120, 115, 136, 141)  -- PROVEN winner (TallPanel, human-judged 2026-07-20)\nSliceScale: 0.4\nSlice verdict: run-1 Rect.new(48, 48, 208, 208) rejected - center region crossed the frame bars and stretched them; 120/115/136/141 keeps a 16x26 stretch band clear of the bar art\nTileSize test: 64 / 128 / 256\nAtlas cells: 128x128 offsets 0,0 / 128,0 / 0,128 / 128,128\nNo FNL promotion or upload authorized",
       "path": "ReplicatedStorage.UIMockups.TexturedUIReferenceKit.GenerationManifest"
     }
   ]
