@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 38,
-  "migrated": 38,
+  "entities": 40,
+  "migrated": 40,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -103,6 +103,15 @@
       "excerpt": "What shipped"
     },
     {
+      "id": "crystal-sanctum",
+      "kind": "pipeline",
+      "title": "Crystal Sanctum",
+      "status": "design",
+      "updated": "2026-07-20",
+      "file": "_project/pipeline/crystal-sanctum.md",
+      "excerpt": "The user seed is the Crystal Sanctum, the Spirit Conclave's main seat of power and architectural masterpiece. A Soul Crystal enables an ultra-strong, almost weightless construction system, so the landmark should express…"
+    },
+    {
       "id": "slotable-items-cutover",
       "kind": "pipeline",
       "title": "slotable-items open-taxonomy cutover",
@@ -191,6 +200,15 @@
       "updated": "2026-07-19",
       "file": "_project/workflows/add-a-package.md",
       "excerpt": "A new @trembus package goes from proposal to built, linked, and recorded — one concern per package, every time. Swimlane transcription of the repo SOP (external-locations/code/roblox-packages-mono/docs/sops/adding-a-pac…"
+    },
+    {
+      "id": "concept-to-studio-architectural-build",
+      "kind": "workflow",
+      "title": "Concept-to-Studio architectural build",
+      "status": "draft",
+      "updated": "2026-07-20",
+      "file": "_project/workflows/concept-to-studio-architectural-build.md",
+      "excerpt": "Turn a user-authored architectural seed into a reviewed, runtime-neutral, manifest-driven Roblox Studio blockout. Every run keeps three genuinely different visual directions, per-section design records and diagrams, ass…"
     },
     {
       "id": "ui-component-promotion",
@@ -457,11 +475,13 @@
       ]
     },
     "pipeline": {
-      "total": 2,
+      "total": 3,
       "byStatus": {
+        "design": 1,
         "build": 2
       },
       "ids": [
+        "crystal-sanctum",
         "slotable-items-cutover",
         "studio-telemetry-modernization"
       ],
@@ -514,12 +534,14 @@
       ]
     },
     "workflow": {
-      "total": 2,
+      "total": 3,
       "byStatus": {
-        "active": 2
+        "active": 2,
+        "draft": 1
       },
       "ids": [
         "add-a-package",
+        "concept-to-studio-architectural-build",
         "ui-component-promotion"
       ],
       "tone": "neutral",
@@ -592,6 +614,18 @@
       "target": "decisions/0008-studio-native-lab-lane"
     },
     {
+      "from": "crystal-sanctum",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "workflows/concept-to-studio-architectural-build"
+    },
+    {
+      "from": "crystal-sanctum",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
       "from": "slotable-items-cutover",
       "fromKind": "pipeline",
       "rel": "decided-in",
@@ -634,6 +668,18 @@
       "target": "decisions/0004-one-concern-per-package"
     },
     {
+      "from": "concept-to-studio-architectural-build",
+      "fromKind": "workflow",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
+      "from": "concept-to-studio-architectural-build",
+      "fromKind": "workflow",
+      "rel": "references",
+      "target": "workflows/ui-component-promotion"
+    },
+    {
       "from": "ui-component-promotion",
       "fromKind": "workflow",
       "rel": "references",
@@ -665,7 +711,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 11,
+    "references": 15,
     "decided-in": 4,
     "supersedes": 1
   },
@@ -780,6 +826,258 @@
               "op": "modify"
             }
           ],
+          "to": []
+        }
+      ]
+    },
+    "concept-to-studio-architectural-build": {
+      "view": "swimlane",
+      "title": "Concept-to-Studio architectural build",
+      "code": "workflow.concept-to-studio-architectural-build",
+      "caption": "A seed concept becomes a selected architectural system, constructible Roblox manifest, and verified Edit-mode Studio blockout.",
+      "lanes": [
+        {
+          "id": "you",
+          "label": "You",
+          "kind": "human"
+        },
+        {
+          "id": "together",
+          "label": "You + agents",
+          "kind": "neutral"
+        },
+        {
+          "id": "visual",
+          "label": "Visual development",
+          "kind": "ai"
+        },
+        {
+          "id": "assets",
+          "label": "Asset + manifest tooling",
+          "kind": "tool"
+        },
+        {
+          "id": "studio",
+          "label": "Roblox Studio MCP",
+          "kind": "tool"
+        }
+      ],
+      "steps": [
+        {
+          "id": "seed",
+          "lane": "you",
+          "label": "State the seed concept",
+          "status": "active",
+          "detail": "Intent, fantasy, essential experience, and any non-negotiable image or spatial idea",
+          "note": "The seed may be rough. Do not ask it to solve dimensions, materials, or Roblox implementation yet.",
+          "to": [
+            "refine"
+          ]
+        },
+        {
+          "id": "refine",
+          "lane": "together",
+          "label": "Refine the design contract",
+          "status": "pending",
+          "detail": "Users, site, scale, parti, rooms, connectors, mood, constraints, and success criteria",
+          "note": "Create one pipeline entity for the run and one canonical creative bundle. Keep the concept runtime-neutral until the owner gate.",
+          "outputs": [
+            {
+              "label": "_project/pipeline/<design-slug>.md",
+              "op": "create"
+            },
+            {
+              "label": "Assets/models/<category>/<design-slug>/README.md",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "variants"
+          ]
+        },
+        {
+          "id": "variants",
+          "lane": "visual",
+          "label": "Generate three distinct concepts",
+          "status": "pending",
+          "detail": "A / B / C vary governing parti, mass-to-void relationship, circulation, and structural expression",
+          "note": "They must not be palette swaps. Shared brief constraints remain fixed so the comparison is meaningful.",
+          "outputs": [
+            {
+              "label": "<design-slug>-concept-a.png",
+              "op": "create"
+            },
+            {
+              "label": "<design-slug>-concept-b.png",
+              "op": "create"
+            },
+            {
+              "label": "<design-slug>-concept-c.png",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "select"
+          ]
+        },
+        {
+          "id": "select",
+          "lane": "you",
+          "label": "Select or synthesize a direction",
+          "status": "pending",
+          "detail": "Approve one direction or explicitly combine named features",
+          "note": "Reject returns to refinement. No section diagrams or build manifest are produced before this gate closes.",
+          "to": [
+            "sections",
+            "refine"
+          ]
+        },
+        {
+          "id": "sections",
+          "lane": "together",
+          "label": "Decompose into unique sections",
+          "status": "pending",
+          "detail": "Site, exterior masses, rooms, connectors, thresholds, service zones, and exceptional details",
+          "note": "Each section receives a frontmatter Markdown record with stable IDs, dimensions in studs, adjacency, materials, asset references, and acceptance checks.",
+          "outputs": [
+            {
+              "label": "sections/<nn>-<section-slug>.md",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "diagrams"
+          ]
+        },
+        {
+          "id": "diagrams",
+          "lane": "visual",
+          "label": "Draw architectural diagrams",
+          "status": "pending",
+          "detail": "Only the views each section needs: plan, section, elevation, axonometric, circulation, or connection detail",
+          "note": "Use a consistent grid, orientation, player scale, diagram legend, and conceptual-versus-measured label.",
+          "outputs": [
+            {
+              "label": "diagrams/<design-slug>-<section-slug>-<view>.png",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "manifest"
+          ]
+        },
+        {
+          "id": "manifest",
+          "lane": "assets",
+          "label": "Compile the Roblox build manifest",
+          "status": "pending",
+          "detail": "Stud grid, assemblies, Parts, materials, assets, connectors, lighting, budgets, tags, and build order",
+          "note": "Separate existing registered assets, local-only assets, generated candidates, primitives, and placeholders. Built-in Roblox materials are preferred before custom assets.",
+          "outputs": [
+            {
+              "label": "roblox-build-manifest.json",
+              "op": "create"
+            },
+            {
+              "label": "manifest.json",
+              "op": "modify"
+            }
+          ],
+          "to": [
+            "owner"
+          ]
+        },
+        {
+          "id": "owner",
+          "lane": "you",
+          "label": "Choose owner and target place",
+          "status": "pending",
+          "detail": "Project, TGL domain, target experience, staging root, and intended runtime handoff",
+          "note": "Only this gate authorizes project-specific paths or TGL names. Room, corridor, and zone candidates map to LAY_ROM, LAY_COR, and LAY_ZON after ownership is selected.",
+          "to": [
+            "asset-audit"
+          ]
+        },
+        {
+          "id": "asset-audit",
+          "lane": "assets",
+          "label": "Resolve asset readiness",
+          "status": "pending",
+          "detail": "Exact path, registry state, checksum, TGL name/status, and fallback for every non-primitive dependency",
+          "note": "Support art has no runtime suffix. Runtime candidates default to BLK; BLK is local proof and is not upload-ready.",
+          "to": [
+            "preflight"
+          ]
+        },
+        {
+          "id": "preflight",
+          "lane": "studio",
+          "label": "Preflight the selected Studio",
+          "status": "pending",
+          "detail": "get state → list Studios → confirm/set active → require Edit DataModel → inspect staging root",
+          "note": "Write a concise GenerationManifest with bundle path/hash, selected concept, BLK status, builder version, and promotion_authorized=false.",
+          "to": [
+            "build"
+          ]
+        },
+        {
+          "id": "build",
+          "lane": "studio",
+          "label": "Build from the manifest",
+          "status": "pending",
+          "detail": "Deterministic Parts and assemblies first; insert exact assets; generate only scoped missing candidates",
+          "note": "Persist only in Edit mode. Build reversibly under an owned lab root; do not mutate an unrelated place or source lab.",
+          "outputs": [
+            {
+              "label": "Studio DataModel/<owned-lab-root>/<design-slug>",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "verify"
+          ]
+        },
+        {
+          "id": "verify",
+          "lane": "together",
+          "label": "Verify architecture and playability",
+          "status": "pending",
+          "detail": "Hierarchy, anchoring, collision, traversal, sightlines, scale, materials, missing assets, budgets, and screenshots",
+          "note": "Use Edit audit plus disposable Play-mode checks. A failed check returns to the section, diagram, or manifest that owns the error.",
+          "to": [
+            "persist",
+            "sections",
+            "manifest"
+          ]
+        },
+        {
+          "id": "persist",
+          "lane": "assets",
+          "label": "Persist proof and evidence",
+          "status": "pending",
+          "detail": "Save place snapshot → syncback dry-run → apply → review diff; manual Save to File for RBXM when required",
+          "note": "Studio MCP can construct and validate the DataModel but does not replace the explicit snapshot/syncback or RBXM export handoff.",
+          "outputs": [
+            {
+              "label": "roblox-labs/<experience>/src/",
+              "op": "modify"
+            },
+            {
+              "label": "evidence/",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "promotion-gate"
+          ]
+        },
+        {
+          "id": "promotion-gate",
+          "lane": "you",
+          "label": "Declare the next lifecycle state",
+          "status": "pending",
+          "detail": "Remain prototype/BLK, mark proven, or authorize a separate production promotion",
+          "note": "Creation does not silently promote, upload, publish, or choose a production package.",
           "to": []
         }
       ]
