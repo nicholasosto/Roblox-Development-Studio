@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 40,
-  "migrated": 40,
+  "entities": 41,
+  "migrated": 41,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -92,6 +92,15 @@
       "updated": "2026-07-19",
       "file": "_project/decisions/0008-studio-native-lab-lane.md",
       "excerpt": "Codex and Claude, both driving Roblox Studio over MCP, have built substantial native work in two experiences. User Interface Development holds six mockup kits in ReplicatedStorage.UIMockups (MiniMap, CharacterPanel, Tex…"
+    },
+    {
+      "id": "0009-soul-steel-universe-topology",
+      "kind": "decision",
+      "title": "Soul Steel universe topology",
+      "status": "accepted",
+      "updated": "2026-07-20",
+      "file": "_project/decisions/0009-soul-steel-universe-topology.md",
+      "excerpt": "Soul Steel is becoming a real multi-place game, and the platform boundaries force topology decisions: DataStores, MemoryStores, MessagingService, and free teleporting are universe-scoped, so any teleport- or persistence…"
     },
     {
       "id": "2026-07-19-studio-labs-audit",
@@ -438,9 +447,9 @@
   ],
   "byKind": {
     "decision": {
-      "total": 8,
+      "total": 9,
       "byStatus": {
-        "accepted": 8
+        "accepted": 9
       },
       "ids": [
         "0001-pnpm-monorepo-founding",
@@ -450,7 +459,8 @@
         "0005-open-taxonomy-slotable-items",
         "0006-adopt-project-system",
         "0007-dual-lane-ts-luau",
-        "0008-studio-native-lab-lane"
+        "0008-studio-native-lab-lane",
+        "0009-soul-steel-universe-topology"
       ],
       "tone": "info",
       "statusOrder": [
@@ -608,6 +618,18 @@
       "target": "decisions/0007-dual-lane-ts-luau"
     },
     {
+      "from": "0009-soul-steel-universe-topology",
+      "fromKind": "decision",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
+      "from": "0009-soul-steel-universe-topology",
+      "fromKind": "decision",
+      "rel": "references",
+      "target": "decisions/0007-dual-lane-ts-luau"
+    },
+    {
       "from": "2026-07-19-studio-labs-audit",
       "fromKind": "report",
       "rel": "references",
@@ -711,7 +733,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 15,
+    "references": 17,
     "decided-in": 4,
     "supersedes": 1
   },
