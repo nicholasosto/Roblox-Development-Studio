@@ -1,29 +1,32 @@
 #!/usr/bin/env node
 // ============================================================================
-// build-labs-status.mjs — Roblox-Development-Studio labs status probe (v1)
+// build-labs-status.mjs — Roblox-Development-Studio sync-lane status probe (v2)
 // ============================================================================
 //
 // ZERO-DEPENDENCY Node ESM prober (node built-ins only: fs, path, url,
 // child_process). Companion to build-packages-registry.mjs; feeds the
 // Command Center's Tools lens.
 //
-// Reads the Studio-labs repo through the read-only symlink at
-//   external-locations/code/roblox-labs
-// (NEVER writes into it), and emits
-//   previews/dashboards/labs-status.json
-// — a moment-in-time status snapshot of the lab serialization loop
-// (decision 0008-studio-native-lab-lane):
+// v2: probes BOTH content-first syncback repos through the read-only
+// symlinks (NEVER writes into them):
+//   external-locations/code/roblox-labs           (decision 0008 — lab experiences)
+//   external-locations/code/soul-steel-universe   (decision 0009 — game-universe shell)
+// and emits previews/dashboards/labs-status.json — a moment-in-time status
+// snapshot of every lab/place serialization loop:
 //
-//   toolchain   rojo pin parsed from the labs rokit.toml (and the monorepo's,
-//               for comparison), the rojo/rokit versions that actually
-//               resolve inside the labs repo, and whether `rojo syncback`
-//               is available there
-//   labs repo   branch, HEAD, dirty file count, last 5 commits
-//   projects    every <dir>/default.project.json in the labs repo (discovered,
-//               never hardcoded — a new lab auto-appears): its places/<id>.rbxl
-//               snapshot (presence, size, mtime), serialization file counts
-//               under <id>/src (.luau / .rbxm / .model.json / .meta.json),
-//               the last commit touching the project, and a derived sync state:
+//   toolchain   rojo pins parsed from each repo's rokit.toml (and the
+//               monorepo's, for comparison), the rojo/rokit versions that
+//               actually resolve, and whether `rojo syncback` is available
+//   labs        the roblox-labs repo block: branch, HEAD, dirty count,
+//               last 5 commits   (name kept from v1 — the lens reads it)
+//   universe    the soul-steel-universe repo block, same shape
+//   projects    every <dir>/default.project.json across BOTH repos
+//               (discovered, never hardcoded — a new lab or place
+//               auto-appears), each tagged with `repo: {name, path}` so the
+//               lens builds repo-correct cd/copy snippets: its
+//               places/<id>.rbxl snapshot (presence, size, mtime),
+//               serialization file counts under <id>/src, the last commit
+//               touching the project, and a derived sync state:
 //                 no-snapshot   places/<id>.rbxl absent (it is gitignored —
 //                               normal on a fresh clone)
 //                 never-synced  snapshot present, no commit touches the project
@@ -35,8 +38,9 @@
 //   commands    the copy-ready dry-run/apply snippets per project (the Tools
 //               lens is COPY-ONLY, like the Packages explorer)
 //
-// FIELD-PRESENCE CONTRACT: snapshot.{bytes,savedAt} and
-// serialization.lastSync are OPTIONAL — absent (not null) when N/A.
+// FIELD-PRESENCE CONTRACT: snapshot.{bytes,savedAt}, serialization.lastSync,
+// and per-project repo are OPTIONAL — absent (not null) when N/A. counts and
+// dirty aggregate across both repos; each repo block carries its own dirty.
 //
 // Unlike the registry, this probe is inherently time-based (mtimes, git
 // stamps, tool versions) — there is no --check mode; re-run it whenever you
@@ -56,9 +60,15 @@ import { spawnSync } from "node:child_process";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const PROJECT_ROOT = resolve(__dirname, "..");
-const LABS_HINT = "external-locations/code/roblox-labs";
-const LABS_LINK = join(PROJECT_ROOT, "external-locations", "code", "roblox-labs");
-const MONO_LINK = join(PROJECT_ROOT, "external-locations", "code", "roblox-packages-mono");
+const codeLink = (name) => join(PROJECT_ROOT, "external-locations", "code", name);
+
+// The probed syncback repos. `key` is the payload block name (labs kept from
+// v1 so existing lens reads keep working); order fixes project sort stability.
+const REPOS = [
+  { key: "labs", name: "roblox-labs", hint: "external-locations/code/roblox-labs" },
+  { key: "universe", name: "soul-steel-universe", hint: "external-locations/code/soul-steel-universe" },
+];
+const MONO_LINK = codeLink("roblox-packages-mono");
 const OUT_FILE = join(PROJECT_ROOT, "previews", "dashboards", "labs-status.json");
 
 const startedAt = Date.now();
@@ -72,7 +82,6 @@ function run(cmd, args, cwd) {
   if (r.error || r.status !== 0) return null;
   return r.stdout.trim();
 }
-const git = (...args) => run("git", ["-C", LABS_LINK, ...args]);
 
 function parseCommit(line) {
   const [sha, when, subject] = (line ?? "").split(US);
@@ -103,77 +112,103 @@ function census(dir, tally = { luau: 0, rbxm: 0, modelJson: 0, metaJson: 0, othe
   return tally;
 }
 
-// ── labs repo ─────────────────────────────────────────────────────────────
-const present = existsSync(join(LABS_LINK, ".git"));
-const branch = present ? git("rev-parse", "--abbrev-ref", "HEAD") : null;
-const head = present ? parseCommit(git("log", "-1", `--format=%h${US}%cI${US}%s`)) : null;
-const dirtyOut = present ? git("status", "--porcelain") : null;
-const dirty = dirtyOut ? dirtyOut.split("\n").filter(Boolean).length : 0;
-const recentCommits = present
-  ? (git("log", "-5", `--format=%h${US}%cI${US}%s`) ?? "")
-      .split("\n")
-      .map(parseCommit)
-      .filter(Boolean)
-  : [];
+// ── per-repo probe: git block + discovered projects ───────────────────────
+function probeRepo({ name, hint }) {
+  const link = codeLink(name);
+  const git = (...args) => run("git", ["-C", link, ...args]);
+
+  const present = existsSync(join(link, ".git"));
+  const branch = present ? git("rev-parse", "--abbrev-ref", "HEAD") : null;
+  const head = present ? parseCommit(git("log", "-1", `--format=%h${US}%cI${US}%s`)) : null;
+  const dirtyOut = present ? git("status", "--porcelain") : null;
+  const dirty = dirtyOut ? dirtyOut.split("\n").filter(Boolean).length : 0;
+  const recentCommits = present
+    ? (git("log", "-5", `--format=%h${US}%cI${US}%s`) ?? "")
+        .split("\n")
+        .map(parseCommit)
+        .filter(Boolean)
+    : [];
+
+  const block = {
+    name,
+    path: hint,
+    present,
+    ...(branch ? { branch } : {}),
+    ...(head ? { head } : {}),
+    dirty,
+    recentCommits,
+  };
+
+  // Projects: every top-level dir carrying default.project.json (discovered).
+  const projects = !present
+    ? []
+    : readdirSync(link, { withFileTypes: true })
+        .filter((e) => e.isDirectory() && existsSync(join(link, e.name, "default.project.json")))
+        .map((e) => e.name)
+        .sort()
+        .map((id) => {
+          const snapFile = `places/${id}.rbxl`;
+          const snapPath = join(link, snapFile);
+          const snapshot = { present: existsSync(snapPath), file: snapFile };
+          if (snapshot.present) {
+            const st = statSync(snapPath);
+            snapshot.bytes = st.size;
+            snapshot.savedAt = st.mtime.toISOString();
+          }
+
+          const lastSyncRaw = git("log", "-1", `--format=%h${US}%cI${US}%s`, "--", `${id}/`);
+          const lastSync = parseCommit(lastSyncRaw);
+          const serialization = { files: census(join(link, id, "src")) };
+          if (lastSync) serialization.lastSync = lastSync;
+
+          // Epoch comparison — savedAt is UTC-Z while git %cI carries a local
+          // offset; comparing the strings lexicographically would be wrong.
+          const sync = !snapshot.present
+            ? "no-snapshot"
+            : !lastSync
+              ? "never-synced"
+              : Date.parse(snapshot.savedAt) > Date.parse(lastSync.when)
+                ? "syncback-due"
+                : "in-sync";
+
+          return {
+            id,
+            projectFile: `${id}/default.project.json`,
+            repo: { name, path: hint },
+            snapshot,
+            serialization,
+            sync,
+            commands: {
+              dryRun: `rojo syncback ${id} --input ${snapFile} --dry-run`,
+              apply: `rojo syncback ${id} --input ${snapFile} -y`,
+            },
+          };
+        });
+
+  return { block, projects };
+}
+
+const probed = REPOS.map((r) => ({ key: r.key, ...probeRepo(r) }));
+const labsProbe = probed.find((p) => p.key === "labs");
+const projects = probed.flatMap((p) => p.projects);
 
 // ── toolchain ─────────────────────────────────────────────────────────────
+const labsLink = codeLink("roblox-labs");
+const labsPresent = labsProbe.block.present;
 const toolchain = {
-  rojoPinLabs: rojoPin(LABS_LINK),
+  rojoPinLabs: rojoPin(labsLink),
+  rojoPinUniverse: rojoPin(codeLink("soul-steel-universe")),
   rojoPinMono: rojoPin(MONO_LINK),
-  rojoResolved: present ? run("rojo", ["--version"], LABS_LINK) : null,
+  rojoResolved: labsPresent ? run("rojo", ["--version"], labsLink) : null,
   rokitResolved: run("rokit", ["--version"], PROJECT_ROOT),
-  syncbackAvailable: present
-    ? spawnSync("rojo", ["syncback", "--help"], { cwd: LABS_LINK, encoding: "utf8", timeout: 15_000 }).status === 0
+  syncbackAvailable: labsPresent
+    ? spawnSync("rojo", ["syncback", "--help"], { cwd: labsLink, encoding: "utf8", timeout: 15_000 }).status === 0
     : false,
 };
 for (const k of Object.keys(toolchain)) if (toolchain[k] === null) delete toolchain[k];
 
-// ── projects (discovered: every top-level dir carrying default.project.json) ──
-const projects = !present
-  ? []
-  : readdirSync(LABS_LINK, { withFileTypes: true })
-      .filter((e) => e.isDirectory() && existsSync(join(LABS_LINK, e.name, "default.project.json")))
-      .map((e) => e.name)
-      .sort()
-      .map((id) => {
-        const snapFile = `places/${id}.rbxl`;
-        const snapPath = join(LABS_LINK, snapFile);
-        const snapshot = { present: existsSync(snapPath), file: snapFile };
-        if (snapshot.present) {
-          const st = statSync(snapPath);
-          snapshot.bytes = st.size;
-          snapshot.savedAt = st.mtime.toISOString();
-        }
-
-        const lastSyncRaw = git("log", "-1", `--format=%h${US}%cI${US}%s`, "--", `${id}/`);
-        const lastSync = parseCommit(lastSyncRaw);
-        const serialization = { files: census(join(LABS_LINK, id, "src")) };
-        if (lastSync) serialization.lastSync = lastSync;
-
-        // Epoch comparison — savedAt is UTC-Z while git %cI carries a local
-        // offset; comparing the strings lexicographically would be wrong.
-        const sync = !snapshot.present
-          ? "no-snapshot"
-          : !lastSync
-            ? "never-synced"
-            : Date.parse(snapshot.savedAt) > Date.parse(lastSync.when)
-              ? "syncback-due"
-              : "in-sync";
-
-        return {
-          id,
-          projectFile: `${id}/default.project.json`,
-          snapshot,
-          serialization,
-          sync,
-          commands: {
-            dryRun: `rojo syncback ${id} --input ${snapFile} --dry-run`,
-            apply: `rojo syncback ${id} --input ${snapFile} -y`,
-          },
-        };
-      });
-
 // ── payload ───────────────────────────────────────────────────────────────
+const dirty = probed.reduce((n, p) => n + p.block.dirty, 0);
 const counts = {
   projects: projects.length,
   luau: projects.reduce((n, p) => n + p.serialization.files.luau, 0),
@@ -186,18 +221,10 @@ const counts = {
 
 const payload = {
   generatedBy: "tools/build-labs-status.mjs",
-  schemaVersion: 1,
+  schemaVersion: 2,
   built: new Date().toISOString(),
   builtMs: Date.now() - startedAt,
-  labs: {
-    name: "roblox-labs",
-    path: LABS_HINT,
-    present,
-    ...(branch ? { branch } : {}),
-    ...(head ? { head } : {}),
-    dirty,
-    recentCommits,
-  },
+  ...Object.fromEntries(probed.map((p) => [p.key, p.block])),
   toolchain,
   counts,
   projects,
@@ -210,8 +237,9 @@ if (printJson) {
   mkdirSync(dirname(OUT_FILE), { recursive: true });
   writeFileSync(OUT_FILE, json);
   console.log(`wrote previews/dashboards/labs-status.json`);
+  const repoNote = probed.map((p) => `${p.block.name}: ${p.block.present ? `${p.projects.length}` : "missing"}`).join(", ");
   console.log(
-    `labs: ${present ? `${projects.length} projects, ${counts.luau} luau, ${counts.rbxm} rbxm, ` : "repo missing, "}` +
+    `lanes: ${counts.projects} projects (${repoNote}), ${counts.luau} luau, ${counts.rbxm} rbxm, ` +
       `${counts.syncbackDue} syncback-due, ${dirty} dirty`,
   );
 }

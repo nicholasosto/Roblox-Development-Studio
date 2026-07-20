@@ -9,7 +9,8 @@ import { Badge, Callout, Card, IconButton, Inline, Table, Tooltip } from '@tremb
 import { receivedAt } from '../catalog';
 import { built as packagesBuilt } from '../packages';
 import { hub } from '../contract';
-import { COLLECTOR_CMD, built as labsBuilt, fmtWhen, labs, toolchain } from '../labs';
+import { COLLECTOR_CMD, built as labsBuilt, fmtWhen, labs, toolchain, universe } from '../labs';
+import type { LabsRepo } from '../labs';
 import { agoMs, fmtAgo } from '../time';
 import { rojoDrift } from './AttentionBanner';
 import { useCopyFlash } from './useCopyFlash';
@@ -80,14 +81,76 @@ function FreshnessBadge({ row, now }: { row: ToolRow; now: number }) {
   );
 }
 
-// The serialization loop (decision 0008) as a numbered step strip — same visual weight as
-// the toolbox it sits beside, provenance carried by the section title.
+// The serialization loop (decisions 0008 + 0009) as a numbered step strip — same visual
+// weight as the toolbox it sits beside, provenance carried by the section title. The loop is
+// per-repo now (labs + universe shell); the dossier's ⎘ loop snippet carries the right cd.
 const LOOP_STEPS: { step: string; gloss: string }[] = [
-  { step: 'Work in Studio', gloss: 'File → Save to File As… into places/' },
+  { step: 'Work in Studio', gloss: 'Publish, then File → Save to File As… into places/' },
   { step: 'Dry-run syncback', gloss: '⎘ dry-run on the experience dossier' },
-  { step: 'Apply · diff · commit', gloss: `inside ${labs.path}` },
+  { step: 'Apply · diff · commit', gloss: "inside the project's repo — ⎘ loop carries the cd" },
   { step: 'Refresh the lens', gloss: '⎘ refresh cmd in the status strip' },
 ];
+
+// One syncback repo's git state — rendered once per probed repo (roblox-labs always; the
+// soul-steel-universe shell when the probe is schemaVersion ≥ 2). The labs card carries the
+// cc-repo-card scroll anchor the status strip's dirty count targets.
+function RepoCard({ repo, id, now }: { repo: LabsRepo; id?: string; now: number }) {
+  return (
+    <Card className="cc-tools-card" id={id}>
+      <h4 className="cc-tools-card__title">{repo.name} repo</h4>
+      <Inline wrap gap={1}>
+        {repo.branch && (
+          <Badge tone="neutral" variant="soft" size="sm">
+            {repo.branch}
+          </Badge>
+        )}
+        {repo.dirty > 0 ? (
+          <Badge tone="warning" variant="soft" size="sm" dot>
+            {repo.dirty} dirty
+          </Badge>
+        ) : (
+          <Badge tone="success" variant="soft" size="sm" dot>
+            clean
+          </Badge>
+        )}
+      </Inline>
+      <dl className="cc-explorer__facts">
+        {/* No HEAD facts — the commits table's first row IS head; repeating it here
+            was the wrap-prone jumble the 2.0 polish removed. */}
+        <div>
+          <dt>Path</dt>
+          <dd>
+            <code className="cc-explorer__mono">{repo.path}</code>
+          </dd>
+        </div>
+      </dl>
+      {repo.recentCommits.length > 0 && (
+        <Table density="compact">
+          <Table.Head>
+            <Table.Row>
+              <Table.HeaderCell>Commit</Table.HeaderCell>
+              <Table.HeaderCell>When</Table.HeaderCell>
+              <Table.HeaderCell>Subject</Table.HeaderCell>
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            {repo.recentCommits.map((c) => (
+              <Table.Row key={c.sha}>
+                <Table.Cell>
+                  <code className="cc-explorer__mono">{c.sha}</code>
+                </Table.Cell>
+                <Table.Cell>
+                  <span title={fmtWhen(c.when)}>{fmtAgo(c.when, now)}</span>
+                </Table.Cell>
+                <Table.Cell>{c.subject}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
+      )}
+    </Card>
+  );
+}
 
 export function WorkbenchRunbook({ now }: { now: number }) {
   const { flash, copy } = useCopyFlash();
@@ -126,6 +189,14 @@ export function WorkbenchRunbook({ now }: { now: number }) {
                 </dd>
               </div>
             )}
+            {toolchain.rojoPinUniverse && (
+              <div>
+                <dt>Rojo pin (universe)</dt>
+                <dd>
+                  <code className="cc-explorer__mono">{toolchain.rojoPinUniverse}</code>
+                </dd>
+              </div>
+            )}
             {toolchain.rojoResolved && (
               <div>
                 <dt>Resolves to</dt>
@@ -155,59 +226,8 @@ export function WorkbenchRunbook({ now }: { now: number }) {
           )}
         </Card>
 
-        <Card className="cc-tools-card" id="cc-repo-card">
-          <h4 className="cc-tools-card__title">{labs.name} repo</h4>
-          <Inline wrap gap={1}>
-            {labs.branch && (
-              <Badge tone="neutral" variant="soft" size="sm">
-                {labs.branch}
-              </Badge>
-            )}
-            {labs.dirty > 0 ? (
-              <Badge tone="warning" variant="soft" size="sm" dot>
-                {labs.dirty} dirty
-              </Badge>
-            ) : (
-              <Badge tone="success" variant="soft" size="sm" dot>
-                clean
-              </Badge>
-            )}
-          </Inline>
-          <dl className="cc-explorer__facts">
-            {/* No HEAD facts — the commits table's first row IS head; repeating it here
-                was the wrap-prone jumble the 2.0 polish removed. */}
-            <div>
-              <dt>Path</dt>
-              <dd>
-                <code className="cc-explorer__mono">{labs.path}</code>
-              </dd>
-            </div>
-          </dl>
-          {labs.recentCommits.length > 0 && (
-            <Table density="compact">
-              <Table.Head>
-                <Table.Row>
-                  <Table.HeaderCell>Commit</Table.HeaderCell>
-                  <Table.HeaderCell>When</Table.HeaderCell>
-                  <Table.HeaderCell>Subject</Table.HeaderCell>
-                </Table.Row>
-              </Table.Head>
-              <Table.Body>
-                {labs.recentCommits.map((c) => (
-                  <Table.Row key={c.sha}>
-                    <Table.Cell>
-                      <code className="cc-explorer__mono">{c.sha}</code>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <span title={fmtWhen(c.when)}>{fmtAgo(c.when, now)}</span>
-                    </Table.Cell>
-                    <Table.Cell>{c.subject}</Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table>
-          )}
-        </Card>
+        <RepoCard repo={labs} id="cc-repo-card" now={now} />
+        {universe && <RepoCard repo={universe} now={now} />}
         </div>
       </section>
 
@@ -266,7 +286,7 @@ export function WorkbenchRunbook({ now }: { now: number }) {
 
       {/* G — THE LOOP (reference strip, decision 0008) */}
       <section className="cc-section">
-        <h3 className="cc-section-title">Serialization loop · decision 0008</h3>
+        <h3 className="cc-section-title">Serialization loop · decisions 0008 + 0009</h3>
         <ol className="cc-loop">
           {LOOP_STEPS.map((s) => (
             <li key={s.step}>

@@ -27,6 +27,8 @@ export interface LabsRepo {
 }
 export interface Toolchain {
   rojoPinLabs?: string;
+  /** soul-steel-universe's rokit pin (schemaVersion ≥ 2; absent in v1 payloads). */
+  rojoPinUniverse?: string;
   rojoPinMono?: string;
   rojoResolved?: string;
   rokitResolved?: string;
@@ -50,9 +52,15 @@ export interface SerializationInfo {
   lastSync?: CommitRef;
 }
 export type SyncState = 'in-sync' | 'syncback-due' | 'never-synced' | 'no-snapshot';
+/** Which syncback repo a project belongs to (schemaVersion ≥ 2; absent in v1 payloads). */
+export interface RepoRef {
+  name: string;
+  path: string;
+}
 export interface ProjectStatus {
   id: string;
   projectFile: string;
+  repo?: RepoRef;
   snapshot: SnapshotInfo;
   serialization: SerializationInfo;
   /** One of SyncState; open vocabulary — unknown words tone neutral. */
@@ -74,6 +82,8 @@ interface LabsStatusFile {
   built: string;
   builtMs: number;
   labs: LabsRepo;
+  /** The soul-steel-universe repo block (schemaVersion ≥ 2; absent in v1 payloads). */
+  universe?: LabsRepo;
   toolchain: Toolchain;
   counts: LabsCounts;
   projects: ProjectStatus[];
@@ -101,6 +111,8 @@ export const counts: LabsCounts = file.counts ?? {
   syncbackDue: 0,
 };
 export const projects: ProjectStatus[] = Array.isArray(file.projects) ? file.projects : [];
+/** The game-universe shell repo (decision 0009) — undefined on schemaVersion-1 payloads. */
+export const universe: LabsRepo | undefined = file.universe;
 export const built: string = file.built ?? '(unknown)';
 
 // ── Presentation vocabulary ──
@@ -147,13 +159,15 @@ export const censusLine = (f: FileCensus): string =>
     .join(' · ') || 'nothing serialized yet';
 
 // ── Copy snippet builders (copy-only — the static build stays fully functional) ──
+/** The repo a project's snippets must run in — v1 payloads (no repo ref) are all labs. */
+const repoPath = (p: ProjectStatus): string => p.repo?.path ?? labs.path;
 /** Space-relative project directory path (through the external-locations symlink). */
-export const labDirPath = (p: ProjectStatus): string => `${labs.path}/${p.id}`;
+export const labDirPath = (p: ProjectStatus): string => `${repoPath(p)}/${p.id}`;
 /** The whole serialization loop for one project, as a paste-ready shell block. */
 export const loopSnippet = (p: ProjectStatus): string =>
   [
-    `cd ${labs.path}`,
-    `# Studio: File → Save to File As… → ${p.snapshot.file}`,
+    `cd ${repoPath(p)}`,
+    `# Studio: File → Publish to Roblox, then File → Save to File As… → ${p.snapshot.file}`,
     p.commands.dryRun,
     p.commands.apply,
     'git diff && git add -A && git commit',
