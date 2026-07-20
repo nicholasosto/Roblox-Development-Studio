@@ -209,10 +209,14 @@
       "tag": "Control surface",
       "name": "Commands",
       "sub": "slash commands",
-      "status": "1",
+      "status": "2",
       "dot": "#5a6478",
       "note": "The project's slash commands (.claude/commands/) — the unified /new <kind> scaffolder + friends. Each writes valid frontmatter and self-validates. The syntax + a one-line gloss of every command is listed here.",
       "entries": [
+        {
+          "text": "/end [optional notes on what to prioritize capturing]",
+          "desc": "End-of-session reconciliation — sync the Command Center with _project/ and the Studio lanes, then capture high-value concepts"
+        },
         {
           "text": "/new <kind> <title>",
           "desc": "Scaffold a new _project/ entity of any kind your project-system.config.json declares"
