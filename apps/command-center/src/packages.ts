@@ -6,6 +6,7 @@
 // two consumer repos' manifests (tools/build-packages-registry.mjs). Field-presence contract:
 // statusNote/supersedes/docs are ABSENT when N/A (no nulls anywhere), so the inspector skips
 // those rows rather than showing empties.
+import type { BriefContract } from '@trembus/ui';
 import type { GraphContract, GraphEdge, GraphNode, LineageTone } from '@trembus/viz';
 import packagesRegistry from '../../../previews/dashboards/packages.json';
 
@@ -291,3 +292,39 @@ export const pnpmAddSnippet = (id: string): string => `pnpm add ${monorepo.scope
 export const linkSnippet = (id: string): string => `link:../${monorepo.name}/packages/${id}`;
 /** Space-relative package directory path (through the external-locations symlink). */
 export const dirPath = (p: PackageRecord): string => `${monorepo.path}/${p.dir}`;
+
+// ── The dossier's Brief document (the Package Dossier example's toBrief, over REAL registry
+// fields). The registry carries no API-surface data (types/interfaces/functions), so the Brief
+// holds only what the generator actually emits: setup commands + shipped docs — nothing invented.
+/** Section ids collapsed on first render — docs reveal on click; Setup stays open. */
+export const DOSSIER_COLLAPSED = ['docs'];
+
+export function dossierBrief(p: PackageRecord): BriefContract {
+  const sections: BriefContract['sections'] = [
+    {
+      id: 'setup',
+      heading: 'Setup',
+      kind: 'commands',
+      note: `Add ${p.name}, or link the sibling checkout the consumer repos use.`,
+      items: [
+        { text: pnpmAddSnippet(p.id), desc: 'Registry install — the published package.' },
+        { text: linkSnippet(p.id), desc: 'Sibling-checkout link: spec (how the game repos consume it).' },
+      ],
+    },
+  ];
+  if (p.docs && p.docs.length > 0) {
+    sections.push({
+      id: 'docs',
+      heading: 'Docs',
+      kind: 'reference',
+      note: `Shipped in ${p.dir}/.`,
+      items: p.docs.map((d) => ({ text: d.label, ref: d.path })),
+    });
+  }
+  return {
+    kind: 'spec',
+    title: 'Reference',
+    summary: `Setup commands and shipped docs for ${p.name} — the registry emits no API surface, so nothing here is invented.`,
+    sections,
+  };
+}

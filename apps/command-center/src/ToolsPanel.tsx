@@ -4,6 +4,12 @@
 // its sync state and copy-ready syncback commands. Every datum comes from the emitted probe JSON
 // via ./labs — the panel names no field the generator doesn't emit, and never re-reads the JSON.
 //
+// Timestamps render RELATIVE (./time) with the absolute always in a title attr; a slow tick
+// keeps them honest while the lens sits open, and the header badges "probe stale" once the
+// build-time snapshot ages past a day. The live poll distinguishes three states — first poll in
+// flight ("checking…"), collector down (a NORMAL quiet state), collector up — and each
+// experience card owns its own copy flash, beside the toolbar it confirms.
+//
 // All actions are COPY-ONLY (clipboard, never the filesystem or a dev-server API) so the static
 // build stays fully functional — the probe itself is re-run from a shell:
 //   node tools/build-labs-status.mjs && pnpm --dir apps/command-center build
@@ -12,6 +18,7 @@ import { Badge, Callout, Card, EmptyState, Inline, Stat, Table, Toolbar } from '
 import { copyText } from './clipboard';
 import { LIVE_POLL_MS, fetchLive, fmtUptime, isFresh, sessionLabel } from './live';
 import type { LiveFeed } from './live';
+import { agoMs, fmtAgo, fmtClock } from './time';
 import {
   built,
   censusLine,
@@ -30,19 +37,22 @@ import type { ProjectStatus } from './labs';
 // Pin "owner/repo@x.y.z" → "x.y.z" (for the resolved-vs-pinned drift check).
 const pinVersion = (pin?: string): string | undefined => pin?.split('@')[1];
 
-export function ToolsPanel() {
-  // Transient confirmation label for the copy actions (self-clears) — same pattern as the
-  // Packages inspector.
-  const [flash, setFlash] = useState<string | null>(null);
+// The probe is a build-time snapshot; past this age the header badges it stale.
+const PROBE_STALE_MS = 24 * 60 * 60 * 1000;
+
+// Re-render tick — fmtAgo reads a `now` per render, so one slow interval keeps every relative
+// stamp honest while the lens sits open (StudioNow re-renders itself via its 5s poll).
+function useNow(intervalMs = 60_000): number {
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    if (!flash) return;
-    const t = window.setTimeout(() => setFlash(null), 1600);
-    return () => window.clearTimeout(t);
-  }, [flash]);
-  const copy = async (label: string, text: string) => {
-    const ok = await copyText(text);
-    setFlash(ok ? `Copied ${label}` : 'Copy failed');
-  };
+    const t = window.setInterval(() => setNow(Date.now()), intervalMs);
+    return () => window.clearInterval(t);
+  }, [intervalMs]);
+  return now;
+}
+
+export function ToolsPanel() {
+  const now = useNow();
 
   if (!labs.present) {
     return (
@@ -62,15 +72,24 @@ export function ToolsPanel() {
     wantVersion && toolchain.rojoResolved && !toolchain.rojoResolved.includes(wantVersion),
   );
 
+  // '(unknown)' built → agoMs null → no badge; the raw text degrades on its own.
+  const probeAge = agoMs(built, now);
+  const probeStale = probeAge !== null && probeAge > PROBE_STALE_MS;
+
   return (
     <div className="cc-explorer">
       {/* 1 — STATUS HEADER */}
       <section className="cc-section">
         <h3 className="cc-section-title">
-          Lab tooling <span className="cc-explorer__built">status probed {fmtWhen(built)}</span>
-          {flash && (
-            <span className="cc-explorer__flash" role="status">
-              {flash}
+          Lab tooling{' '}
+          <span className="cc-explorer__built" title={fmtWhen(built)}>
+            status probed {fmtAgo(built, now)}
+          </span>
+          {probeStale && (
+            <span title="Status is a build-time snapshot — re-run node tools/build-labs-status.mjs and rebuild.">
+              <Badge tone="warning" variant="outline" size="sm" dot>
+                probe stale
+              </Badge>
             </span>
           )}
         </h3>
@@ -185,7 +204,7 @@ export function ToolsPanel() {
               {labs.head && (
                 <div>
                   <dt>Committed</dt>
-                  <dd>{fmtWhen(labs.head.when)}</dd>
+                  <dd title={fmtWhen(labs.head.when)}>{fmtAgo(labs.head.when, now)}</dd>
                 </div>
               )}
               <div>
@@ -210,7 +229,9 @@ export function ToolsPanel() {
                       <Table.Cell>
                         <code className="cc-explorer__mono">{c.sha}</code>
                       </Table.Cell>
-                      <Table.Cell>{fmtWhen(c.when)}</Table.Cell>
+                      <Table.Cell>
+                        <span title={fmtWhen(c.when)}>{fmtAgo(c.when, now)}</span>
+                      </Table.Cell>
                       <Table.Cell>{c.subject}</Table.Cell>
                     </Table.Row>
                   ))}
@@ -224,11 +245,18 @@ export function ToolsPanel() {
       {/* 4 — EXPERIENCES */}
       <section className="cc-section">
         <h3 className="cc-section-title">Experiences</h3>
-        <div className="cc-pkg-grid">
-          {projects.map((p) => (
-            <ExperienceCard key={p.id} project={p} onCopy={copy} />
-          ))}
-        </div>
+        {projects.length === 0 ? (
+          <EmptyState
+            title="No lab experiences discovered"
+            description={`The probe found no <dir>/default.project.json under ${labs.path}. Scaffold a Rojo project there (any top-level directory with a default.project.json is auto-discovered), then re-run node tools/build-labs-status.mjs and rebuild the app.`}
+          />
+        ) : (
+          <div className="cc-pkg-grid">
+            {projects.map((p) => (
+              <ExperienceCard key={p.id} project={p} now={now} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 5 — THE LOOP */}
@@ -248,7 +276,9 @@ export function ToolsPanel() {
 
 // ── "Studio now" — polls the collector's /live endpoint while the lens is mounted. Collector
 // offline is a NORMAL state (the collector is a dev-time process), rendered as a quiet note, so
-// the static build stays fully functional without it. ──
+// the static build stays fully functional without it. feed === null (first poll in flight) is a
+// third, distinct state — without it every mount flashes a false "collector offline" for up to
+// the 2s fetch timeout, even when the collector is up. ──
 function StudioNow() {
   const [feed, setFeed] = useState<LiveFeed | null>(null);
   useEffect(() => {
@@ -270,17 +300,30 @@ function StudioNow() {
     <>
       <h3 className="cc-section-title">
         Studio now{' '}
-        {feed?.up ? (
-          <Badge tone="success" variant="soft" size="sm" dot>
-            collector up
+        {feed === null ? (
+          <Badge tone="neutral" variant="soft" size="sm">
+            checking…
           </Badge>
+        ) : feed.up ? (
+          <>
+            <Badge tone="success" variant="soft" size="sm" dot>
+              collector up
+            </Badge>
+            {feed.updatedAt && (
+              <span className="cc-explorer__built" title={fmtWhen(feed.updatedAt)}>
+                as of {fmtClock(feed.updatedAt)}
+              </span>
+            )}
+          </>
         ) : (
           <Badge tone="neutral" variant="outline" size="sm">
             collector offline
           </Badge>
         )}
       </h3>
-      {!feed?.up ? (
+      {feed === null ? (
+        <p className="cc-pkg-card__desc">Checking for a local collector…</p>
+      ) : !feed.up ? (
         <p className="cc-pkg-card__desc">
           Start <code className="cc-explorer__mono">node tools/telemetry-collector.mjs</code> to see
           live Studio session heartbeats here.
@@ -315,6 +358,13 @@ function StudioNow() {
                     <dt>Instances</dt>
                     <dd>{s.instanceCount.toLocaleString()}</dd>
                   </div>
+                  {/* Fresh sessions omit the row — their beat IS now (field-presence ethos). */}
+                  {!fresh && (
+                    <div>
+                      <dt>Last seen</dt>
+                      <dd title={fmtWhen(s.lastSeenAt)}>{fmtAgo(s.lastSeenAt)}</dd>
+                    </div>
+                  )}
                   {s.placeId > 0 && (
                     <div>
                       <dt>Place id</dt>
@@ -333,14 +383,21 @@ function StudioNow() {
   );
 }
 
-// ── A single experience card — sync state, snapshot/serialization facts, and the copy bar. ──
-function ExperienceCard({
-  project: p,
-  onCopy,
-}: {
-  project: ProjectStatus;
-  onCopy: (label: string, text: string) => Promise<void>;
-}) {
+// ── A single experience card — sync state, snapshot/serialization facts, and the copy bar.
+// Each card owns its copy flash so the confirmation appears beside the toolbar it confirms
+// (the Packages inspector's footer pattern), never up in the panel header. ──
+function ExperienceCard({ project: p, now }: { project: ProjectStatus; now: number }) {
+  const [flash, setFlash] = useState<string | null>(null);
+  useEffect(() => {
+    if (!flash) return;
+    const t = window.setTimeout(() => setFlash(null), 1600);
+    return () => window.clearTimeout(t);
+  }, [flash]);
+  const copy = async (label: string, text: string) => {
+    const ok = await copyText(text);
+    setFlash(ok ? `Copied ${label}` : 'Copy failed');
+  };
+
   const style = syncStyle(p.sync);
   return (
     <Card className="cc-tools-card">
@@ -357,7 +414,10 @@ function ExperienceCard({
           <dd>
             {p.snapshot.present ? (
               <>
-                {fmtBytes(p.snapshot.bytes)} · saved {fmtWhen(p.snapshot.savedAt)}
+                {fmtBytes(p.snapshot.bytes)} ·{' '}
+                <span title={fmtWhen(p.snapshot.savedAt)}>
+                  saved {fmtAgo(p.snapshot.savedAt, now)}
+                </span>
               </>
             ) : (
               <>none — save from Studio</>
@@ -369,31 +429,39 @@ function ExperienceCard({
           <dd>{censusLine(p.serialization.files)}</dd>
         </div>
         {p.serialization.lastSync && (
-          <div>
+          <div className="cc-tools-card__lastsync">
             <dt>Last sync</dt>
-            <dd title={p.serialization.lastSync.subject}>
+            <dd title={`${p.serialization.lastSync.subject} — ${fmtWhen(p.serialization.lastSync.when)}`}>
               <code className="cc-explorer__mono">{p.serialization.lastSync.sha}</code> ·{' '}
-              {fmtWhen(p.serialization.lastSync.when)}
+              {fmtAgo(p.serialization.lastSync.when, now)}
+              <span className="cc-tools-card__subject">{p.serialization.lastSync.subject}</span>
             </dd>
           </div>
         )}
       </dl>
-      <Toolbar aria-label={`${p.id} commands`} className="cc-tools-card__bar">
-        <Toolbar.Group aria-label="Copy syncback commands">
-          <Toolbar.Button title={p.commands.dryRun} onClick={() => void onCopy('dry-run', p.commands.dryRun)}>
-            ⎘ dry-run
-          </Toolbar.Button>
-          <Toolbar.Button title={p.commands.apply} onClick={() => void onCopy('apply', p.commands.apply)}>
-            ⎘ apply
-          </Toolbar.Button>
-          <Toolbar.Button title="The whole loop as a shell block" onClick={() => void onCopy('loop', loopSnippet(p))}>
-            ⎘ loop
-          </Toolbar.Button>
-          <Toolbar.Button title={labDirPath(p)} onClick={() => void onCopy('dir path', labDirPath(p))}>
-            ⎘ dir
-          </Toolbar.Button>
-        </Toolbar.Group>
-      </Toolbar>
+      <div className="cc-explorer__footerbar cc-tools-card__bar">
+        <Toolbar aria-label={`${p.id} commands`}>
+          <Toolbar.Group aria-label="Copy syncback commands">
+            <Toolbar.Button title={p.commands.dryRun} onClick={() => void copy('dry-run', p.commands.dryRun)}>
+              ⎘ dry-run
+            </Toolbar.Button>
+            <Toolbar.Button title={p.commands.apply} onClick={() => void copy('apply', p.commands.apply)}>
+              ⎘ apply
+            </Toolbar.Button>
+            <Toolbar.Button title="The whole loop as a shell block" onClick={() => void copy('loop', loopSnippet(p))}>
+              ⎘ loop
+            </Toolbar.Button>
+            <Toolbar.Button title={labDirPath(p)} onClick={() => void copy('dir path', labDirPath(p))}>
+              ⎘ dir
+            </Toolbar.Button>
+          </Toolbar.Group>
+        </Toolbar>
+        {flash && (
+          <span className="cc-explorer__flash" role="status">
+            {flash}
+          </span>
+        )}
+      </div>
     </Card>
   );
 }
