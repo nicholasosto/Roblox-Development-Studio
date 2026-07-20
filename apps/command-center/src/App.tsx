@@ -4,7 +4,7 @@ import type { BriefContract, SectionKind } from '@trembus/ui';
 import { domainById, entities, entitiesOfKinds, hub, hubData, kinds, prettify } from './contract';
 import { CatalogPanel } from './CatalogPanel';
 import { PackagesExplorer } from './PackagesExplorer';
-import { ToolsPanel } from './ToolsPanel';
+import { ToolsPanel } from './tools/ToolsPanel';
 import { groupByStatus } from './status';
 
 // The four areas: the Hub overview (the Project-System contract made legible), the Packages
@@ -20,12 +20,16 @@ const AREAS: NavEntry[] = [
 ];
 
 // Deep-link support: the static landing shell links to `app/#packages`. Honor a leading hash that
-// names a real nav tab on first load; anything unknown (or no hash) falls back to Overview. Read
-// once at mount — the tabs are in-page state, not routes, so we don't sync back to the URL.
+// names a real nav tab on first load; `#tools=<projectId>` (the Tools lens's own deep link — the
+// panel reads the id itself) opens Tools; anything unknown (or no hash) falls back to Overview.
+// Exact tab names match FIRST so `#packages`-style links can never regress. Read once at mount —
+// the tabs are in-page state, not routes, so we don't sync back to the URL.
 function initialTab(): NavEntry['value'] {
   if (typeof window === 'undefined') return 'overview';
   const hash = window.location.hash.replace(/^#/, '');
-  return AREAS.some((a) => a.value === hash) ? (hash as NavEntry['value']) : 'overview';
+  if (AREAS.some((a) => a.value === hash)) return hash as NavEntry['value'];
+  if (hash.startsWith('tools=')) return 'tools';
+  return 'overview';
 }
 
 // Section kind per control-surface facet (the non-kind hex petals that carry `entries`).

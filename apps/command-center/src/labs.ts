@@ -158,3 +158,89 @@ export const loopSnippet = (p: ProjectStatus): string =>
     p.commands.apply,
     'git diff && git add -A && git commit',
   ].join('\n');
+
+// ── Tools 2.0 derivations (presentation-only, shared by the tools/ views) ──
+
+/** Sync tone alone — rail dots, funnel stages, and filter chips read just the color. */
+export const syncTone = (s: string): SyncStyle['tone'] => syncStyle(s).tone;
+
+/** Loop-order state roster — farthest-from-synced first (the funnel's stage order). */
+export const SYNC_ORDER: SyncState[] = ['no-snapshot', 'never-synced', 'syncback-due', 'in-sync'];
+
+/** Project count per sync state, precomputed once (the probe is build-time static).
+ *  Open vocabulary: an unknown state groups under its own key rather than vanishing. */
+export const bySync: Record<string, number> = projects.reduce<Record<string, number>>((by, p) => {
+  by[p.sync] = (by[p.sync] ?? 0) + 1;
+  return by;
+}, {});
+
+/** Stacked-Meter segments for a file census — zero-count types skipped (field-presence
+ *  ethos), category-coded to match censusLine's order. Assignable to @trembus/ui's
+ *  MeterSegment without importing it (this module stays dependency-free). */
+export interface CensusSegment {
+  value: number;
+  tone: 'info' | 'accent' | 'success' | 'warning' | 'neutral';
+  label: string;
+}
+export const censusSegments = (f: FileCensus): CensusSegment[] =>
+  (
+    [
+      [f.luau, 'info', 'luau'],
+      [f.rbxm, 'accent', 'rbxm'],
+      [f.modelJson, 'success', 'model.json'],
+      [f.metaJson, 'warning', 'meta.json'],
+      [f.other, 'neutral', 'other'],
+    ] as [number, CensusSegment['tone'], string][]
+  )
+    .filter(([n]) => n > 0)
+    .map(([value, tone, label]) => ({ value, tone, label }));
+
+/** The one derived next step for a project — the dossier's lead callout. Unknown sync
+ *  words degrade to the neutral label+gloss (mirror of syncStyle), never a wrong verb. */
+export interface NextAction {
+  tone: SyncStyle['tone'];
+  title: string;
+  instruction: string;
+  command?: string;
+  commandLabel?: string;
+}
+export const nextAction = (p: ProjectStatus): NextAction => {
+  switch (p.sync) {
+    case 'syncback-due':
+      return {
+        tone: 'warning',
+        title: 'Syncback due — run the dry-run',
+        instruction: 'The snapshot is newer than the serialized source. Dry-run, review, then apply.',
+        command: p.commands.dryRun,
+        commandLabel: 'dry-run',
+      };
+    case 'never-synced':
+      return {
+        tone: 'info',
+        title: 'First syncback',
+        instruction: 'A snapshot exists but nothing is serialized yet — run the first dry-run.',
+        command: p.commands.dryRun,
+        commandLabel: 'dry-run',
+      };
+    case 'no-snapshot':
+      return {
+        tone: 'neutral',
+        title: 'Save a snapshot from Studio',
+        instruction: `In Studio: File → Save to File As… → ${p.snapshot.file}`,
+      };
+    case 'in-sync':
+      return {
+        tone: 'success',
+        title: 'In sync',
+        instruction: 'Serialized source is current — work in Studio, save a snapshot when ready.',
+      };
+    default:
+      return { tone: 'neutral', title: syncStyle(p.sync).label, instruction: syncStyle(p.sync).gloss };
+  }
+};
+
+// ── Workspace command roster (copy-only) ──
+/** Refresh THIS lens: re-probe, then rebuild so the inlined JSON is current. */
+export const REFRESH_COMMAND = 'node tools/build-labs-status.mjs && pnpm --dir apps/command-center build';
+/** Start the live collector the "Studio now" section polls. */
+export const COLLECTOR_CMD = 'node tools/telemetry-collector.mjs';
