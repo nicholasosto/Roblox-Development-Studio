@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 41,
-  "migrated": 41,
+  "entities": 42,
+  "migrated": 42,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -137,6 +137,15 @@
       "updated": "2026-07-19",
       "file": "_project/pipeline/studio-telemetry-modernization.md",
       "excerpt": "The [[studio-telemetry]] plugin was rescued from the soul-steel archive with its 2026-03 shape intact: soul-steel payloads (Workspace.Zones / Workspace.NPCs) and the legacy localhost:3001 dashboard endpoint. Meanwhile […"
+    },
+    {
+      "id": "v2-effects-library-normalization",
+      "kind": "pipeline",
+      "title": "V2 effects library normalization",
+      "status": "build",
+      "updated": "2026-07-21",
+      "file": "_project/pipeline/v2-effects-library-normalization.md",
+      "excerpt": "Crystal Sanctum's ServerStorage.V2 holds ~100 particle effects across 12 category folders (plus a loose Hallow Hold Ability model) — a merge of at least three collections: a letter-graded VFX pack (A - CANDLELIGHT), a n…"
     },
     {
       "id": "package-platform-roadmap",
@@ -485,15 +494,16 @@
       ]
     },
     "pipeline": {
-      "total": 3,
+      "total": 4,
       "byStatus": {
         "design": 1,
-        "build": 2
+        "build": 3
       },
       "ids": [
         "crystal-sanctum",
         "slotable-items-cutover",
-        "studio-telemetry-modernization"
+        "studio-telemetry-modernization",
+        "v2-effects-library-normalization"
       ],
       "tone": "success",
       "statusOrder": [
@@ -660,6 +670,18 @@
       "target": "decisions/0008-studio-native-lab-lane"
     },
     {
+      "from": "v2-effects-library-normalization",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "decisions/0009-soul-steel-universe-topology"
+    },
+    {
+      "from": "v2-effects-library-normalization",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
       "from": "2026-07-19-roblox-labs-setup",
       "fromKind": "session",
       "rel": "references",
@@ -733,7 +755,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 17,
+    "references": 19,
     "decided-in": 4,
     "supersedes": 1
   },
