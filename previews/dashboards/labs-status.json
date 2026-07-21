@@ -1,8 +1,8 @@
 {
   "generatedBy": "tools/build-labs-status.mjs",
   "schemaVersion": 2,
-  "built": "2026-07-20T18:08:55.931Z",
-  "builtMs": 265,
+  "built": "2026-07-20T19:13:14.257Z",
+  "builtMs": 135,
   "labs": {
     "name": "roblox-labs",
     "path": "external-locations/code/roblox-labs",
@@ -65,7 +65,7 @@
     "modelJson": 14,
     "metaJson": 27,
     "dirty": 0,
-    "syncbackDue": 0
+    "syncbackDue": 1
   },
   "projects": [
     {
@@ -173,8 +173,10 @@
         "path": "external-locations/code/soul-steel-universe"
       },
       "snapshot": {
-        "present": false,
-        "file": "places/hub.rbxl"
+        "present": true,
+        "file": "places/hub.rbxl",
+        "bytes": 87195,
+        "savedAt": "2026-07-20T19:08:44.654Z"
       },
       "serialization": {
         "files": {
@@ -190,7 +192,7 @@
           "subject": "Scaffold universe-shell repo: four syncback projects"
         }
       },
-      "sync": "no-snapshot",
+      "sync": "syncback-due",
       "commands": {
         "dryRun": "rojo syncback hub --input places/hub.rbxl --dry-run",
         "apply": "rojo syncback hub --input places/hub.rbxl -y"

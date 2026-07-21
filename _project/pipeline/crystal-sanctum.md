@@ -15,7 +15,7 @@ links:
 
 The user seed is the **Crystal Sanctum**, the Spirit Conclave's main seat of power and architectural masterpiece. A Soul Crystal enables an ultra-strong, almost weightless construction system, so the landmark should express a civilization that treats gravity as a negotiable condition rather than the source of its architectural order. The discarded working title was “Spire of Eternia”; the established building name remains Crystal Sanctum.
 
-This run follows [[concept-to-studio-architectural-build]]. It is currently at the collaborative refinement gate: no concept image has been selected, no asset owner or target place has been chosen, and no Studio scene is authorized for mutation.
+This run follows [[concept-to-studio-architectural-build]]. C2H — Double Helix / As Above, So Below is selected and section decomposition is active. No asset owner or target place has been chosen, and no Studio scene is authorized for mutation.
 
 ### Continuity synthesis
 
@@ -118,6 +118,20 @@ The operator preferred Concept C's orbital void and requested three further vari
 
 The parent C concept remains the governing parti: the central void is the sacred room, the Soul Crystal field is its axis, and occupied architecture forms the crown around absence. The next selection can choose C1, C2, C3, or an explicit synthesis before section frontmatter begins.
 
+### C2H — Double Helix / As Above, So Below
+
+The operator selected C2 as the refinement base, requested a double-helix silhouette governed by “as above, so below,” and locked the resulting C2H direction on 2026-07-20. The selected reference is `output/imagegen/crystal-sanctum/crystal-sanctum-concept-c2h-double-helix-as-above-so-below.png` (1672 × 941; SHA-256 `7ff334115dcb3dabe81b73b25bed58d622fbb8282713c0062f666a16cdea9595`).
+
+The architectural rule is now explicit:
+
+- The Floating Isle and principal threshold form the equatorial plane.
+- Two distinct, phase-offset inhabited strands spiral upward around the open Soul Crystal axis.
+- Short bridge-chambers join the strands at controlled intervals without filling the central void.
+- An equal inverted pair descends below: the same height, pitch, floor capacity, window rhythm, and connector order.
+- The upper helix is luminous, ceremonial, and publicly legible; the lower helix is equally substantial but colder, administratively coded, and access-controlled.
+
+This selected direction gives the clearest structural expression of the Conclave's duality and a repeatable Roblox kit: curved multi-floor strand segments, equatorial threshold modules, bridge-chamber rungs, axial crystal anchors, and mirrored upper/lower zone assemblies. The image remains speculative support art rather than a production asset or lore-graph capture.
+
 ### Decisions for the refinement gate
 
 The operator approved the integrated canon reading and progression into A/B/C visual development. The current foundation is:
@@ -128,13 +142,17 @@ The operator approved the integrated canon reading and progression into A/B/C vi
 
 The candidate creative-bundle path is `Assets/models/architectural-environments/crystal-sanctum/`, but it remains uncreated until an asset owner and category are explicitly selected.
 
+Until that owner gate closes, runtime-neutral draft section records live at `output/architecture/crystal-sanctum/sections/`; they may be migrated into the canonical bundle without changing their stable `section_id` values.
+
+The initial decomposition contains 14 validated records spanning site, equatorial mass, arrival threshold, mirrored helix systems, reusable strand and bridge modules, Soul Crystal axis, five principal occupied programs, and the concealed administration/root sequence. The bundle contract and coordinate system are recorded in `output/architecture/crystal-sanctum/README.md`. Three foundational conceptual sheets cover the mirrored master section, equatorial plan, and strand/bridge connection family. Two room-scale sheets add the Choir of Confluence and the north Diplomacy Court; both room-scale designs received operator approval on 2026-07-20. The remaining requested views are still open inside this phase.
+
 ## Build plan
 
 1. **Seed** (done 2026-07-20): record the user fantasy, power source, faction role, and gravity-light material premise.
 2. **Refine** (done 2026-07-20): approve the continuity reconciliation, ethical ambiguity of the living crystal, shared architectural laws, and A/B/C comparison axes.
 3. **Concept images** (done 2026-07-20): generated and visually inspected one matched presentation image for each direction; stable paths and hashes recorded above.
-4. **Selection** (active): Concept C is the preferred parent direction; choose C1, C2, C3, or name an explicit synthesis before section decomposition.
-5. **Sections and diagrams**: create stable frontmatter records and only the plan, section, elevation, axonometric, circulation, or connection views each unique section requires.
+4. **Selection** (done 2026-07-20): C2H — Double Helix / As Above, So Below locked as the governing direction.
+5. **Sections and diagrams** (active): 14 stable section records created and cross-validated on 2026-07-20. Five sheets are now generated, visually inspected, hashed, and linked: three foundational system views plus the operator-approved Choir of Confluence room blueprint and Diplomacy Court subspace blueprint. Generate only the remaining plan, section, elevation, axonometric, circulation, or connection views each section requests.
 6. **Manifest**: compile parts, materials, assemblies, effects, assets, budgets, tags, connectors, and build order into `roblox-build-manifest.json`.
 7. **Owner and Studio gates**: select the asset owner, TGL domain, target place, and reversible Edit-mode staging root before any MCP mutation.
 8. **Build and verify**: construct from the manifest, audit traversal and performance, capture evidence, persist through the approved snapshot/syncback path, and leave promotion unauthorized by default.
