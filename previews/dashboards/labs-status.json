@@ -1,8 +1,8 @@
 {
   "generatedBy": "tools/build-labs-status.mjs",
   "schemaVersion": 2,
-  "built": "2026-07-21T13:29:13.158Z",
-  "builtMs": 160,
+  "built": "2026-07-21T13:59:36.882Z",
+  "builtMs": 165,
   "labs": {
     "name": "roblox-labs",
     "path": "external-locations/code/roblox-labs",
@@ -38,12 +38,17 @@
     "present": true,
     "branch": "main",
     "head": {
-      "sha": "c86a3ee",
-      "when": "2026-07-21T09:29:00-04:00",
-      "subject": "First syncback: serialize all four places from Studio snapshots"
+      "sha": "2c8cf68",
+      "when": "2026-07-21T09:59:36-04:00",
+      "subject": "Phase 1 of V2 effects normalization: TrembusGameLibrary lands"
     },
     "dirty": 0,
     "recentCommits": [
+      {
+        "sha": "2c8cf68",
+        "when": "2026-07-21T09:59:36-04:00",
+        "subject": "Phase 1 of V2 effects normalization: TrembusGameLibrary lands"
+      },
       {
         "sha": "c86a3ee",
         "when": "2026-07-21T09:29:00-04:00",
@@ -75,8 +80,8 @@
   },
   "counts": {
     "projects": 6,
-    "luau": 26,
-    "rbxm": 246,
+    "luau": 27,
+    "rbxm": 345,
     "modelJson": 33,
     "metaJson": 61,
     "dirty": 0,
@@ -159,21 +164,21 @@
       "snapshot": {
         "present": true,
         "file": "places/crystal-sanctum.rbxl",
-        "bytes": 108923,
-        "savedAt": "2026-07-21T12:51:22.485Z"
+        "bytes": 115461,
+        "savedAt": "2026-07-21T13:59:02.514Z"
       },
       "serialization": {
         "files": {
-          "luau": 3,
-          "rbxm": 85,
+          "luau": 4,
+          "rbxm": 184,
           "modelJson": 5,
           "metaJson": 9,
           "other": 1
         },
         "lastSync": {
-          "sha": "c86a3ee",
-          "when": "2026-07-21T09:29:00-04:00",
-          "subject": "First syncback: serialize all four places from Studio snapshots"
+          "sha": "2c8cf68",
+          "when": "2026-07-21T09:59:36-04:00",
+          "subject": "Phase 1 of V2 effects normalization: TrembusGameLibrary lands"
         }
       },
       "sync": "in-sync",
