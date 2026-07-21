@@ -1,8 +1,8 @@
 {
   "generatedBy": "tools/build-labs-status.mjs",
   "schemaVersion": 2,
-  "built": "2026-07-21T13:59:36.882Z",
-  "builtMs": 165,
+  "built": "2026-07-21T14:56:19.217Z",
+  "builtMs": 231,
   "labs": {
     "name": "roblox-labs",
     "path": "external-locations/code/roblox-labs",
@@ -85,7 +85,7 @@
     "modelJson": 33,
     "metaJson": 61,
     "dirty": 0,
-    "syncbackDue": 0
+    "syncbackDue": 1
   },
   "projects": [
     {
@@ -164,8 +164,8 @@
       "snapshot": {
         "present": true,
         "file": "places/crystal-sanctum.rbxl",
-        "bytes": 115461,
-        "savedAt": "2026-07-21T13:59:02.514Z"
+        "bytes": 125278,
+        "savedAt": "2026-07-21T14:55:53.200Z"
       },
       "serialization": {
         "files": {
@@ -181,7 +181,7 @@
           "subject": "Phase 1 of V2 effects normalization: TrembusGameLibrary lands"
         }
       },
-      "sync": "in-sync",
+      "sync": "syncback-due",
       "commands": {
         "dryRun": "rojo syncback crystal-sanctum --input places/crystal-sanctum.rbxl --dry-run",
         "apply": "rojo syncback crystal-sanctum --input places/crystal-sanctum.rbxl -y"

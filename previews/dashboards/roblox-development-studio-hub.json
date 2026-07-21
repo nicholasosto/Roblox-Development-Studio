@@ -12,7 +12,7 @@
   "stats": [
     {
       "label": "entities",
-      "value": 42
+      "value": 44
     },
     {
       "label": "kinds",
@@ -32,12 +32,12 @@
   "scope": [
     {
       "label": "Entities",
-      "num": "42",
+      "num": "44",
       "value": "across 7 kinds"
     },
     {
       "label": "Conformant",
-      "num": "42/42",
+      "num": "44/44",
       "value": "carry frontmatter · 0 pending"
     },
     {
@@ -70,7 +70,7 @@
       "tag": "Contract",
       "name": "ProjectEntity",
       "sub": "3 primitives · 1 shape",
-      "status": "42/42",
+      "status": "44/44",
       "dot": "#44DDFF",
       "note": "One non-optional contract every _project/ file derives from — Identity (kind·id·title) · State (status·updated) · Relation (links). kind & id are loader-derived from the path; the authored surface is just title/status/updated (+links/tags). The validator, scaffolder, guard, and this dashboard all read this single source.",
       "sources": [
@@ -99,9 +99,9 @@
       "tag": "Decisions",
       "name": "Decision log",
       "sub": "decisions/ · per-kind status enum",
-      "status": "9",
+      "status": "10",
       "dot": "#D4AF37",
-      "note": "9 decision entities — status over the per-kind enum (all accepted). 19 typed links touch this kind.",
+      "note": "10 decision entities — status over the per-kind enum (all accepted). 19 typed links touch this kind.",
       "sources": [
         "_project/decisions/"
       ]
@@ -209,17 +209,21 @@
       "tag": "Control surface",
       "name": "Commands",
       "sub": "slash commands",
-      "status": "2",
+      "status": "3",
       "dot": "#5a6478",
       "note": "The project's slash commands (.claude/commands/) — the unified /new <kind> scaffolder + friends. Each writes valid frontmatter and self-validates. The syntax + a one-line gloss of every command is listed here.",
       "entries": [
         {
-          "text": "/end [optional notes on what to prioritize capturing]",
-          "desc": "End-of-session reconciliation — sync the Command Center with _project/ and the Studio lanes, then capture high-value concepts"
+          "text": "/end [--report]",
+          "desc": "End-of-session sweep — drift check, knowledge-capture opportunities, and a conflict audit across instructions · memory · skills"
         },
         {
           "text": "/new <kind> <title>",
           "desc": "Scaffold a new _project/ entity of any kind your project-system.config.json declares"
+        },
+        {
+          "text": "/start [<goal>]",
+          "desc": "Session wake-up — dangling-session triage, one-shot orientation brief, and an engram-style session open"
         }
       ],
       "sources": [

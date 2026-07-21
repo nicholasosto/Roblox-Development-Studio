@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 42,
-  "migrated": 42,
+  "entities": 44,
+  "migrated": 44,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -101,6 +101,15 @@
       "updated": "2026-07-20",
       "file": "_project/decisions/0009-soul-steel-universe-topology.md",
       "excerpt": "Soul Steel is becoming a real multi-place game, and the platform boundaries force topology decisions: DataStores, MemoryStores, MessagingService, and free teleporting are universe-scoped, so any teleport- or persistence…"
+    },
+    {
+      "id": "0010-session-lifecycle-activation",
+      "kind": "decision",
+      "title": "Session lifecycle activation",
+      "status": "accepted",
+      "updated": "2026-07-21",
+      "file": "_project/decisions/0010-session-lifecycle-activation.md",
+      "excerpt": "The session kind declares a full lifecycle (planned → active → blocked → completed → shelved) that was never exercised: all six pre-existing sessions were hand-created retroactively at completed. /end produced only an i…"
     },
     {
       "id": "2026-07-19-studio-labs-audit",
@@ -209,6 +218,19 @@
       "updated": "2026-07-20",
       "file": "_project/sessions/2026-07-20-tools-lens-ux-polish.md",
       "excerpt": "Scan the command-center Tools lens for UX rough edges and land the agreed fixes — the six obvious ones plus dev auto-refresh of labs-status.json — without changing the lens's copy-only character."
+    },
+    {
+      "id": "2026-07-21-start-command-and-session-lifecycle",
+      "kind": "session",
+      "title": "Start command and session lifecycle",
+      "status": "completed",
+      "updated": "2026-07-21",
+      "file": "_project/sessions/2026-07-21-start-command-and-session-lifecycle.md",
+      "tags": {
+        "last-active": "2026-07-21T13:32",
+        "kos": "decisions, dashboards, memory"
+      },
+      "excerpt": "Ship the /start command and activate the session lifecycle: engram-style session entities opened by /start, closed by /end, with dangling-session detection and a one-shot orientation brief."
     },
     {
       "id": "add-a-package",
@@ -456,9 +478,9 @@
   ],
   "byKind": {
     "decision": {
-      "total": 9,
+      "total": 10,
       "byStatus": {
-        "accepted": 9
+        "accepted": 10
       },
       "ids": [
         "0001-pnpm-monorepo-founding",
@@ -469,7 +491,8 @@
         "0006-adopt-project-system",
         "0007-dual-lane-ts-luau",
         "0008-studio-native-lab-lane",
-        "0009-soul-steel-universe-topology"
+        "0009-soul-steel-universe-topology",
+        "0010-session-lifecycle-activation"
       ],
       "tone": "info",
       "statusOrder": [
@@ -532,9 +555,9 @@
       ]
     },
     "session": {
-      "total": 6,
+      "total": 7,
       "byStatus": {
-        "completed": 6
+        "completed": 7
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -542,7 +565,8 @@
         "2026-07-19-telemetry-m1-catalog-feed",
         "2026-07-19-telemetry-m2-studio-now-heartbeat",
         "2026-07-20-packages-dossier-master-detail",
-        "2026-07-20-tools-lens-ux-polish"
+        "2026-07-20-tools-lens-ux-polish",
+        "2026-07-21-start-command-and-session-lifecycle"
       ],
       "tone": "warning",
       "statusOrder": [
@@ -1707,6 +1731,7 @@
                     "Success Criteria",
                     "Source References",
                     "Decisions",
+                    "First-Principles Candidates",
                     "Outputs",
                     "Blockers",
                     "Next Action",
