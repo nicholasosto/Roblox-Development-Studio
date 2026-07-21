@@ -1,33 +1,55 @@
 ---
-description: End-of-session reconciliation — sync the Command Center with _project/ and the Studio lanes, then capture high-value concepts
-argument-hint: "[optional notes on what to prioritize capturing]"
-allowed-tools: Bash(node tools/check-dashboard-drift.mjs:*), Bash(node .project-system/tools/render-hub.mjs:*), Bash(node .project-system/tools/validate.mjs:*), Bash(node tools/build-packages-registry.mjs:*), Bash(node tools/build-labs-status.mjs:*), Bash(pnpm --dir apps/command-center build:*), Bash(git status:*), Bash(git diff:*), Bash(git add:*)
+description: End-of-session sweep — drift check, knowledge-capture opportunities, and a conflict audit across instructions · memory · skills
+argument-hint: "[--report]"
+allowed-tools: Bash(node .project-system/tools/validate.mjs:*), Bash(node .project-system/tools/render-hub.mjs:*), Bash(node .project-system/tools/new-entity.mjs:*), Bash(git status:*), Bash(git log:*), Bash(git diff:*), Bash(node tools/check-dashboard-drift.mjs:*), Bash(node tools/build-packages-registry.mjs:*), Bash(node tools/build-labs-status.mjs:*), Bash(pnpm --dir apps/command-center build:*)
 ---
-Run the end-of-session reconciliation for **Roblox-Development-Studio**. Two halves, in order — do **not** skip half 2, it is the reason this ritual exists. (This does not quit the session; it's the wrap-up you run before you do.)
+Close out this working session with three passes, then present ONE compact report — **Drift · Capture · Conflicts** — ending in a proposed-actions checklist.
 
-Extra priorities for the capture step, if any: **$ARGUMENTS**
+Ground rules (the framework's ethos, applied to session hygiene): **engines validate, they never mutate**; you may apply fixes directly only to **your own memory layer** (auto-memory files — they're your notebook); everything else — repo docs, planning entities, vault captures, config — is **proposed**, applied only on approval or where this project's standing conventions already authorize it. If the session did little, say so in one line and keep the sweep to the engines.
 
-## 1 · Detect drift (mechanical)
-Run `node tools/check-dashboard-drift.mjs` and read the signals. If it prints "no drift", jump to step 3 — but still glance at the Studio-lane check in step 2's last bullet if Studio was open this session.
+## 1 · Drift — does recorded state still match reality?
 
-## 2 · Reconcile the Command Center (mechanical)
-Resolve the signals **in order A → C → B** (fixing A/C is what dirties B, so commit last, once, covering everything):
+Run and *interpret* (summarize; don't paste raw output):
 
-- **Signal A — source edited, contracts not regenerated:** run `node .project-system/tools/render-hub.mjs` (graph + hub JSON). The hub's sources are `_project/` **and** the `.claude/` control surface (commands/hooks/workflows facets) — editing a slash command dirties the hub too. Sanity-check with `node .project-system/tools/validate.mjs --summary` if the corpus changed. If monorepo `package.json`s changed this session, run `node tools/build-packages-registry.mjs --check` and rebuild if stale.
-- **Signal C — static bundle behind the contract:** run `pnpm --dir apps/command-center build` to refresh `previews/app/` (JSON is inlined at build time). Skip only if nothing a contract feeds changed — say so.
-- **Signal B — regenerated but uncommitted:** do **not** auto-commit. Show `git status` + `git diff --stat -- previews/`, then **propose** a commit split by logical change and **wait for the user's explicit yes**. The commit is the human's call.
-- **Studio-lane check (this workspace only):** if Roblox Studio was open this session, run `node tools/build-labs-status.mjs` and read the `syncback-due` / `dirty` counts. Any non-zero means the roblox-labs loop is owed (in Studio: File → Save to File As… → `places/<project>.rbxl`, then `rojo syncback` **in the roblox-labs repo** — code work happens there, not here). Also remind the user if an Edit-mode place mutation from this session still needs File → Publish; `ui-catalog.json` regenerates via the telemetry collector on ledger change, not by a CLI — if it's dirty, it just needs committing.
+- `node .project-system/tools/validate.mjs --root . --config ./project-system.config.json` — planning-tree health: errors/warnings, prose↔frontmatter status agreement.
+- `node .project-system/tools/render-hub.mjs --root . --check` — is the emitted JSON contract stale against `_project/` + config? If this project pipes the emitted JSON onward (e.g. an app's bundled snapshot), check that copy is fresh too.
+- `git status` (+ `git log` for context) — work finished but uncommitted? (Skip if this space isn't git-tracked; say so.)
+- **Memory vs. reality**: for each persistent-memory fact this session actually *relied on or contradicted*, re-verify it against the repo. A memory that names files, versions, counts, or statuses is a claim — check the claim, not the vibe.
+- Mirror drift (the vendored `.project-system/` vs. the canonical framework) is asserted from the framework side by its consumer drift check — flag only if you observed the vendored copy being edited in place (it must only ever be re-copied).
 
-Re-run `node tools/check-dashboard-drift.mjs` to confirm the mechanical drift is cleared (only the awaiting-approval commit may remain).
+<!-- consumer-extension: command-center-reconciliation · restored from the pre-template /end · re-apply after any re-vendor (grep for "consumer-extension") -->
+**Command Center reconciliation (this workspace):** the SessionStart/SessionEnd hooks already run `node tools/check-dashboard-drift.mjs --quiet` — interpret those signals from context (re-run only if absent) and resolve **in order A → C → B**; fixing A/C is what dirties B, so commit last, once, covering everything. The mechanical regens below are authorized by this workspace's standing dashboard conventions (CLAUDE.md); the commit is always the human's call.
 
-## 3 · Capture high-value concepts (judgment — never skip)
-Review **this session** for what would otherwise be re-derived next time: decisions made, non-obvious constraints discovered, corrections or preferences the user voiced, new patterns, live phase-state changes. Fold in any **$ARGUMENTS** priorities.
+- **A — source edited, contracts not regenerated** → `node .project-system/tools/render-hub.mjs` (the hub's sources are `_project/` AND the `.claude/` control surface — editing a slash command dirties the hub too). If monorepo `package.json`s changed this session: `node tools/build-packages-registry.mjs`.
+- **C — static bundle behind the contracts** → `pnpm --dir apps/command-center build` (JSON is inlined at build time). Skip only if nothing a contract feeds changed — say so.
+- **B — regenerated but uncommitted** → never auto-commit: show `git status` + `git diff --stat -- previews/`, propose a commit split by logical change, and wait for the user's explicit yes.
+- **Studio-lane check:** if Roblox Studio was open this session, run `node tools/build-labs-status.mjs` — it probes BOTH syncback repos (roblox-labs and soul-steel-universe) and tags every project with its owning repo. Any `syncback-due`/`dirty` project means **that project's repo** is owed its loop (save the place to `places/<project>.rbxl`, then `rojo syncback` **in the owning repo** — read it from the project's `repo` field; never from this planning root). Remind about unpublished Edit-mode mutations; `ui-catalog.json` regenerates via the telemetry collector, not a CLI — if dirty, it just needs committing.
+<!-- /consumer-extension: command-center-reconciliation -->
 
-- **Durable cross-session knowledge** → write or update a file-memory (`memory/<slug>.md` + a one-line `MEMORY.md` pointer) per the memory conventions: one fact per file, correct `type`, absolute dates, link related notes with `[[…]]`. Update the existing file if one already covers it; don't duplicate.
-- **Roblox platform/API knowledge** (engine behavior, API constraints, Studio quirks verified this session) → `roblox-dev:capture` into the Roblox Brain. Cross-domain or lore-adjacent concepts → the artificial-brain synthesis path. Only when something genuinely rises to that bar — both are heavier than a memory note.
-- **Planning state shifted** → update the affected `_project/` entity's **Status**/sections with Edit (the guard validates); a genuinely new decision, session log, or other entity goes through `/new <kind> "<title>"` — never hand-written frontmatter.
+## 2 · Capture — what would evaporate when this session ends?
 
-Don't capture what the repo already records (code structure, git history, existing entities). If nothing clears the bar, say so plainly — do not invent concepts to look thorough.
+Sweep the conversation for durable knowledge with no home yet:
 
-## 4 · Report
-Close with a tight summary: what was reconciled (commands run), the Studio-lane verdict (syncback owed or clear), what was captured (memories/brain notes written, entities touched), and anything left for the user — most importantly any commit awaiting approval or unpublished Studio state.
+- **Auto-memory** — non-derivable facts worth keeping (user preferences and corrections, project state not recorded in the repo, external references). Write or update the memory files directly, keep the index line in sync, and say what changed. Delete or amend memories pass 1 proved stale.
+- **The planning ledger** — the contract's own capture surface, using whatever kinds this project's `project-system.config.json` declares:
+  - a decision made ad hoc in conversation but recorded nowhere → offer `/new decision` (or this project's decision-shaped kind);
+  - substantial work completed and verified → offer `/new` for its retro-shaped kind;
+  - work left mid-flight that a future session must pick up → offer `/new` for its handoff-shaped kind — unless an open session entity already exists (next bullet): then the handoff lives in ITS Handoff Notes, not a new file.
+
+<!-- consumer-extension: session-lifecycle · local until upstreamed to Project-System · re-apply after any re-vendor (grep for "consumer-extension") -->
+- **Close the open session** — Grep `_project/sessions/` for frontmatter status `planned`, `active`, or `blocked`.
+  - **None** → skip in one line; the offers above are unchanged.
+  - **One this conversation actually advanced** → draft its close: backfill Outputs / Blockers / Next Action / Handoff Notes from the session; set `tags.last-active` (time of the last user message, `YYYY-MM-DDTHH:MM`) and refresh `tags.kos` (union — never truncate what /start wrote); pick the end state — `completed` (Goal met), `blocked` (parked, blocker named), `shelved` (abandoned). **Never leave `planned` or `active`** — that is the dangling signal /start's wake-check hunts. Propose the close in the checklist; on approval apply as **one Edit spanning the frontmatter `status:`/`updated:` lines through the prose `> **Status:** …` line** (the guard validates the pair; a lone frontmatter flip is a prose↔status violation).
+  - **Multiple open** → propose a real close only for the one this session advanced; list each other with a suggested `shelved` (abandoned) or `blocked` (genuinely parked) and let the user pick. Never bulk-`completed` work this conversation can't vouch for.
+<!-- /consumer-extension: session-lifecycle -->
+- **Knowledge vaults** — concepts, patterns, or hard-won lessons that belong in a wired knowledge-capture skill (brain/vault plugins, when this space has them): list each candidate with the exact capture invocation to run. Never auto-capture into a vault — those skills own their own intake.
+
+## 3 · Conflicts — do the instruction surfaces agree?
+
+Cross-check what governed this session — the project `CLAUDE.md`/`AGENTS.md`, `.claude/` (commands · skills · settings/hooks), persistent memory, and any skill guidance that was loaded — against **each other** and against observed reality. Scope honestly: audit surfaces this session actually touched or loaded; don't boil the ocean of global plugins.
+
+Flag each contradiction as: the two (or more) sources, file paths, which one reality supports, and a one-line proposed resolution. Typical finds: a doc claiming a state the code disproves; a memory predating a rename or migration; two instructions prescribing different tools for the same job; a stated convention vs. the actual wiring.
+
+## The report
+
+Present the three sections compactly, then the checklist: memory fixes **applied**, and each remaining item as an offer (`/new …`, a capture invocation, a doc edit, a commit). With `--report` — or whenever the user wants a durable record — scaffold it into the ledger with `node .project-system/tools/new-entity.mjs` using this project's retro-shaped kind, and fill its sections from the sweep itself.
