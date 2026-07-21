@@ -5,7 +5,7 @@
 // copy-ready command and the freshness of the JSON it produces (each timestamp read from
 // that artifact's own inlined module — no new backend) — and the serialization loop as a
 // numbered step strip (footer-reference altitude, not document chrome).
-import { Badge, Callout, Card, IconButton, Inline, Table, Tooltip } from '@trembus/ui';
+import { Badge, Callout, Card, IconButton, Inline, Stat, Table, Toolbar, Tooltip } from '@trembus/ui';
 import { receivedAt } from '../catalog';
 import { built as packagesBuilt } from '../packages';
 import { hub } from '../contract';
@@ -91,40 +91,39 @@ const LOOP_STEPS: { step: string; gloss: string }[] = [
   { step: 'Refresh the lens', gloss: '⎘ refresh cmd in the status strip' },
 ];
 
-// One syncback repo's git state — rendered once per probed repo (roblox-labs always; the
-// soul-steel-universe shell when the probe is schemaVersion ≥ 2). The labs card carries the
-// cc-repo-card scroll anchor the status strip's dirty count targets.
+// One syncback repo's git state — rebuilt on the 2.0 compound-Card vocabulary: a header
+// (name · branch/clean badges · path subtitle), the recent-commits table sitting flush
+// between header and footer (its first row IS head, now tagged), and a copy-only footer.
+// Rendered once per probed repo (roblox-labs always; the soul-steel-universe shell when the
+// probe is schemaVersion ≥ 2). The labs card carries the cc-repo-card scroll anchor the
+// status strip's dirty count targets.
 function RepoCard({ repo, id, now }: { repo: LabsRepo; id?: string; now: number }) {
+  const { flash, copy } = useCopyFlash();
   return (
-    <Card className="cc-tools-card" id={id}>
-      <h4 className="cc-tools-card__title">{repo.name} repo</h4>
-      <Inline wrap gap={1}>
-        {repo.branch && (
-          <Badge tone="neutral" variant="soft" size="sm">
-            {repo.branch}
-          </Badge>
-        )}
-        {repo.dirty > 0 ? (
-          <Badge tone="warning" variant="soft" size="sm" dot>
-            {repo.dirty} dirty
-          </Badge>
-        ) : (
-          <Badge tone="success" variant="soft" size="sm" dot>
-            clean
-          </Badge>
-        )}
-      </Inline>
-      <dl className="cc-explorer__facts">
-        {/* No HEAD facts — the commits table's first row IS head; repeating it here
-            was the wrap-prone jumble the 2.0 polish removed. */}
-        <div>
-          <dt>Path</dt>
-          <dd>
-            <code className="cc-explorer__mono">{repo.path}</code>
-          </dd>
+    <Card className="cc-workbench-card" id={id}>
+      <Card.Header className="cc-workbench-card__head">
+        <div className="cc-workbench-card__headrow">
+          <span className="cc-pkg-card__name">{repo.name}</span>
+          <Inline wrap gap={1}>
+            {repo.branch && (
+              <Badge tone="neutral" variant="soft" size="sm">
+                {repo.branch}
+              </Badge>
+            )}
+            {repo.dirty > 0 ? (
+              <Badge tone="warning" variant="soft" size="sm" dot>
+                {repo.dirty} dirty
+              </Badge>
+            ) : (
+              <Badge tone="success" variant="soft" size="sm" dot>
+                clean
+              </Badge>
+            )}
+          </Inline>
         </div>
-      </dl>
-      {repo.recentCommits.length > 0 && (
+        <span className="cc-workbench-card__path">{repo.path}</span>
+      </Card.Header>
+      {repo.recentCommits.length > 0 ? (
         <Table density="compact">
           <Table.Head>
             <Table.Row>
@@ -134,20 +133,45 @@ function RepoCard({ repo, id, now }: { repo: LabsRepo; id?: string; now: number 
             </Table.Row>
           </Table.Head>
           <Table.Body>
-            {repo.recentCommits.map((c) => (
+            {repo.recentCommits.map((c, i) => (
               <Table.Row key={c.sha}>
                 <Table.Cell>
-                  <code className="cc-explorer__mono">{c.sha}</code>
+                  <code className="cc-explorer__mono cc-workbench__sha">{c.sha}</code>
+                  {i === 0 && <span className="cc-workbench__headtag">HEAD</span>}
                 </Table.Cell>
                 <Table.Cell>
-                  <span title={fmtWhen(c.when)}>{fmtAgo(c.when, now)}</span>
+                  <span className="cc-workbench__when" title={fmtWhen(c.when)}>
+                    {fmtAgo(c.when, now)}
+                  </span>
                 </Table.Cell>
                 <Table.Cell>{c.subject}</Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
         </Table>
+      ) : (
+        <p className="cc-workbench-card__empty">No commits probed.</p>
       )}
+      <Card.Footer className="cc-explorer__footerbar cc-workbench-card__foot">
+        <Toolbar aria-label={`${repo.name} commands`}>
+          <Toolbar.Group aria-label="Copy repo commands">
+            <Toolbar.Button title={`cd ${repo.path}`} onClick={() => void copy('cd', `cd ${repo.path}`)}>
+              ⎘ cd
+            </Toolbar.Button>
+            <Toolbar.Button
+              title={`git -C ${repo.path} status`}
+              onClick={() => void copy('git status', `git -C ${repo.path} status`)}
+            >
+              ⎘ status
+            </Toolbar.Button>
+          </Toolbar.Group>
+        </Toolbar>
+        {flash && (
+          <span className="cc-explorer__flash" role="status">
+            {flash}
+          </span>
+        )}
+      </Card.Footer>
     </Card>
   );
 }
@@ -156,78 +180,58 @@ export function WorkbenchRunbook({ now }: { now: number }) {
   const { flash, copy } = useCopyFlash();
   const drift = rojoDrift();
 
+  // Toolchain rail values — versions only (strip the tool name), pins compared for the note.
+  // Every field is optional; an undefined value lets Stat fall back to its "—" default.
+  const rojoValue = toolchain.rojoResolved?.replace(/^Rojo\s+/i, '');
+  const rokitValue = toolchain.rokitResolved?.replace(/^rokit\s+/i, '');
+  const pinLabs = toolchain.rojoPinLabs?.split('@')[1];
+  const pinUniverse = toolchain.rojoPinUniverse?.split('@')[1];
+  const pinNote = drift
+    ? `pinned ${pinLabs ?? '?'} · drifted`
+    : pinLabs && pinUniverse && pinLabs === pinUniverse
+      ? `pinned ${pinLabs} · labs + universe`
+      : pinLabs
+        ? `pinned ${pinLabs}`
+        : undefined;
+
   return (
     <>
-      {/* F — TOOLCHAIN + REPO */}
+      {/* F — TOOLCHAIN RAIL + MATCHED REPO PAIR */}
       <section className="cc-section">
         <h3 className="cc-section-title">Workbench</h3>
-        <div className="cc-tools-grid">
-        <Card className="cc-tools-card">
-          <h4 className="cc-tools-card__title">Toolchain</h4>
-          <Inline wrap gap={1}>
-            {toolchain.syncbackAvailable ? (
-              <Badge tone="success" variant="soft" size="sm" dot>
-                syncback available
-              </Badge>
-            ) : (
-              <Badge tone="danger" variant="soft" size="sm" dot>
-                syncback missing
-              </Badge>
-            )}
-            {drift && (
-              <Badge tone="warning" variant="outline" size="sm" dot>
-                resolved rojo ≠ pin
-              </Badge>
-            )}
-          </Inline>
-          <dl className="cc-explorer__facts">
-            {toolchain.rojoPinLabs && (
-              <div>
-                <dt>Rojo pin (labs)</dt>
-                <dd>
-                  <code className="cc-explorer__mono">{toolchain.rojoPinLabs}</code>
-                </dd>
-              </div>
-            )}
-            {toolchain.rojoPinUniverse && (
-              <div>
-                <dt>Rojo pin (universe)</dt>
-                <dd>
-                  <code className="cc-explorer__mono">{toolchain.rojoPinUniverse}</code>
-                </dd>
-              </div>
-            )}
-            {toolchain.rojoResolved && (
-              <div>
-                <dt>Resolves to</dt>
-                <dd>{toolchain.rojoResolved}</dd>
-              </div>
-            )}
-            {toolchain.rojoPinMono && (
-              <div>
-                <dt>Rojo pin (mono)</dt>
-                <dd>
-                  <code className="cc-explorer__mono">{toolchain.rojoPinMono}</code>
-                </dd>
-              </div>
-            )}
-            {toolchain.rokitResolved && (
-              <div>
-                <dt>Rokit</dt>
-                <dd>{toolchain.rokitResolved}</dd>
-              </div>
-            )}
-          </dl>
-          {drift && (
+        <div className="cc-workbench-rail">
+          <Stat
+            label="Rojo"
+            value={rojoValue}
+            tone={drift ? 'warning' : 'success'}
+            target={pinNote}
+            badge={
+              drift ? (
+                <Badge tone="warning" variant="soft" size="sm" dot>
+                  drift
+                </Badge>
+              ) : undefined
+            }
+          />
+          <Stat label="Rokit" value={rokitValue} tone="neutral" target="toolchain manager" />
+          <Stat
+            label="Syncback"
+            value={toolchain.syncbackAvailable ? 'available' : 'missing'}
+            tone={toolchain.syncbackAvailable ? 'success' : 'danger'}
+            target={toolchain.syncbackAvailable ? 'rojo syncback ready' : 'no syncback-capable rojo'}
+          />
+        </div>
+        {drift && (
+          <div className="cc-workbench-drift">
             <Callout tone="warning" title="Toolchain drift">
               The rojo resolving inside the labs repo does not match its rokit pin — run{' '}
               <code className="cc-explorer__mono">rokit install</code> there.
             </Callout>
-          )}
-        </Card>
-
-        <RepoCard repo={labs} id="cc-repo-card" now={now} />
-        {universe && <RepoCard repo={universe} now={now} />}
+          </div>
+        )}
+        <div className="cc-workbench-pair">
+          <RepoCard repo={labs} id="cc-repo-card" now={now} />
+          {universe && <RepoCard repo={universe} now={now} />}
         </div>
       </section>
 

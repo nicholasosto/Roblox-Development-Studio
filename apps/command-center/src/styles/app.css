@@ -752,7 +752,84 @@ body,
   color: var(--tcl-text-dim, rgba(255, 255, 255, 0.35));
 }
 
-/* ── Tools lens (1.0 vocabulary still used by the workbench cards + session grid) ── */
+/* ── F — Workbench 2.0: a shared toolchain stat rail above a matched repo pair. Supersedes
+   the 1.0 cc-tools-grid cards for THIS region only; the shared cc-tools-card* classes below
+   are still live for the Catalog + Studio-now + session grids. ── */
+.cc-workbench-rail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.cc-workbench-drift {
+  margin-bottom: 1rem;
+}
+.cc-workbench-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1rem;
+}
+.cc-workbench-card {
+  display: flex;
+  flex-direction: column;
+}
+.cc-workbench-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.cc-workbench-card__headrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.cc-workbench-card__path {
+  font-family: var(--tcl-font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--tcl-text-faint, rgba(255, 255, 255, 0.4));
+  overflow-wrap: anywhere;
+}
+/* The commit table sits flush between header and footer — strip its own frame so the card
+   owns the border/radius (the card clips it via overflow:hidden). */
+.cc-workbench-card .tcl-table-scroll {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+.cc-workbench-card__empty {
+  margin: 0;
+  padding: 0.9rem 1.25rem;
+  font-size: 0.78rem;
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.6));
+}
+.cc-workbench-card__foot {
+  margin-top: auto; /* footers align across the pair when one repo has fewer commits */
+}
+/* SHAs read as whole tokens — override cc-explorer__mono's base break-all in this region. */
+.cc-workbench__sha {
+  white-space: nowrap;
+  word-break: normal;
+}
+/* Relative ages ("2d ago") stay on one line even when a long subject squeezes the column. */
+.cc-workbench__when {
+  white-space: nowrap;
+}
+.cc-workbench__headtag {
+  margin-left: 0.4rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.55));
+  border: 1px solid var(--tcl-border, rgba(255, 255, 255, 0.15));
+  border-radius: 4px;
+  padding: 0 0.25rem;
+  vertical-align: middle;
+}
+
+/* ── Tools lens (1.0 vocabulary — Catalog lens, Studio-now cards, session grid) ── */
 .cc-tools-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
