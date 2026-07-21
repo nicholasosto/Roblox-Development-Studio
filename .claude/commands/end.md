@@ -17,7 +17,7 @@ Run and *interpret* (summarize; don't paste raw output):
 - **Memory vs. reality**: for each persistent-memory fact this session actually *relied on or contradicted*, re-verify it against the repo. A memory that names files, versions, counts, or statuses is a claim — check the claim, not the vibe.
 - Mirror drift (the vendored `.project-system/` vs. the canonical framework) is asserted from the framework side by its consumer drift check — flag only if you observed the vendored copy being edited in place (it must only ever be re-copied).
 
-<!-- consumer-extension: command-center-reconciliation · restored from the pre-template /end · re-apply after any re-vendor (grep for "consumer-extension") -->
+<!-- consumer-extension: command-center-reconciliation · restored from the pre-template /end · re-apply after any re-vendor (grep for "consumer-extension") · its four workspace tools ride in allowed-tools -->
 **Command Center reconciliation (this workspace):** the SessionStart/SessionEnd hooks already run `node tools/check-dashboard-drift.mjs --quiet` — interpret those signals from context (re-run only if absent) and resolve **in order A → C → B**; fixing A/C is what dirties B, so commit last, once, covering everything. The mechanical regens below are authorized by this workspace's standing dashboard conventions (CLAUDE.md); the commit is always the human's call.
 
 - **A — source edited, contracts not regenerated** → `node .project-system/tools/render-hub.mjs` (the hub's sources are `_project/` AND the `.claude/` control surface — editing a slash command dirties the hub too). If monorepo `package.json`s changed this session: `node tools/build-packages-registry.mjs`.
@@ -34,14 +34,11 @@ Sweep the conversation for durable knowledge with no home yet:
 - **The planning ledger** — the contract's own capture surface, using whatever kinds this project's `project-system.config.json` declares:
   - a decision made ad hoc in conversation but recorded nowhere → offer `/new decision` (or this project's decision-shaped kind);
   - substantial work completed and verified → offer `/new` for its retro-shaped kind;
-  - work left mid-flight that a future session must pick up → offer `/new` for its handoff-shaped kind — unless an open session entity already exists (next bullet): then the handoff lives in ITS Handoff Notes, not a new file.
-
-<!-- consumer-extension: session-lifecycle · local until upstreamed to Project-System · re-apply after any re-vendor (grep for "consumer-extension") -->
-- **Close the open session** — Grep `_project/sessions/` for frontmatter status `planned`, `active`, or `blocked`.
+  - work left mid-flight that a future session must pick up → offer `/new` for its handoff-shaped kind — unless an open session entity already exists (see **Close the open session** below): then the handoff lives in ITS Handoff Notes, not a new file.
+- **Close the open session** — Grep the handoff-shaped kind's folder (standard: `_project/sessions/`) for its open or parked frontmatter statuses (standard: `planned`, `active`, `blocked`).
   - **None** → skip in one line; the offers above are unchanged.
-  - **One this conversation actually advanced** → draft its close: backfill Outputs / Blockers / Next Action / Handoff Notes from the session; set `tags.last-active` (time of the last user message, `YYYY-MM-DDTHH:MM`) and refresh `tags.kos` (union — never truncate what /start wrote); pick the end state — `completed` (Goal met), `blocked` (parked, blocker named), `shelved` (abandoned). **Never leave `planned` or `active`** — that is the dangling signal /start's wake-check hunts. Propose the close in the checklist; on approval apply as **one Edit spanning the frontmatter `status:`/`updated:` lines through the prose `> **Status:** …` line** (the guard validates the pair; a lone frontmatter flip is a prose↔status violation).
+  - **One this conversation actually advanced** → draft its close: backfill Outputs / Blockers / Next Action / Handoff Notes from the session; set `tags.last-active` (time of the last user message, `YYYY-MM-DDTHH:MM`) and refresh `tags.kos` (union — never truncate what /start wrote); pick the end state — `completed` (Goal met), `blocked` (parked, blocker named), `shelved` (abandoned). **Never leave `planned` or `active`** — that is the dangling signal /start's wake-check hunts. Propose the close in the checklist; on approval apply as **one Edit spanning the frontmatter `status:`/`updated:` lines through the prose `> **Status:** …` line** — where `proseStatusEnforcement` is `error` a half-flip is guard-blocked; at `warn` it is flagged, not blocked — keep the flip atomic regardless.
   - **Multiple open** → propose a real close only for the one this session advanced; list each other with a suggested `shelved` (abandoned) or `blocked` (genuinely parked) and let the user pick. Never bulk-`completed` work this conversation can't vouch for.
-<!-- /consumer-extension: session-lifecycle -->
 - **Knowledge vaults** — concepts, patterns, or hard-won lessons that belong in a wired knowledge-capture skill (brain/vault plugins, when this space has them): list each candidate with the exact capture invocation to run. Never auto-capture into a vault — those skills own their own intake.
 
 ## 3 · Conflicts — do the instruction surfaces agree?

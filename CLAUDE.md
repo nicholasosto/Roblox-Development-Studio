@@ -17,7 +17,7 @@ Tags: `lane: ts | luau` on package entities. The Luau lane is **reserved** — n
 
 ## Session lifecycle
 
-`/start "<goal>"` opens a session entity (status `active`); `/end` closes it — backfills Outputs/Blockers/Next Action/Handoff Notes and flips to `completed|blocked|shelved` (decision `0010-session-lifecycle-activation`). A session still `planned|active` when a new chat starts was never /end-ed; `/start` surfaces it. Tags `last-active`/`kos` are command-maintained (single-line flow map; quote comma values); first-principles candidates go in the body section. Note: `.claude/commands/end.md` carries local `consumer-extension` blocks — re-apply after any re-vendor (grep "consumer-extension").
+`/start "<goal>"` opens a session entity (status `active`); `/end` closes it — backfills Outputs/Blockers/Next Action/Handoff Notes and flips to `completed|blocked|shelved` (decision `0010-session-lifecycle-activation`). A session still `planned|active` when a new chat starts was never /end-ed; `/start` surfaces it. Tags `last-active`/`kos` are command-maintained (single-line flow map; quote comma values); first-principles candidates go in the body section. The lifecycle (session close included) is now native to the vendored command templates; `/reflect` (bridge review over closed sessions) ships alongside them. Note: `.claude/commands/end.md` carries one local `consumer-extension` block — `command-center-reconciliation` — re-apply it and its four workspace `allowed-tools` entries after any re-vendor (grep "consumer-extension").
 
 ## Dashboards
 
