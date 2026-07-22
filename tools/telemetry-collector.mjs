@@ -24,8 +24,9 @@
 //   POST /api/studio-telemetry   telemetry envelope ({channel, timestamp, data})
 //
 // ui-catalog.json is written atomically (tmp + rename) and only when the
-// incoming snapshot differs from what's on disk (ignoring stamps), so a
-// 30-second catalog poll does not churn the file or its git status.
+// incoming snapshot differs from that place's stored entry (ignoring stamps),
+// so a 30-second catalog poll does not churn the file or its git status.
+// Schema v2 keys the registry by place — see the emission section for why.
 //
 // Usage:
 //   node tools/telemetry-collector.mjs        # runs until Ctrl-C
@@ -82,47 +83,99 @@ const stamp = () => new Date().toISOString();
 const log = (msg) => console.log(`[collector ${stamp()}] ${msg}`);
 
 // ── ui-catalog.json emission ──────────────────────────────────────────────
-/** The comparable core of a payload — everything except the volatile stamps. */
-const comparable = (payload) =>
+// The registry is KEYED BY PLACE: one entry per Studio place that has ever reported.
+// Schema v1 was a single flat slot, which made the file last-writer-wins — opening a
+// place with no ledger (the hub, Part Textures) posted an honest empty snapshot that
+// silently erased whichever lab had reported before it. Under v2 an empty report
+// updates only its own entry and can no longer clobber a sibling place.
+const SCHEMA_VERSION = 2;
+
+/** The comparable core of ONE place's ledger — everything except the volatile stamps. */
+const comparable = (entry) =>
   JSON.stringify({
-    place: payload.place,
-    placeId: payload.placeId,
-    catalog: payload.catalog,
-    kits: payload.kits,
-    manifests: payload.manifests,
+    place: entry.place,
+    placeId: entry.placeId,
+    catalog: entry.catalog,
+    kits: entry.kits,
+    manifests: entry.manifests,
   });
 
-function writeCatalog(envelope) {
-  const data = envelope.data ?? {};
-  const next = {
-    generatedBy: "@trembus/studio-telemetry catalog channel via tools/telemetry-collector.mjs",
-    schemaVersion: 1,
-    receivedAt: stamp(),
-    channelTimestamp: envelope.timestamp ?? null,
-    place: typeof data.place === "string" ? data.place : "(unknown place)",
-    placeId: typeof data.placeId === "number" ? data.placeId : 0,
+/**
+ * Normalize a catalog payload into a keyed registry entry. `placeId` is the real identity —
+ * the plugin sends `game.Name`, which is "Place1" for every published place — so the key
+ * falls back to the name only for unsaved places (placeId 0), mirroring `sessionKey`.
+ */
+function normalizeEntry(data, receivedAt, channelTimestamp) {
+  const place = typeof data.place === "string" ? data.place : "(unknown place)";
+  const placeId = typeof data.placeId === "number" ? data.placeId : 0;
+  return {
+    key: sessionKey({ place, placeId }),
+    place,
+    placeId,
+    receivedAt,
+    channelTimestamp,
     catalog: Array.isArray(data.catalog) ? data.catalog : [],
     kits: Array.isArray(data.kits) ? data.kits : [],
     manifests: Array.isArray(data.manifests) ? data.manifests : [],
   };
+}
 
-  if (existsSync(OUT_FILE)) {
-    try {
-      const prev = JSON.parse(readFileSync(OUT_FILE, "utf8"));
-      if (comparable(prev) === comparable(next)) return false; // unchanged — no churn
-    } catch {
-      // unreadable/corrupt previous file — overwrite it
-    }
+/**
+ * Read the existing registry. A v1 single-slot file is migrated into the keyed shape rather
+ * than discarded, and flagged `needsRewrite` so the migration lands even when the incoming
+ * ledger is byte-identical to what v1 held (otherwise the change-only guard would keep the
+ * stale schema on disk forever).
+ */
+function readRegistry() {
+  if (!existsSync(OUT_FILE)) return { places: [], needsRewrite: true };
+  let prev;
+  try {
+    prev = JSON.parse(readFileSync(OUT_FILE, "utf8"));
+  } catch {
+    return { places: [], needsRewrite: true }; // unreadable/corrupt — start clean
   }
+  if (Array.isArray(prev?.places)) {
+    return { places: prev.places, needsRewrite: prev.schemaVersion !== SCHEMA_VERSION };
+  }
+  if (typeof prev?.placeId === "number" || typeof prev?.place === "string") {
+    const migrated = normalizeEntry(prev, prev.receivedAt ?? stamp(), prev.channelTimestamp ?? null);
+    log(`migrating ui-catalog.json v${prev.schemaVersion ?? "?"} → v${SCHEMA_VERSION} (${migrated.key})`);
+    return { places: [migrated], needsRewrite: true };
+  }
+  return { places: [], needsRewrite: true };
+}
+
+function writeCatalog(envelope) {
+  const next = normalizeEntry(envelope.data ?? {}, stamp(), envelope.timestamp ?? null);
+  const { places, needsRewrite } = readRegistry();
+
+  const at = places.findIndex((p) => p.key === next.key);
+  const unchanged = at >= 0 && comparable(places[at]) === comparable(next);
+  if (unchanged && !needsRewrite) return false; // no churn
+
+  if (at >= 0) {
+    // Preserve the stored receivedAt when only the schema is being rewritten, so a migration
+    // does not falsely advance every place's "last reported" stamp.
+    places[at] = unchanged ? { ...places[at], key: next.key } : next;
+  } else {
+    places.push(next);
+  }
+  places.sort((a, b) => a.key.localeCompare(b.key)); // deterministic order → clean diffs
+
+  const doc = {
+    generatedBy: "@trembus/studio-telemetry catalog channel via tools/telemetry-collector.mjs",
+    schemaVersion: SCHEMA_VERSION,
+    places,
+  };
 
   mkdirSync(dirname(OUT_FILE), { recursive: true });
   const tmp = `${OUT_FILE}.tmp`;
-  writeFileSync(tmp, `${JSON.stringify(next, null, 2)}\n`);
+  writeFileSync(tmp, `${JSON.stringify(doc, null, 2)}\n`);
   renameSync(tmp, OUT_FILE);
   lastCatalogAt = next.receivedAt;
   log(
-    `ui-catalog.json ← ${next.place}: ${next.catalog.length} catalog entries, ` +
-      `${next.kits.length} kits, ${next.manifests.length} manifests`,
+    `ui-catalog.json ← ${next.place} (${next.key}): ${next.catalog.length} catalog entries, ` +
+      `${next.kits.length} kits, ${next.manifests.length} manifests · ${places.length} place(s) tracked`,
   );
   return true;
 }
@@ -146,6 +199,13 @@ const server = createServer((req, res) => {
       uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
       tallies,
       lastCatalogAt,
+      placesTracked: readRegistry().places.map((p) => ({
+        key: p.key,
+        placeId: p.placeId,
+        receivedAt: p.receivedAt,
+        entries: p.catalog?.length ?? 0,
+        kits: p.kits?.length ?? 0,
+      })),
       liveSessions: liveSessions().length,
       out: "previews/dashboards/ui-catalog.json",
     });

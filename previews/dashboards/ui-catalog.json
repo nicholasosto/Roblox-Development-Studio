@@ -1,11 +1,107 @@
 {
   "generatedBy": "@trembus/studio-telemetry catalog channel via tools/telemetry-collector.mjs",
-  "schemaVersion": 1,
-  "receivedAt": "2026-07-20T17:35:16.029Z",
-  "channelTimestamp": 1784568916,
-  "place": "Place1",
-  "placeId": 102596975485791,
-  "catalog": [],
-  "kits": [],
-  "manifests": []
+  "schemaVersion": 2,
+  "places": [
+    {
+      "key": "place:102596975485791",
+      "place": "Place1",
+      "placeId": 102596975485791,
+      "receivedAt": "2026-07-22T13:09:02.556Z",
+      "channelTimestamp": 1784725742,
+      "catalog": [],
+      "kits": [],
+      "manifests": []
+    },
+    {
+      "key": "place:134559055187413",
+      "place": "Place1",
+      "placeId": 134559055187413,
+      "receivedAt": "2026-07-22T13:09:56.312Z",
+      "channelTimestamp": 1784725796,
+      "catalog": [],
+      "kits": [],
+      "manifests": []
+    },
+    {
+      "key": "place:75067279879490",
+      "place": "Place1",
+      "placeId": 75067279879490,
+      "receivedAt": "2026-07-22T13:08:35.094Z",
+      "channelTimestamp": 1784725715,
+      "catalog": [
+        {
+          "component": "inventory.panel",
+          "generatedBy": "RobloxUIStudio",
+          "name": "InventoryPanel",
+          "templates": 0,
+          "harnessVersion": 1,
+          "state": "prototype",
+          "sourceGuiPath": "StarterGui.InventoryGui.MainFrame"
+        },
+        {
+          "component": "inventory.slot",
+          "generatedBy": "RobloxUIStudio",
+          "name": "InventorySlot",
+          "templates": 0,
+          "harnessVersion": 1,
+          "state": "prototype",
+          "variants": "filled,empty; drag=idle,source,eligible,pending,rejected; rarity=Common,Rare,Epic",
+          "sourceGuiPath": "StarterGui.InventoryGui.MainFrame.SlotContainer.Slot_1"
+        },
+        {
+          "component": "inventory.drag-ghost",
+          "generatedBy": "RobloxUIStudio",
+          "name": "InventoryDragGhost",
+          "templates": 0,
+          "harnessVersion": 1,
+          "state": "interactive-prototype",
+          "sourceGuiPath": "StarterGui.InventoryGui.DragGhost"
+        }
+      ],
+      "kits": [
+        {
+          "hasManifest": false,
+          "descendants": 94,
+          "name": "MiniMap",
+          "className": "ScreenGui"
+        },
+        {
+          "hasManifest": true,
+          "descendants": 88,
+          "name": "TexturedUIReferenceKit",
+          "className": "ScreenGui"
+        },
+        {
+          "hasManifest": false,
+          "descendants": 330,
+          "name": "IconSubtypeTestLab",
+          "className": "ScreenGui"
+        },
+        {
+          "hasManifest": false,
+          "descendants": 119,
+          "name": "AnimatedIconEffectsLab",
+          "className": "ScreenGui"
+        },
+        {
+          "hasManifest": false,
+          "descendants": 739,
+          "name": "GameplayTileStateLab",
+          "className": "ScreenGui"
+        },
+        {
+          "hasManifest": false,
+          "descendants": 370,
+          "name": "CharacterPanel",
+          "className": "ScreenGui"
+        }
+      ],
+      "manifests": [
+        {
+          "value": "Textured UI Reference Kit / run-1\nStatus: BLK / local proof only\nPanel: rbxasset://trembus/ui/frames/graphite-cyan-reference-panel_BLK.png\nTile: rbxasset://trembus/ui/backgrounds/graphite-cyan-reference-tile_BLK.png\nAtlas: rbxasset://trembus/ui/sprites/graphite-cyan-reference-controls_BLK.png\nSliceCenter: Rect.new(48, 48, 208, 208)\nSliceScale test: 0.48 / 0.56 / 0.58\nTileSize test: 64 / 128 / 256\nAtlas cells: 128x128 offsets 0,0 / 128,0 / 0,128 / 128,128\nNo FNL promotion or upload authorized",
+          "path": "ReplicatedStorage.UIMockups.TexturedUIReferenceKit.GenerationManifest"
+        }
+      ]
+    }
+  ]
 }
