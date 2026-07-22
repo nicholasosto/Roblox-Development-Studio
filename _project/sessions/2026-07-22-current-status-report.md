@@ -1,13 +1,13 @@
 ---
 title: "Current status report"
-status: active
+status: completed
 updated: 2026-07-22
-tags: { last-active: 2026-07-22T09:12, kos: "dashboards, decisions, telemetry, command-center, packages-mono, roblox-labs" }
+tags: { last-active: 2026-07-22T14:10, kos: "dashboards, decisions, telemetry, command-center, packages-mono, roblox-labs, asset-studio, two-path-adr, trembus-game-library, rig-remediation" }
 ---
 
 # Current status report
 
-> **Status:** active (2026-07-22)
+> **Status:** completed (2026-07-22)
 
 ## Goal
 
@@ -60,12 +60,22 @@ Produce a current status report across the space — where every in-flight pipel
 
 ## Blockers
 
-- <blocker, or “none”>
+- none
 
 ## Next Action
 
-<the single next concrete action>
+Publish `Trembus-Game-Library` v16 (the rig remediation sits unpublished at v15), save the hub
+place, then run the soul-steel-universe syncback loop when labs-status flags it.
 
 ## Handoff Notes
 
-<what the next session needs to know>
+- Everything from this session is committed and pushed (afternoon close): telemetry v2 `8f062fb`,
+  Catalog lens `1fd31c4`, this entity `715fe8d`, contracts + bundle `39bb7b8`. The collector is
+  running again — live heartbeat verified at the 14:10 close.
+- The two-path question this session surfaced is now **ADR 0012 in Asset-Studio**
+  (`decisions/0012-two-path-asset-delivery…`, status `proposed`, awaiting ratification). Its
+  appendix carries the executed rig remediation — 16/16 conformant, `Mechanisms` typo fixed,
+  settled SUB codes (no CRE rigs exist).
+- Remaining queue: `vfx` medium card (Asset-Studio), spatial bays for the three sub-package labs,
+  ADR 0012 ratification, `_FNL` promotions (everything is `_BLK`), and the "package the outputs,
+  not the workbench" ADR candidate recorded in Decisions above.
