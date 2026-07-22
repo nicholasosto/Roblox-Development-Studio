@@ -862,6 +862,13 @@ body,
 }
 
 /* ── Catalog lens ── */
+/* Place picker — the feed is keyed by placeId, so the lens needs a source selector. Bounded so a
+   long place name doesn't stretch the control across the whole lens. */
+.cc-catalog-picker {
+  max-width: 26rem;
+  margin-bottom: 0.75rem;
+}
+
 .cc-catalog-pre {
   margin: 0;
   padding: 0.6rem 0.7rem;

@@ -6,7 +6,7 @@
 // that artifact's own inlined module — no new backend) — and the serialization loop as a
 // numbered step strip (footer-reference altitude, not document chrome).
 import { Badge, Callout, Card, IconButton, Inline, Stat, Table, Toolbar, Tooltip } from '@trembus/ui';
-import { receivedAt } from '../catalog';
+import { latestReceivedAt } from '../catalog';
 import { built as packagesBuilt } from '../packages';
 import { hub } from '../contract';
 import { COLLECTOR_CMD, built as labsBuilt, fmtWhen, labs, toolchain, universe } from '../labs';
@@ -56,7 +56,7 @@ const TOOLBOX: ToolRow[] = [
     label: 'Telemetry collector',
     command: COLLECTOR_CMD,
     output: 'ui-catalog.json + /live',
-    freshIso: receivedAt,
+    freshIso: latestReceivedAt,
     freshLabel: 'last envelope',
   },
   {
