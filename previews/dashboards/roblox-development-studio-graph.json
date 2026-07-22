@@ -236,12 +236,12 @@
       "id": "2026-07-22-current-status-report",
       "kind": "session",
       "title": "Current status report",
-      "status": "active",
+      "status": "completed",
       "updated": "2026-07-22",
       "file": "_project/sessions/2026-07-22-current-status-report.md",
       "tags": {
-        "last-active": "2026-07-22T09:12",
-        "kos": "dashboards, decisions, telemetry, command-center, packages-mono, roblox-labs"
+        "last-active": "2026-07-22T14:10",
+        "kos": "dashboards, decisions, telemetry, command-center, packages-mono, roblox-labs, asset-studio, two-path-adr, trembus-game-library, rig-remediation"
       },
       "excerpt": "Produce a current status report across the space — where every in-flight pipeline stands, what the roadmap owes, and what work is actually next — then act on whatever the report surfaces as the top item."
     },
@@ -570,8 +570,7 @@
     "session": {
       "total": 8,
       "byStatus": {
-        "completed": 7,
-        "active": 1
+        "completed": 8
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
