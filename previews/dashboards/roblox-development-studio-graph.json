@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 44,
-  "migrated": 44,
+  "entities": 45,
+  "migrated": 45,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -231,6 +231,19 @@
         "kos": "decisions, dashboards, memory"
       },
       "excerpt": "Ship the /start command and activate the session lifecycle: engram-style session entities opened by /start, closed by /end, with dangling-session detection and a one-shot orientation brief."
+    },
+    {
+      "id": "2026-07-22-current-status-report",
+      "kind": "session",
+      "title": "Current status report",
+      "status": "active",
+      "updated": "2026-07-22",
+      "file": "_project/sessions/2026-07-22-current-status-report.md",
+      "tags": {
+        "last-active": "2026-07-22T09:12",
+        "kos": "dashboards, decisions, telemetry, command-center, packages-mono, roblox-labs"
+      },
+      "excerpt": "Produce a current status report across the space — where every in-flight pipeline stands, what the roadmap owes, and what work is actually next — then act on whatever the report surfaces as the top item."
     },
     {
       "id": "add-a-package",
@@ -555,9 +568,10 @@
       ]
     },
     "session": {
-      "total": 7,
+      "total": 8,
       "byStatus": {
-        "completed": 7
+        "completed": 7,
+        "active": 1
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -566,7 +580,8 @@
         "2026-07-19-telemetry-m2-studio-now-heartbeat",
         "2026-07-20-packages-dossier-master-detail",
         "2026-07-20-tools-lens-ux-polish",
-        "2026-07-21-start-command-and-session-lifecycle"
+        "2026-07-21-start-command-and-session-lifecycle",
+        "2026-07-22-current-status-report"
       ],
       "tone": "warning",
       "statusOrder": [

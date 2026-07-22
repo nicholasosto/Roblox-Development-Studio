@@ -1,8 +1,8 @@
 {
   "generatedBy": "tools/build-labs-status.mjs",
   "schemaVersion": 2,
-  "built": "2026-07-21T14:56:19.217Z",
-  "builtMs": 231,
+  "built": "2026-07-22T17:39:37.426Z",
+  "builtMs": 203,
   "labs": {
     "name": "roblox-labs",
     "path": "external-locations/code/roblox-labs",
@@ -38,12 +38,17 @@
     "present": true,
     "branch": "main",
     "head": {
-      "sha": "2c8cf68",
-      "when": "2026-07-21T09:59:36-04:00",
-      "subject": "Phase 1 of V2 effects normalization: TrembusGameLibrary lands"
+      "sha": "683081c",
+      "when": "2026-07-21T12:18:31-04:00",
+      "subject": "Syncback crystal-sanctum from Studio snapshot"
     },
     "dirty": 0,
     "recentCommits": [
+      {
+        "sha": "683081c",
+        "when": "2026-07-21T12:18:31-04:00",
+        "subject": "Syncback crystal-sanctum from Studio snapshot"
+      },
       {
         "sha": "2c8cf68",
         "when": "2026-07-21T09:59:36-04:00",
@@ -63,11 +68,6 @@
         "sha": "ac3930f",
         "when": "2026-07-21T08:30:50-04:00",
         "subject": "Add SoulSteelShell install payload (step-4 skeleton)"
-      },
-      {
-        "sha": "3b1b318",
-        "when": "2026-07-20T14:06:38-04:00",
-        "subject": "Scaffold universe-shell repo: four syncback projects"
       }
     ]
   },
@@ -80,12 +80,12 @@
   },
   "counts": {
     "projects": 6,
-    "luau": 27,
-    "rbxm": 345,
-    "modelJson": 33,
+    "luau": 28,
+    "rbxm": 445,
+    "modelJson": 34,
     "metaJson": 61,
     "dirty": 0,
-    "syncbackDue": 1
+    "syncbackDue": 0
   },
   "projects": [
     {
@@ -169,19 +169,19 @@
       },
       "serialization": {
         "files": {
-          "luau": 4,
-          "rbxm": 184,
-          "modelJson": 5,
+          "luau": 5,
+          "rbxm": 284,
+          "modelJson": 6,
           "metaJson": 9,
           "other": 1
         },
         "lastSync": {
-          "sha": "2c8cf68",
-          "when": "2026-07-21T09:59:36-04:00",
-          "subject": "Phase 1 of V2 effects normalization: TrembusGameLibrary lands"
+          "sha": "683081c",
+          "when": "2026-07-21T12:18:31-04:00",
+          "subject": "Syncback crystal-sanctum from Studio snapshot"
         }
       },
-      "sync": "syncback-due",
+      "sync": "in-sync",
       "commands": {
         "dryRun": "rojo syncback crystal-sanctum --input places/crystal-sanctum.rbxl --dry-run",
         "apply": "rojo syncback crystal-sanctum --input places/crystal-sanctum.rbxl -y"
