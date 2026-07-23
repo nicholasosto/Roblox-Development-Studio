@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 45,
-  "migrated": 45,
+  "entities": 47,
+  "migrated": 47,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -119,6 +119,15 @@
       "updated": "2026-07-19",
       "file": "_project/reports/2026-07-19-studio-labs-audit.md",
       "excerpt": "What shipped"
+    },
+    {
+      "id": "ancient-void-ship-arrival-environment",
+      "kind": "pipeline",
+      "title": "Ancient Void Ship Arrival Environment",
+      "status": "design",
+      "updated": "2026-07-22",
+      "file": "_project/pipeline/ancient-void-ship-arrival-environment.md",
+      "excerpt": "Soul Steel needs a production-oriented starting environment that immediately reads as an ancient alien spacecraft suspended in an interdimensional Void seam. The first slice must remain compact while exercising current…"
     },
     {
       "id": "crystal-sanctum",
@@ -244,6 +253,19 @@
         "kos": "dashboards, decisions, telemetry, command-center, packages-mono, roblox-labs, asset-studio, two-path-adr, trembus-game-library, rig-remediation"
       },
       "excerpt": "Produce a current status report across the space — where every in-flight pipeline stands, what the roadmap owes, and what work is actually next — then act on whatever the report surfaces as the top item."
+    },
+    {
+      "id": "2026-07-22-trim-sheet-pbr-audit-and-correction",
+      "kind": "session",
+      "title": "Trim sheet PBR audit and correction",
+      "status": "completed",
+      "updated": "2026-07-22",
+      "file": "_project/sessions/2026-07-22-trim-sheet-pbr-audit-and-correction.md",
+      "tags": {
+        "last-active": "2026-07-22T19:27",
+        "kos": "studio-mcp, blender-mcp, asset-studio, roblox-brain, memory"
+      },
+      "excerpt": "Audit the Codex-generated ancient-alien-architecture trim sheet PBR map set for correctness, and land whatever correction the audit justifies."
     },
     {
       "id": "add-a-package",
@@ -530,12 +552,13 @@
       ]
     },
     "pipeline": {
-      "total": 4,
+      "total": 5,
       "byStatus": {
-        "design": 1,
+        "design": 2,
         "build": 3
       },
       "ids": [
+        "ancient-void-ship-arrival-environment",
         "crystal-sanctum",
         "slotable-items-cutover",
         "studio-telemetry-modernization",
@@ -568,9 +591,9 @@
       ]
     },
     "session": {
-      "total": 8,
+      "total": 9,
       "byStatus": {
-        "completed": 8
+        "completed": 9
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -580,7 +603,8 @@
         "2026-07-20-packages-dossier-master-detail",
         "2026-07-20-tools-lens-ux-polish",
         "2026-07-21-start-command-and-session-lifecycle",
-        "2026-07-22-current-status-report"
+        "2026-07-22-current-status-report",
+        "2026-07-22-trim-sheet-pbr-audit-and-correction"
       ],
       "tone": "warning",
       "statusOrder": [
@@ -682,6 +706,18 @@
       "fromKind": "report",
       "rel": "references",
       "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
+      "from": "ancient-void-ship-arrival-environment",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "workflows/concept-to-studio-architectural-build"
+    },
+    {
+      "from": "ancient-void-ship-arrival-environment",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "decisions/0009-soul-steel-universe-topology"
     },
     {
       "from": "crystal-sanctum",
@@ -793,7 +829,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 19,
+    "references": 21,
     "decided-in": 4,
     "supersedes": 1
   },

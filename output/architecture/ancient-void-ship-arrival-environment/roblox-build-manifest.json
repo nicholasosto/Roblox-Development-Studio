@@ -1,0 +1,177 @@
+{
+  "schema_version": "0.1",
+  "design_id": "ancient-void-ship-arrival-environment",
+  "selected_direction": "riftborne-atrium",
+  "status": "reversible-edit-mode-blockout",
+  "authority": {
+    "planning_space": "Roblox-Development-Studio",
+    "canonical_repository": "/Users/nicholasosto/Master-Managed/Repositories/Gaming/Roblox-Repositories/soul-steel-universe",
+    "prototype_place": { "name": "Lab - Architecture", "place_id": 78520415943353 },
+    "final_place": { "name": "Soul Steel Hub", "place_id": 102596975485791, "game_id": 6679100030 },
+    "studio_edit_blockout_requested": true,
+    "studio_edit_blockout_authorized": true,
+    "studio_approval_state": "explicit user approval received 2026-07-22 for the owned Hub root in Edit mode only",
+    "hub_persistence_authorized": false,
+    "publish_authorized": false,
+    "syncback_authorized": false,
+    "asset_promotion_authorized": false,
+    "tgl_republish_authorized": false
+  },
+  "ownership": {
+    "root_name": "SoulSteelVoidArrivalLab",
+    "temporary_build_root_name": "SoulSteelVoidArrivalLab_Building",
+    "generated_by": "Codex",
+    "design_id_attribute": "ancient-void-ship-arrival-environment",
+    "reversible": true,
+    "cleanup_scope": "owned_root_only",
+    "scripts_allowed_in_root": false
+  },
+  "builder_contract": {
+    "datamodel": "Edit",
+    "refuse_play_mode": true,
+    "refuse_unowned_same_name_roots": true,
+    "transaction": [
+      "construct temporary owned root",
+      "audit candidate",
+      "remove prior owned final root only",
+      "rename candidate to final root",
+      "set BuildStatus Ready",
+      "record ChangeHistoryService waypoint"
+    ],
+    "owned_folders": ["Architecture", "MaterialSurfaces", "LightingRigs", "VoidVignettes", "CameraPresets"],
+    "camera_presets": ["SpawnReveal", "PadChamber", "UpperCatwalk", "MaterialBay", "PortholeCloseup", "VoidOculus"],
+    "cleanup": "delete matching owned final and partial-build roots only",
+    "global_state_restoration_required": false
+  },
+  "preserve": [
+    "Workspace.SpawnLocation",
+    "Workspace.TeleportPads",
+    "Workspace.Game Systems",
+    "Workspace.Trembus-Game-Library",
+    "Workspace.AncientAlienPortalMaterialLab",
+    "Workspace.TrimSheetCompare",
+    "Lighting.Sky",
+    "Lighting.Atmosphere",
+    "Lighting.Bloom",
+    "Lighting.SunRays",
+    "Terrain"
+  ],
+  "coordinate_contract": {
+    "origin": [0, 0, 0],
+    "forward_axis": "+Z",
+    "teleport_axis": "-Z",
+    "deck_y": 0,
+    "envelope_studs": [74, 38, 76]
+  },
+  "assemblies": [
+    { "id": "arrival-dais", "layer_y": 0, "part_budget": 12, "jobs": ["frame SpawnLocation", "first-view focal point", "cyan practical pool"] },
+    { "id": "teleport-flight-deck", "layer_y": 0, "part_budget": 24, "jobs": ["preserve three pad triggers", "integrate apertures", "maintain direct-child hierarchy"] },
+    { "id": "upper-observation-catwalks", "layer_y": 10, "part_budget": 28, "jobs": ["second traversal level", "cross-room view", "underside SurfaceLight"] },
+    { "id": "sunken-material-bay", "layer_y": -6, "part_budget": 20, "jobs": ["third traversal level", "material coupons", "hard grazing-light test"] },
+    { "id": "porthole-bays", "layer_y": 13, "part_budget": 54, "jobs": ["six framed openings", "glass/recess test", "exterior depth cue"] },
+    { "id": "hull-ribs-and-crown", "layer_y": 26, "part_budget": 30, "jobs": ["canted silhouette", "ceiling occlusion", "surface-light carriers"] },
+    { "id": "void-vignettes", "layer_y": 12, "part_budget": 12, "jobs": ["temporary porthole exterior", "no-horizon composition", "skybox-independent review"] }
+  ],
+  "lighting": {
+    "active_local_light_cap": 10,
+    "shadow_caster_cap": 2,
+    "fixtures": [
+      { "class": "SurfaceLight", "count": 4, "parent": "BasePart", "shadows": false, "role": "broad deck and underside panels" },
+      { "class": "PointLight", "count": 4, "parent": "Attachment", "shadows": false, "role": "arrival and machine practical pools" },
+      { "class": "SpotLight", "count": 2, "parent": "Attachment", "shadows": true, "role": "hard material-grazing accents" }
+    ],
+    "global_lighting_mutation": false,
+    "bloom_is_not_illumination": true
+  },
+  "material_tokens": {
+    "hull-plinth": { "fallback_material": "Basalt", "fallback_color": [20, 25, 36], "candidate": "ancient-tech-exterior-wall-plinth-01_BLK" },
+    "hull-field": { "fallback_material": "Metal", "fallback_color": [31, 42, 55], "candidate": "ancient-tech-exterior-wall-field-01_BLK" },
+    "hull-crown": { "fallback_material": "CorrodedMetal", "fallback_color": [46, 50, 61], "candidate": "ancient-tech-exterior-wall-crown-01_BLK" },
+    "deck-field": { "fallback_material": "Slate", "fallback_color": [25, 34, 45], "candidate": "ancient-tech-plaza-01_BLK" },
+    "walking-trim": { "fallback_material": "DiamondPlate", "fallback_color": [50, 68, 78], "candidate": "ancient-tech-sidewalk-01_BLK" },
+    "void-glass": { "fallback_material": "Glass", "fallback_color": [64, 111, 145], "candidate": null },
+    "veil-emissive": { "fallback_material": "Neon", "fallback_color": [55, 227, 255], "candidate": "ancient-alien-trim-sheet-beta-emissive" }
+  },
+  "asset_candidates": [
+    { "kind": "tileable_family", "path": "/Users/nicholasosto/Master-Managed/Assets/textures/tileable/robotic/ancient-tech-*_BLK.png", "state": "BLK color-only, not uploaded" },
+    { "kind": "pbr_trim_sheet", "path": "/Users/nicholasosto/Master-Managed/Project-Spaces/Asset-Studio/output/imagegen/ancient-alien-architecture-trim-sheet/pbr-prototype/", "state": "ignored BETA staging, 11/11 audited, not canonical or uploaded" },
+    { "kind": "void_direction_study", "path": "output/imagegen/ancient-void-ship-arrival-environment/interdimensional-void-panorama-study.png", "state": "generated locally; panorama only, not a cubemap, not seam-tested, not registered or uploaded", "sha256": "a364d7b0a7c2a9278bc4a455bec1abd67a0f4779f2c93cc2e3aba476c3400881" },
+    { "kind": "interior_direction_study", "path": "output/imagegen/ancient-void-ship-arrival-environment/riftborne-atrium-interior-study.png", "state": "generated locally; noncanonical reference, not registered or uploaded", "sha256": "da65bb8eb5ecfa15cf59878784489a970828dd130c822c0d3b764f72686da7b4" },
+    { "kind": "porthole_material_study", "path": "output/imagegen/ancient-void-ship-arrival-environment/ancient-voidcraft-porthole-material-study.png", "state": "generated locally; noncanonical reference, not registered or uploaded", "sha256": "0c8cfa06881473f41270552edffb401ee3026a68736922d206e3a38b05b10a10" },
+    { "kind": "skybox", "path": "/Users/nicholasosto/Master-Managed/Assets/textures/skybox/soul-steel-interdimensional-void-01/{up,dn,lf,rt,ft,bk}_BLK.png", "state": "proposed; six faces not generated, seam-tested, registered, or uploaded" }
+  ],
+  "studio_evidence": {
+    "captured_on": "2026-07-22",
+    "place_id": 102596975485791,
+    "root_path": "Workspace.SoulSteelVoidArrivalLab",
+    "build_status": "Ready",
+    "visual_pass": "03-runtime-exposure-balance",
+    "unsaved": true,
+    "unpublished": true,
+    "counts": {
+      "baseparts": 180,
+      "meshparts": 0,
+      "surface_lights": 4,
+      "point_lights": 4,
+      "spot_lights": 2,
+      "shadow_casting_local_lights": 2,
+      "particle_emitters": 0,
+      "scripts": 0
+    },
+    "global_lighting_signature_preserved": true,
+    "spawn_and_teleport_pad_paths_preserved": true,
+    "runtime_light_balance": {
+      "surface_light_brightness": 0.38,
+      "point_light_brightness_range": [0.6, 0.7],
+      "spot_light_brightness": 2.8,
+      "fixture_ranges_preserved": true,
+      "reason": "disposable Play QA exposed overlapping cyan wash"
+    }
+  },
+  "play_qa": {
+    "performed_on": "2026-07-22",
+    "disposable": true,
+    "scene_mutations_in_play": false,
+    "client_root_present": true,
+    "server_root_present": true,
+    "avatar_health_after_routes": 100,
+    "routes_passed": [
+      "arrival dais to teleport-pad approach",
+      "arrival deck to upper catwalk",
+      "intended ramp waypoints into sunken material bay",
+      "sunken material bay back to arrival dais",
+      "arrival dais to forward oculus approach"
+    ],
+    "prototype_console_errors": 0,
+    "returned_to_edit_mode": true
+  },
+  "cleanup_rebuild_proof": {
+    "performed_on": "2026-07-22",
+    "scope": "owned root only",
+    "method": "clone audited owned root, remove final root, verify preserved state, restore clone",
+    "preserved_workspace_roots_verified": 7,
+    "teleport_pads_verified": 3,
+    "global_lighting_signature_preserved": true,
+    "restored_build_status": "Ready",
+    "saved": false,
+    "published": false
+  },
+  "budgets": {
+    "generated_baseparts_max": 180,
+    "active_local_lights_max": 10,
+    "shadow_casting_local_lights_max": 2,
+    "particle_emitters_max": 0,
+    "scripts_in_root_max": 0
+  },
+  "qa_views": ["spawn-reveal", "pad-chamber", "upper-catwalk", "sunken-material-bay", "porthole-closeup", "void-oculus"],
+  "required_checks": [
+    "Edit datamodel only for authoring",
+    "SpawnLocation remains usable",
+    "TeleportPads remain direct children and retain trigger clearance",
+    "No global Lighting, Terrain, TGL, or material-audit-rig mutation",
+    "PointLight, SurfaceLight, and SpotLight roles match the design contract",
+    "Part and light budgets pass",
+    "Owned-root cleanup restores pre-build scene",
+    "Play traversal QA is explicitly distinct from Edit-mode persistence"
+  ]
+}

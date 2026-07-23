@@ -4,10 +4,10 @@
   "places": [
     {
       "key": "place:102596975485791",
-      "place": "Soul Steel",
+      "place": "Place2",
       "placeId": 102596975485791,
-      "receivedAt": "2026-07-22T17:57:42.282Z",
-      "channelTimestamp": 1784743062,
+      "receivedAt": "2026-07-22T18:49:16.440Z",
+      "channelTimestamp": 1784746156,
       "catalog": [],
       "kits": [],
       "manifests": []

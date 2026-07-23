@@ -27,6 +27,7 @@ Tags: `lane: ts | luau` on package entities. The Luau lane is **reserved** — n
 - `node tools/telemetry-collector.mjs` → long-running collector on `127.0.0.1:4320`; receives `@trembus/studio-telemetry` envelopes from Studio, rewrites `previews/dashboards/ui-catalog.json` on ledger change (M1 — schema v2, **keyed by placeId**: each place owns its entry, so a place with no ledger can no longer clobber a lab's; v1 files migrate on first post), and serves live session heartbeats at `GET /live` for the Tools lens's "Studio now" card (M2 — in-memory by design, never a committed file)
 - `pnpm --dir apps/command-center build` → `previews/app/` (static explorer; JSON is inlined at build time, so rebuild after regenerating)
 - Serve locally via `.claude/launch.json` → `previews-static` (port 4319) or `command-center` (vite dev, port 5176)
+- Ports (4319/4320/5176) are claimed in the cross-space port registry (`~/Master-Managed/Project-Spaces/Project-System/docs/port-registry.md`) — claim there before adding a server; 4320 is pinned (Studio senders + `live.ts` hardcode it)
 
 ## Related
 

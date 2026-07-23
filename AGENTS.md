@@ -20,7 +20,9 @@ Tags: `lane: ts | luau` on package entities. The Luau lane is **reserved** — n
 - `node .project-system/tools/render-hub.mjs` → `previews/dashboards/roblox-development-studio-{graph,hub}.json`
 - `node tools/build-packages-registry.mjs` → `previews/dashboards/packages.json` (reads the monorepo through `external-locations/code/`; run after any package.json change; `--check` probes staleness)
 - `pnpm --dir apps/command-center build` → `previews/app/` (static explorer; JSON is inlined at build time, so rebuild after regenerating)
-- Serve locally via `.Codex/launch.json` → `previews-static` (port 4319) or `command-center` (vite dev, port 5176)
+- `node tools/telemetry-collector.mjs` → long-running collector on `127.0.0.1:4320` (Studio telemetry envelopes → `previews/dashboards/ui-catalog.json`, live heartbeats at `GET /live`)
+- Serve locally via `.claude/launch.json` → `previews-static` (port 4319) or `command-center` (vite dev, port 5176)
+- Ports (4319/4320/5176) are claimed in the cross-space port registry (`~/Master-Managed/Project-Spaces/Project-System/docs/port-registry.md`) — claim there before adding a server
 
 ## Related
 
