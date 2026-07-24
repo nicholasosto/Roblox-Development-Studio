@@ -1,8 +1,8 @@
 {
   "generatedBy": "tools/build-labs-status.mjs",
   "schemaVersion": 2,
-  "built": "2026-07-22T23:26:08.496Z",
-  "builtMs": 247,
+  "built": "2026-07-24T13:28:59.965Z",
+  "builtMs": 239,
   "labs": {
     "name": "roblox-labs",
     "path": "external-locations/code/roblox-labs",

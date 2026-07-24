@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 47,
-  "migrated": 47,
+  "entities": 51,
+  "migrated": 51,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -110,6 +110,24 @@
       "updated": "2026-07-21",
       "file": "_project/decisions/0010-session-lifecycle-activation.md",
       "excerpt": "The session kind declares a full lifecycle (planned → active → blocked → completed → shelved) that was never exercised: all six pre-existing sessions were hand-created retroactively at completed. /end produced only an i…"
+    },
+    {
+      "id": "0011-tgl-package-vs-syncback-boundary",
+      "kind": "decision",
+      "title": "TGL package vs syncback boundary",
+      "status": "accepted",
+      "updated": "2026-07-23",
+      "file": "_project/decisions/0011-tgl-package-vs-syncback-boundary.md",
+      "excerpt": "Trembus-Game-Library (TGL) is a Roblox Package — an asset-id-backed, Roblox-maintained, versioned instance library (currently v15, v16 pending), edited live in Studio. Its contents now land inside places that are record…"
+    },
+    {
+      "id": "0012-tgl-grand-package-model-and-satellite-naming",
+      "kind": "decision",
+      "title": "TGL grand-package model and satellite naming",
+      "status": "accepted",
+      "updated": "2026-07-24",
+      "file": "_project/decisions/0012-tgl-grand-package-model-and-satellite-naming.md",
+      "excerpt": "A live Studio probe (2026-07-24, hub place 102596975485791) found that TGL is not what the planning docs recorded. The actual package — Workspace.Trembus-Game-Library, PackageLink intact, rbxassetid://119571962868471, a…"
     },
     {
       "id": "2026-07-19-studio-labs-audit",
@@ -266,6 +284,32 @@
         "kos": "studio-mcp, blender-mcp, asset-studio, roblox-brain, memory"
       },
       "excerpt": "Audit the Codex-generated ancient-alien-architecture trim sheet PBR map set for correctness, and land whatever correction the audit justifies."
+    },
+    {
+      "id": "2026-07-23-rojo-packages-and-syncback-re-evaluation",
+      "kind": "session",
+      "title": "Rojo, packages, and syncback re-evaluation",
+      "status": "completed",
+      "updated": "2026-07-23",
+      "file": "_project/sessions/2026-07-23-rojo-packages-and-syncback-re-evaluation.md",
+      "tags": {
+        "last-active": "2026-07-23T15:38",
+        "kos": "packages-mono, roblox-labs, soul-steel, dashboards, decisions"
+      },
+      "excerpt": "Re-evaluate the rojo + @trembus package setup now that Trembus-Game-Library (TGL) is established: audit every repo behind external-locations/code/, confirm each syncback lane still matches how TGL is actually built and…"
+    },
+    {
+      "id": "2026-07-24-tgl-flow-and-structure-nail-the-concepts",
+      "kind": "session",
+      "title": "TGL flow and structure — nail the concepts",
+      "status": "completed",
+      "updated": "2026-07-24",
+      "file": "_project/sessions/2026-07-24-tgl-flow-and-structure-nail-the-concepts.md",
+      "tags": {
+        "last-active": "2026-07-24T09:28",
+        "kos": "decisions, soul-steel, dashboards, studio-mcp, memory"
+      },
+      "excerpt": "Nail down the concept model for TGL (Trembus-Game-Library, the Roblox Package) — its structure (composition, granularity, namespace ownership) and its flow (how content is authored, enters the package, gets recorded, an…"
     },
     {
       "id": "add-a-package",
@@ -513,9 +557,9 @@
   ],
   "byKind": {
     "decision": {
-      "total": 10,
+      "total": 12,
       "byStatus": {
-        "accepted": 10
+        "accepted": 12
       },
       "ids": [
         "0001-pnpm-monorepo-founding",
@@ -527,7 +571,9 @@
         "0007-dual-lane-ts-luau",
         "0008-studio-native-lab-lane",
         "0009-soul-steel-universe-topology",
-        "0010-session-lifecycle-activation"
+        "0010-session-lifecycle-activation",
+        "0011-tgl-package-vs-syncback-boundary",
+        "0012-tgl-grand-package-model-and-satellite-naming"
       ],
       "tone": "info",
       "statusOrder": [
@@ -591,9 +637,9 @@
       ]
     },
     "session": {
-      "total": 9,
+      "total": 11,
       "byStatus": {
-        "completed": 9
+        "completed": 11
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -604,7 +650,9 @@
         "2026-07-20-tools-lens-ux-polish",
         "2026-07-21-start-command-and-session-lifecycle",
         "2026-07-22-current-status-report",
-        "2026-07-22-trim-sheet-pbr-audit-and-correction"
+        "2026-07-22-trim-sheet-pbr-audit-and-correction",
+        "2026-07-23-rojo-packages-and-syncback-re-evaluation",
+        "2026-07-24-tgl-flow-and-structure-nail-the-concepts"
       ],
       "tone": "warning",
       "statusOrder": [
