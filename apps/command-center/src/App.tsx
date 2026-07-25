@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Brief, Card, Hub, Tabs } from '@trembus/ui';
 import type { BriefContract, SectionKind } from '@trembus/ui';
 import { domainById, entities, entitiesOfKinds, hub, hubData, kinds, prettify } from './contract';
@@ -7,16 +7,22 @@ import { PackagesExplorer } from './PackagesExplorer';
 import { ToolsPanel } from './tools/ToolsPanel';
 import { groupByStatus } from './status';
 
-// The four areas: the Hub overview (the Project-System contract made legible), the Packages
+const SpatialGridPanel = lazy(() => import('./spatial/SpatialGridPanel'));
+
+// The five areas: the Hub overview (the Project-System contract made legible), the Packages
 // explorer (the registry surface), the Catalog lens (the decision-0008 lab ledger feed), and the
-// Tools lens (lab toolchain + syncback status). Per-kind auto-tabs are deliberately omitted — the
-// hex drawer already lists every kind's entities.
-type NavEntry = { value: 'overview' | 'packages' | 'catalog' | 'tools'; label: string };
+// Tools lens (lab toolchain + syncback status), plus the provisional Spatial grid laboratory.
+// Per-kind auto-tabs are deliberately omitted — the hex drawer already lists every kind's entities.
+type NavEntry = {
+  value: 'overview' | 'packages' | 'catalog' | 'tools' | 'spatial';
+  label: string;
+};
 const AREAS: NavEntry[] = [
   { value: 'overview', label: 'Overview' },
   { value: 'packages', label: 'Packages' },
   { value: 'catalog', label: 'Catalog' },
   { value: 'tools', label: 'Tools' },
+  { value: 'spatial', label: 'Spatial' },
 ];
 
 // Deep-link support: the static landing shell links to `app/#packages`. Honor a leading hash that
@@ -196,6 +202,17 @@ export function App() {
         </Tabs.Panel>
         <Tabs.Panel value="tools" className="cc-panel">
           <ToolsPanel />
+        </Tabs.Panel>
+        <Tabs.Panel value="spatial" className="cc-panel">
+          <Suspense
+            fallback={
+              <div className="cc-section" role="status">
+                Loading the spatial grid laboratory…
+              </div>
+            }
+          >
+            <SpatialGridPanel />
+          </Suspense>
         </Tabs.Panel>
       </Tabs>
     </div>

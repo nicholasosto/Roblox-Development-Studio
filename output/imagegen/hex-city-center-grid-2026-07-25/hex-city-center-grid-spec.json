@@ -1,0 +1,233 @@
+{
+  "title": "Hex City Center Roblox Unit Grid",
+  "status": "measured-draft",
+  "revision": 1,
+  "date": "2026-07-25",
+  "authority": {
+    "dimensional": "This app-local JSON is the sole numeric authority; bundle JSON, SVG, and PNG are derived copies",
+    "canonicalSpec": "apps/command-center/src/spatial/fixtures/hex-city-center-grid-spec.json",
+    "sourceBundle": "output/imagegen/hex-city-center-grid-2026-07-25/",
+    "projectWorkflow": "_project/workflows/measured-spatial-grid-to-studio-blockout.md",
+    "vectorPreview": "output/imagegen/hex-city-center-grid-2026-07-25/hex-city-center-grid-measured-draft.svg",
+    "preview": "output/imagegen/hex-city-center-grid-2026-07-25/hex-city-center-grid-measured-draft.png",
+    "generatedConcept": "non-dimensional visual reference only"
+  },
+  "coordinateSystem": {
+    "plane": "X/Z",
+    "origin": [0, 0],
+    "imageRight": "+X",
+    "imageDown": "+Z",
+    "north": "-Z",
+    "verticalAxisShown": false
+  },
+  "view": {
+    "boundsStuds": {
+      "x": [-256, 256],
+      "z": [-256, 256]
+    },
+    "sizeStuds": [512, 512],
+    "pngPixels": [2048, 2048],
+    "plotPixels": [1792, 1792],
+    "plotPixelsPerStud": 3.5
+  },
+  "grid": {
+    "minorStuds": 4,
+    "majorStuds": 16,
+    "superStuds": 64
+  },
+  "hex": {
+    "orientation": "flat-top",
+    "construction": "For apothem A, vertices are (2A/sqrt(3),0), (A/sqrt(3),A), (-A/sqrt(3),A), (-2A/sqrt(3),0), (-A/sqrt(3),-A), (A/sqrt(3),-A).",
+    "core": {
+      "apothemStuds": 80,
+      "flatToFlatStuds": 160,
+      "pointToPointStuds": 184.752086
+    },
+    "innerSidewalkOuterEdge": {
+      "apothemStuds": 92,
+      "bandWidthStuds": 12,
+      "flatToFlatStuds": 184,
+      "pointToPointStuds": 212.464899
+    },
+    "roadCenterline": {
+      "apothemStuds": 108,
+      "flatToFlatStuds": 216,
+      "pointToPointStuds": 249.415316
+    },
+    "roadOuterEdge": {
+      "apothemStuds": 124,
+      "bandWidthStuds": 32,
+      "laneWidthStuds": 16,
+      "flatToFlatStuds": 248,
+      "pointToPointStuds": 286.365734
+    },
+    "outerSidewalkOuterEdge": {
+      "apothemStuds": 136,
+      "bandWidthStuds": 12,
+      "flatToFlatStuds": 272,
+      "pointToPointStuds": 314.078546
+    }
+  },
+  "approaches": {
+    "count": 6,
+    "normalAnglesDegreesFromPositiveX": [30, 90, 150, 210, 270, 330],
+    "roadWidthStuds": 32,
+    "laneWidthStuds": 16,
+    "sidewalkEachSideStuds": 12,
+    "sidewalkToSidewalkWidthStuds": 56,
+    "crosswalkDepthStuds": 12,
+    "crosswalkPaintHasPhysicalWidth": false
+  },
+  "appearance": {
+    "schema": "trembus.spatial-appearance/v1",
+    "revision": 1,
+    "projection": {
+      "mode": "world-xz",
+      "uAxis": "+X",
+      "vAxis": "-Z",
+      "anchor": [0, 0]
+    },
+    "textureAssets": [
+      {
+        "id": "spatial-orientation-diagnostic",
+        "role": "color",
+        "sourceKey": "spatial-orientation-diagnostic",
+        "optional": true
+      }
+    ],
+    "surfaceDefinitions": [
+      {
+        "id": "ground",
+        "maps": {},
+        "mapping": {
+          "tileStuds": [16, 16],
+          "offsetStuds": [0, 0],
+          "rotationDegrees": 0
+        },
+        "preview": {
+          "fallbackColor": "#0A0D12",
+          "roughness": 0.95,
+          "metalness": 0,
+          "normalStrength": 1
+        },
+        "roblox": {
+          "mode": "enumMaterial",
+          "material": "Ground",
+          "physics": "inherit"
+        }
+      },
+      {
+        "id": "core",
+        "maps": {},
+        "mapping": {
+          "tileStuds": [16, 16],
+          "offsetStuds": [0, 0],
+          "rotationDegrees": 0
+        },
+        "preview": {
+          "fallbackColor": "#D4AF37",
+          "roughness": 0.82,
+          "metalness": 0.02,
+          "normalStrength": 1
+        },
+        "roblox": {
+          "mode": "enumMaterial",
+          "material": "Concrete",
+          "physics": "inherit"
+        }
+      },
+      {
+        "id": "sidewalk",
+        "maps": {},
+        "mapping": {
+          "tileStuds": [16, 16],
+          "offsetStuds": [0, 0],
+          "rotationDegrees": 0
+        },
+        "preview": {
+          "fallbackColor": "#44DDFF",
+          "roughness": 0.88,
+          "metalness": 0,
+          "normalStrength": 1
+        },
+        "roblox": {
+          "mode": "enumMaterial",
+          "material": "Concrete",
+          "physics": "inherit"
+        }
+      },
+      {
+        "id": "road",
+        "maps": {
+          "color": "spatial-orientation-diagnostic"
+        },
+        "mapping": {
+          "tileStuds": [16, 16],
+          "offsetStuds": [0, 0],
+          "rotationDegrees": 0
+        },
+        "preview": {
+          "fallbackColor": "#5A6371",
+          "roughness": 0.92,
+          "metalness": 0,
+          "normalStrength": 1
+        },
+        "roblox": {
+          "mode": "enumMaterial",
+          "material": "Asphalt",
+          "physics": "inherit"
+        }
+      }
+    ],
+    "surfaceBindings": [
+      {
+        "geometryRole": "ground",
+        "surfaceId": "ground"
+      },
+      {
+        "geometryRole": "core",
+        "surfaceId": "core"
+      },
+      {
+        "geometryRole": "sidewalk.inner",
+        "surfaceId": "sidewalk"
+      },
+      {
+        "geometryRole": "sidewalk.outer",
+        "surfaceId": "sidewalk"
+      },
+      {
+        "geometryRole": "road.ring",
+        "surfaceId": "road"
+      },
+      {
+        "geometryRole": "road.approach",
+        "surfaceId": "road"
+      },
+      {
+        "geometryRole": "sidewalk.approach",
+        "surfaceId": "sidewalk"
+      }
+    ]
+  },
+  "implementationNotes": [
+    "All band widths are measured perpendicular to the regular hex edges.",
+    "Boundary strokes and road paint are annotations and add zero physical studs.",
+    "If one-stud curbs are added, subtract them from the sidewalk allocation unless the overall plan is deliberately enlarged.",
+    "Do not infer dimensions from the generated concept raster."
+  ],
+  "promotionGates": {
+    "projectEntityCreated": true,
+    "ownerTargetRecorded": true,
+    "studioImported": true,
+    "studioSaved": false,
+    "playQaCompleted": false,
+    "published": false,
+    "uploaded": false,
+    "registered": false,
+    "syncbackApplied": false,
+    "promotionAuthorized": false,
+    "promoted": false,
+    "committed": false
+  }
+}

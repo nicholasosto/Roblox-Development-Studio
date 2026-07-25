@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 51,
-  "migrated": 51,
+  "entities": 54,
+  "migrated": 54,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -155,6 +155,15 @@
       "updated": "2026-07-20",
       "file": "_project/pipeline/crystal-sanctum.md",
       "excerpt": "The user seed is the Crystal Sanctum, the Spirit Conclave's main seat of power and architectural masterpiece. A Soul Crystal enables an ultra-strong, almost weightless construction system, so the landmark should express…"
+    },
+    {
+      "id": "hex-city-center-spatial-lab-rev01",
+      "kind": "pipeline",
+      "title": "Hex City Center Spatial Lab REV01",
+      "status": "build",
+      "updated": "2026-07-25",
+      "file": "_project/pipeline/hex-city-center-spatial-lab-rev01.md",
+      "excerpt": "The accepted geometry revision 1 / appearance revision 1 contract is apps/command-center/src/spatial/fixtures/hex-city-center-grid-spec.json. The user authorized a reversible visual whitebox in the already-open testing…"
     },
     {
       "id": "slotable-items-cutover",
@@ -312,6 +321,19 @@
       "excerpt": "Nail down the concept model for TGL (Trembus-Game-Library, the Roblox Package) — its structure (composition, granularity, namespace ownership) and its flow (how content is authored, enters the package, gets recorded, an…"
     },
     {
+      "id": "2026-07-25-rojo-setup-analysis-across-the-development-space",
+      "kind": "session",
+      "title": "Rojo setup analysis across the development space",
+      "status": "active",
+      "updated": "2026-07-25",
+      "file": "_project/sessions/2026-07-25-rojo-setup-analysis-across-the-development-space.md",
+      "tags": {
+        "last-active": "2026-07-25T06:56",
+        "kos": "decisions, soul-steel, roblox-labs, packages-mono, dashboards"
+      },
+      "excerpt": "Produce a full analysis of the rojo setup across all five wrapped repos — every project file, its lane (syncback vs code-first), its rojo pin, its tree mappings, and its ignore boundaries — and surface where the actual…"
+    },
+    {
       "id": "add-a-package",
       "kind": "workflow",
       "title": "Add a package",
@@ -328,6 +350,15 @@
       "updated": "2026-07-20",
       "file": "_project/workflows/concept-to-studio-architectural-build.md",
       "excerpt": "Turn a user-authored architectural seed into a reviewed, runtime-neutral, manifest-driven Roblox Studio blockout. Every run keeps three genuinely different visual directions, per-section design records and diagrams, ass…"
+    },
+    {
+      "id": "measured-spatial-grid-to-studio-blockout",
+      "kind": "workflow",
+      "title": "Measured spatial grid to Studio blockout",
+      "status": "active",
+      "updated": "2026-07-25",
+      "file": "_project/workflows/measured-spatial-grid-to-studio-blockout.md",
+      "excerpt": "Turn a proposed environment layout into one measured X/Z JSON contract, inspect that same contract as a dimensioned 2D reference and a Command Center 3D spatial preview, and hand it to a reversible Roblox Studio whitebo…"
     },
     {
       "id": "ui-component-promotion",
@@ -598,14 +629,15 @@
       ]
     },
     "pipeline": {
-      "total": 5,
+      "total": 6,
       "byStatus": {
         "design": 2,
-        "build": 3
+        "build": 4
       },
       "ids": [
         "ancient-void-ship-arrival-environment",
         "crystal-sanctum",
+        "hex-city-center-spatial-lab-rev01",
         "slotable-items-cutover",
         "studio-telemetry-modernization",
         "v2-effects-library-normalization"
@@ -637,9 +669,10 @@
       ]
     },
     "session": {
-      "total": 11,
+      "total": 12,
       "byStatus": {
-        "completed": 11
+        "completed": 11,
+        "active": 1
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -652,7 +685,8 @@
         "2026-07-22-current-status-report",
         "2026-07-22-trim-sheet-pbr-audit-and-correction",
         "2026-07-23-rojo-packages-and-syncback-re-evaluation",
-        "2026-07-24-tgl-flow-and-structure-nail-the-concepts"
+        "2026-07-24-tgl-flow-and-structure-nail-the-concepts",
+        "2026-07-25-rojo-setup-analysis-across-the-development-space"
       ],
       "tone": "warning",
       "statusOrder": [
@@ -664,14 +698,15 @@
       ]
     },
     "workflow": {
-      "total": 3,
+      "total": 4,
       "byStatus": {
-        "active": 2,
+        "active": 3,
         "draft": 1
       },
       "ids": [
         "add-a-package",
         "concept-to-studio-architectural-build",
+        "measured-spatial-grid-to-studio-blockout",
         "ui-component-promotion"
       ],
       "tone": "neutral",
@@ -780,6 +815,12 @@
       "target": "decisions/0008-studio-native-lab-lane"
     },
     {
+      "from": "hex-city-center-spatial-lab-rev01",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "workflows/measured-spatial-grid-to-studio-blockout"
+    },
+    {
       "from": "slotable-items-cutover",
       "fromKind": "pipeline",
       "rel": "decided-in",
@@ -846,6 +887,18 @@
       "target": "workflows/ui-component-promotion"
     },
     {
+      "from": "measured-spatial-grid-to-studio-blockout",
+      "fromKind": "workflow",
+      "rel": "references",
+      "target": "workflows/concept-to-studio-architectural-build"
+    },
+    {
+      "from": "measured-spatial-grid-to-studio-blockout",
+      "fromKind": "workflow",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
       "from": "ui-component-promotion",
       "fromKind": "workflow",
       "rel": "references",
@@ -877,7 +930,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 21,
+    "references": 24,
     "decided-in": 4,
     "supersedes": 1
   },
@@ -1244,6 +1297,219 @@
           "status": "pending",
           "detail": "Remain prototype/BLK, mark proven, or authorize a separate production promotion",
           "note": "Creation does not silently promote, upload, publish, or choose a production package.",
+          "to": []
+        }
+      ]
+    },
+    "measured-spatial-grid-to-studio-blockout": {
+      "view": "swimlane",
+      "title": "Measured spatial grid to Studio blockout",
+      "code": "workflow.measured-spatial-grid-to-studio-blockout",
+      "caption": "A proposed layout becomes a validated stud-scale X/Z contract, reviewable 2D and 3D evidence, and an explicitly gated Studio whitebox.",
+      "lanes": [
+        {
+          "id": "you",
+          "label": "You",
+          "kind": "human"
+        },
+        {
+          "id": "together",
+          "label": "You + agents",
+          "kind": "neutral"
+        },
+        {
+          "id": "agent",
+          "label": "Spatial design agent",
+          "kind": "ai"
+        },
+        {
+          "id": "renderer",
+          "label": "Grid + renderer tooling",
+          "kind": "tool"
+        },
+        {
+          "id": "project",
+          "label": "Project System",
+          "kind": "system"
+        },
+        {
+          "id": "studio",
+          "label": "Roblox Studio",
+          "kind": "tool"
+        }
+      ],
+      "steps": [
+        {
+          "id": "brief",
+          "lane": "you",
+          "label": "State the spatial intent",
+          "detail": "Name the layout, player-scale goal, known dimensions, orientation, and what must remain conceptual",
+          "note": "A visual reference may guide composition, but its pixels are never dimensional authority.",
+          "to": [
+            "spec"
+          ]
+        },
+        {
+          "id": "spec",
+          "lane": "agent",
+          "label": "Author the measured X/Z contract",
+          "detail": "Stud units, bounds, origin, north, grid cadence, geometric bands, approaches, annotations, and promotion gates",
+          "note": "Use one machine-readable JSON source. Start every persistence and promotion gate false.",
+          "outputs": [
+            {
+              "label": "<design-bundle>/<design-slug>-grid-spec.json",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "validate"
+          ]
+        },
+        {
+          "id": "validate",
+          "lane": "renderer",
+          "label": "Validate schema, dimensions, and copies",
+          "detail": "Require X/Z, north -Z, finite bounded geometry, consistent derived widths, aligned approaches, zero-width paint, and byte-identical portable JSON copies",
+          "note": "Reject invalid input atomically so the last valid scene remains visible. A failed contract returns to authoring.",
+          "to": [
+            "reference",
+            "spec"
+          ]
+        },
+        {
+          "id": "reference",
+          "lane": "agent",
+          "label": "Render the measured 2D reference",
+          "detail": "Grid, dimensions, legend, origin, compass, roads, sidewalks, and explicit measured-draft labeling",
+          "outputs": [
+            {
+              "label": "<design-bundle>/<design-slug>-measured.svg",
+              "op": "create"
+            },
+            {
+              "label": "<design-bundle>/<design-slug>-measured.png",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "spatial"
+          ]
+        },
+        {
+          "id": "spatial",
+          "lane": "renderer",
+          "label": "Inspect the same JSON in Spatial",
+          "detail": "Perspective and orthographic top views, layer switches, unit readouts, geometry picking, and illustrative Y control",
+          "note": "The Command Center loads local JSON for review; local loads are ephemeral and do not mutate Studio or project records.",
+          "to": [
+            "review"
+          ]
+        },
+        {
+          "id": "review",
+          "lane": "together",
+          "label": "Review scale and circulation",
+          "detail": "Confirm footprint, band widths, approach alignment, player scale, sightlines, and whether the contract answers the design question",
+          "note": "Requesting changes returns to the JSON contract, not to manual edits of a derived image or 3D scene.",
+          "to": [
+            "revise",
+            "record"
+          ]
+        },
+        {
+          "id": "revise",
+          "lane": "agent",
+          "label": "Revise the authoritative JSON",
+          "outputs": [
+            {
+              "label": "<design-bundle>/<design-slug>-grid-spec.json",
+              "op": "modify"
+            }
+          ],
+          "to": [
+            "validate"
+          ]
+        },
+        {
+          "id": "record",
+          "lane": "project",
+          "label": "Record the accepted measured draft",
+          "detail": "Link the source bundle, verification evidence, authority statement, and still-open promotion gates",
+          "note": "Create or update project entities only through Project System tooling. Any portable JSON copy must match the canonical contract byte for byte; refresh the generated graph, hub, and static Command Center afterward.",
+          "outputs": [
+            {
+              "label": "<design-bundle>/README.md",
+              "op": "modify"
+            }
+          ],
+          "to": [
+            "owner"
+          ]
+        },
+        {
+          "id": "owner",
+          "lane": "you",
+          "label": "Choose owner, target place, and next state",
+          "detail": "Keep the grid as measured design evidence, or authorize a named reversible Studio whitebox",
+          "note": "No target project, TGL domain, place, or production path is inferred from the geometry alone.",
+          "to": [
+            "hold",
+            "pipeline"
+          ]
+        },
+        {
+          "id": "hold",
+          "lane": "project",
+          "label": "Retain measured-draft evidence",
+          "detail": "The contract remains available for review without Studio mutation",
+          "to": []
+        },
+        {
+          "id": "pipeline",
+          "lane": "project",
+          "label": "Scaffold the owned build pipeline",
+          "detail": "Use new-entity tooling; record target place, owned root, authoritative files, exit criteria, and promotion_authorized=false",
+          "outputs": [
+            {
+              "label": "_project/pipeline/<design-slug>.md",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "studio"
+          ]
+        },
+        {
+          "id": "studio",
+          "lane": "studio",
+          "label": "Build the reversible whitebox",
+          "detail": "Construct measured Parts under a uniquely named owned root in Edit mode; use Play only for disposable traversal QA",
+          "note": "Y dimensions become authoritative only when declared in the build manifest or pipeline. Do not save or publish without a separate authorization.",
+          "outputs": [
+            {
+              "label": "Studio DataModel/<owned-root>/<design-slug>",
+              "op": "create"
+            }
+          ],
+          "to": [
+            "verify"
+          ]
+        },
+        {
+          "id": "verify",
+          "lane": "together",
+          "label": "Verify geometry and playability",
+          "detail": "Measure hierarchy, footprint, anchoring, collision, traversal, sightlines, performance, and screenshots against the JSON contract",
+          "to": [
+            "promotion"
+          ]
+        },
+        {
+          "id": "promotion",
+          "lane": "you",
+          "label": "Declare the next lifecycle state",
+          "detail": "Remain a prototype, revise the contract, or separately authorize save, publish, upload, registry, syncback, and commit gates",
+          "note": "Each gate is independent; completing this workflow never closes an unperformed gate.",
           "to": []
         }
       ]
