@@ -37,8 +37,14 @@ export function CommandDock() {
             Copied <code className="cc-explorer__mono">{text}</code>
           </span>
         ) : (
-          // Same escape hatch the copy buttons name: every command shows in full on hover.
-          <span key={seq.current}>Copy failed — the command shows on hover</span>
+          // The rest of the lens can say "shown on hover" — its copy controls carry the
+          // command in a title attr (dossier) or inline in the table (toolbox). A CommandBar
+          // command has no such field, so pointing at a hover here would name an affordance
+          // the dock does not have: the readout has to BE the fallback and show the line to
+          // copy by hand. .cc-dock__status already wraps a full shell line for exactly this.
+          <span key={seq.current} className="cc-dock__status">
+            Copy failed — <code className="cc-explorer__mono">{text}</code>
+          </span>
         ),
       );
     });

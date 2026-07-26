@@ -21,6 +21,7 @@ import type { LabsRepo } from '../labs';
 import { latestReceivedAt } from '../catalog';
 import { built as packagesBuilt } from '../packages';
 import { hub } from '../contract';
+import { agoMs } from '../time';
 
 /** The code-first testing repo (CLAUDE.md's rojo-lane table) — not covered by the labs
  *  probe, which only walks the two SYNCBACK repos, so its path is a constant here. */
@@ -216,15 +217,35 @@ const repoGroup = (): CommandGroup => {
   };
 };
 
+/** A generator's output counts fresh for a day — the same threshold the toolbox badge uses. */
+const GEN_FRESH_MS = 24 * 60 * 60 * 1000;
+
+/** Generators — ONE disclosing command, not five flat ones. Five labelled top-level controls
+ *  outgrew the bar at every realistic width, so the group carrying the most-run commands was
+ *  the one the overflow ate first (order decides that, and generators build last); folded into
+ *  a menu it takes the shape every other group here already has and stays on the bar.
+ *
+ *  Each leaf's hint is what the command PRODUCES — the toolbox table's Produces column, moved
+ *  to where you decide what to run — flagged `· stale` past the freshness threshold. */
 const generatorGroup = (): CommandGroup => ({
   id: 'generators',
   label: 'Generators',
-  commands: GENERATORS.map((g) =>
-    cmd(g.id, g.label, g.command, {
-      glyph: g.id === 'gen.collector' ? 'network' : 'terminal',
-      showLabel: true,
-    }),
-  ),
+  commands: [
+    menu(
+      'gen',
+      'Generate',
+      'terminal',
+      GENERATORS.map((g) => {
+        // Read ONCE at module load, so the hint must not be a relative stamp: "6d ago" would
+        // freeze while the lens ticks on around it. Stale-vs-fresh survives a session honestly.
+        const age = agoMs(g.freshIso);
+        return cmd(g.id, g.label, g.command, {
+          glyph: g.id === 'gen.collector' ? 'network' : 'terminal',
+          hint: age !== null && age > GEN_FRESH_MS ? `${g.output} · stale` : g.output,
+        });
+      }),
+    ),
+  ],
 });
 
 /** The dock's whole model. Built once at module load — every input is build-time static
