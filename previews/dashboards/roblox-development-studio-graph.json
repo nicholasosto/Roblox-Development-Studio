@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 54,
-  "migrated": 54,
+  "entities": 55,
+  "migrated": 55,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -182,6 +182,15 @@
       "updated": "2026-07-19",
       "file": "_project/pipeline/studio-telemetry-modernization.md",
       "excerpt": "The [[studio-telemetry]] plugin was rescued from the soul-steel archive with its 2026-03 shape intact: soul-steel payloads (Workspace.Zones / Workspace.NPCs) and the legacy localhost:3001 dashboard endpoint. Meanwhile […"
+    },
+    {
+      "id": "traversal-testing-utility-blk-rev01",
+      "kind": "pipeline",
+      "title": "Traversal Testing Utility BLK REV01",
+      "status": "build",
+      "updated": "2026-07-25",
+      "file": "_project/pipeline/traversal-testing-utility-blk-rev01.md",
+      "excerpt": "The active Lab - Architecture experience needs a faster way to inspect measured environments without turning a local testing aid into production movement code. The requested first slice combines hold-to-sprint and opt-i…"
     },
     {
       "id": "v2-effects-library-normalization",
@@ -629,10 +638,10 @@
       ]
     },
     "pipeline": {
-      "total": 6,
+      "total": 7,
       "byStatus": {
         "design": 2,
-        "build": 4
+        "build": 5
       },
       "ids": [
         "ancient-void-ship-arrival-environment",
@@ -640,6 +649,7 @@
         "hex-city-center-spatial-lab-rev01",
         "slotable-items-cutover",
         "studio-telemetry-modernization",
+        "traversal-testing-utility-blk-rev01",
         "v2-effects-library-normalization"
       ],
       "tone": "success",
@@ -833,6 +843,12 @@
       "target": "decisions/0008-studio-native-lab-lane"
     },
     {
+      "from": "traversal-testing-utility-blk-rev01",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
       "from": "v2-effects-library-normalization",
       "fromKind": "pipeline",
       "rel": "references",
@@ -930,7 +946,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 24,
+    "references": 25,
     "decided-in": 4,
     "supersedes": 1
   },

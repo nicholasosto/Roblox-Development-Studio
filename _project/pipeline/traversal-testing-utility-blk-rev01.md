@@ -37,8 +37,9 @@ anti-cheat boundary.
 1. Refuse to build unless Studio is in Edit mode, the inspected Place ID still matches, the
    preserved loading GUI exists, and the owned root does not.
 2. Create one `_BLK` folder containing a single LocalScript plus in-place manifest attributes.
-3. Bind hold-Shift sprint without stealing the key from lower-priority systems; always restore the
-   character's observed base `WalkSpeed`.
+3. Bind hold-Left-Shift sprint at explicit priority and consume that key while this utility is
+   active so Roblox shift-lock does not also toggle. Do not change the place-wide
+   `EnableMouseLockOption`; always restore the character's observed base `WalkSpeed`.
 4. Treat two jump requests within 0.35 seconds, with the second request airborne, as flight entry.
    Use `LinearVelocity` and `AlignOrientation`, not deprecated body movers.
 5. Generate a native bottom-right HUD at runtime with ready, armed, sprint, boost, flight, and
@@ -64,3 +65,32 @@ anti-cheat boundary.
 - Edit audit and disposable Play QA are reported independently.
 - `promotion_authorized=false`; save, publish, upload, registry, syncback, promotion, staging, and
   commit remain false.
+
+## Implementation evidence
+
+Completed in the inspected `Lab - Architecture` Studio session:
+
+- Edit build created exactly one owned root,
+  `ReplicatedFirst.TrembusTraversalUtility_BLK`, containing one enabled LocalScript. The existing
+  `ReplicatedFirst.Loading` sibling, empty `StarterPlayerScripts`, empty `StarterGui`, Workspace,
+  Lighting, and Terrain were not changed.
+- Runtime created exactly one `PlayerGui.TrembusTraversalHUD_BLK`. The native indicator rendered
+  ready, sprint, armed, flight, and boost states with text plus color and a visible control legend.
+- Real Left-Shift input changed the observed Humanoid `WalkSpeed` from 16 to 28 and restored 16 on
+  release.
+- Two distinct jump inputs inside the 0.35-second window entered flight while airborne. The
+  current HumanoidRootPart received exactly one owned Attachment, LinearVelocity, and
+  AlignOrientation; Humanoid state became `Physics` and `AutoRotate` became false.
+- Flight QA passed 64-stud steering, 42-stud vertical rise target, 42-stud descent target with
+  safe ground collision, and 96-stud Shift boost. Q removed all three owned constraints, unbound
+  all three flight-only actions, restored `AutoRotate`, and restored 16 WalkSpeed.
+- Death during flight removed the old character's flight state. Automatic respawn retained
+  exactly one HUD, exactly two lifetime action bindings, zero flight bindings, zero owned
+  constraints, 16 WalkSpeed, and zero utility audit failures.
+- Console output contained only the expected utility transitions and existing shell/telemetry
+  messages; no utility warning or error was emitted.
+- Stop returned Studio to Edit mode. The authored root still had one descendant and the same
+  29,786-character source; `HexCityCenterSpatialLab_REV01` remained present with 465 descendants.
+
+Current gates: Edit build and disposable Play QA are complete. Save, Save to File, publish,
+upload, registry, syncback, promotion, staging, and commit remain false.

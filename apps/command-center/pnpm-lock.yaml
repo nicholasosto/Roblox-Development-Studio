@@ -9,17 +9,17 @@ importers:
   .:
     dependencies:
       '@trembus/game-viz':
-        specifier: ^0.3.1
-        version: 0.3.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.183.2)
+        specifier: ^0.4.1
+        version: 0.4.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.183.2)
       '@trembus/icons':
-        specifier: ^0.2.0
-        version: 0.2.0(react@19.2.7)
+        specifier: ^0.3.0
+        version: 0.3.0(react@19.2.7)
       '@trembus/ui':
-        specifier: ^0.8.1
-        version: 0.8.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.10.0
+        version: 0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@trembus/viz':
-        specifier: ^0.5.0
-        version: 0.5.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.5.1
+        version: 0.5.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react:
         specifier: ^19.0.0
         version: 19.2.7
@@ -476,18 +476,12 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@trembus/game-viz@0.3.1':
-    resolution: {integrity: sha512-2/WF9kAV5z/6nkU12Kl4R29zE49A+VWkcTGYqYF0QawwFVWq2Kg9h4Kukut723tyFzBAOJENuY40ezSnb4ELcQ==}
+  '@trembus/game-viz@0.4.1':
+    resolution: {integrity: sha512-cy5OtCVks0yG8jgW+rwRluuCKUQcnQ6fQ29ME0NYRJ7sniKAcTewmVbvtPTFQCs5Xw1r0569ZUMKlAfqZWul8Q==}
     engines: {node: '>=20'}
     peerDependencies:
       react: ^19.0.0
       react-dom: ^19.0.0
-
-  '@trembus/icons@0.1.0':
-    resolution: {integrity: sha512-TPlo0qvVOc05h+AxYw9YqSk+FDa3/7QSuzoOxaOOsLIpv2fJgSw/h43/mhZ7IH8ZqaPpdLFcWqXNCPz8E6PNUQ==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      react: ^19.0.0
 
   '@trembus/icons@0.2.0':
     resolution: {integrity: sha512-zAj9Ex9p8EL0p1sdqYr5QCulL1doQ97pAkObIBiJBGE9WurFxOrc4aLRnW0wLgG/dH9OaeCmMeRT65CZLjHN2g==}
@@ -495,8 +489,14 @@ packages:
     peerDependencies:
       react: ^19.0.0
 
-  '@trembus/tokens@0.1.0':
-    resolution: {integrity: sha512-WP1MtG9B5EGea3vqdjb3v6c8mADewC858x5JEZucO7RzUaGN7ngO7mrLUoMUfO+vltUhCmxzBpel4CNvfi0sHw==}
+  '@trembus/icons@0.3.0':
+    resolution: {integrity: sha512-PEL8gb0gR/NJgLdRfSW7dJmiNi4NolwwZO3nECFg8t9H9HWs6eMOE3HRVrJX+PyjbwSHIXTwblzJqvUROwzwUQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      react: ^19.0.0
+
+  '@trembus/tokens@0.2.2':
+    resolution: {integrity: sha512-HIWrxYY0K2/b6a9/gExU6JxOwddOYPNEGeDEvE3WWja1YUlZuINrh19VrMy6f84EifB/6h1BlEQqdAf2jhk4WQ==}
     engines: {node: '>=20'}
     peerDependencies:
       jest-axe: ^9.0.0
@@ -504,24 +504,22 @@ packages:
       jest-axe:
         optional: true
 
-  '@trembus/tokens@0.2.0':
-    resolution: {integrity: sha512-YssV15uw4ciAOfUsNkAaKHT/8ddl+22l7XJK2xIJIq1rh6D0ShcIq5q09an4EkWbnegko1ivz3YE8uJwmBzb5g==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      jest-axe: ^9.0.0
-    peerDependenciesMeta:
-      jest-axe:
-        optional: true
-
-  '@trembus/ui@0.8.1':
-    resolution: {integrity: sha512-ezHnz2q0+z7hxfZKAeUKoySI2G+Gv4UwltdqqcTpcM8Qqkl5d0U3UuY15lAeM1yY85rJdZWvWZ7cE7URnT6kSw==}
+  '@trembus/ui@0.10.0':
+    resolution: {integrity: sha512-GskWcskC9TV28Uu2vw26Wz+dqJk+UP3JKxcrosJMmkODVjbaqF0fjMk9oqss09Surm/ZY+nbiI32tDZalcJoPQ==}
     engines: {node: '>=20'}
     peerDependencies:
       react: ^19.0.0
       react-dom: ^19.0.0
 
-  '@trembus/viz@0.5.0':
-    resolution: {integrity: sha512-M3IoB7AVqMlcYYEAOBHHZYGTTCbWKyykHP9B3EF7emzTkARQ19v/tpUwkhjAhFXCV4b3FvHTaaLQoODpEGQiJg==}
+  '@trembus/ui@0.8.4':
+    resolution: {integrity: sha512-ZnHBWDyFCbICtRA2nQi1CNDBX/O0szBwPg7N7frvAPwZBXVTWcbep6YOawQtsAsZXoJRZddXGQ74FffpfxBkxg==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      react: ^19.0.0
+      react-dom: ^19.0.0
+
+  '@trembus/viz@0.5.1':
+    resolution: {integrity: sha512-hFTpKlbdfVZUazfZS7ebtZVuTJ1pQfxftnTYyVpF9o4C5ImjdHgGzbzvlHWgYWW28/ZiWdG6W4VoLJIKtuL4nA==}
     engines: {node: '>=20'}
     peerDependencies:
       react: ^19.0.0
@@ -1111,45 +1109,52 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.62.2':
     optional: true
 
-  '@trembus/game-viz@0.3.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.183.2)':
+  '@trembus/game-viz@0.4.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(three@0.183.2)':
     dependencies:
       '@google/model-viewer': 4.3.1(three@0.183.2)
       '@trembus/icons': 0.2.0(react@19.2.7)
-      '@trembus/tokens': 0.2.0
-      '@trembus/ui': 0.8.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@trembus/viz': 0.5.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@trembus/tokens': 0.2.2
+      '@trembus/ui': 0.8.4(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@trembus/viz': 0.5.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
     transitivePeerDependencies:
       - jest-axe
       - three
 
-  '@trembus/icons@0.1.0(react@19.2.7)':
-    dependencies:
-      react: 19.2.7
-
   '@trembus/icons@0.2.0(react@19.2.7)':
     dependencies:
       react: 19.2.7
 
-  '@trembus/tokens@0.1.0': {}
-
-  '@trembus/tokens@0.2.0': {}
-
-  '@trembus/ui@0.8.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@trembus/icons@0.3.0(react@19.2.7)':
     dependencies:
-      '@trembus/icons': 0.2.0(react@19.2.7)
-      '@trembus/tokens': 0.2.0
+      react: 19.2.7
+
+  '@trembus/tokens@0.2.2': {}
+
+  '@trembus/ui@0.10.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@trembus/icons': 0.3.0(react@19.2.7)
+      '@trembus/tokens': 0.2.2
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
     transitivePeerDependencies:
       - jest-axe
 
-  '@trembus/viz@0.5.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@trembus/ui@0.8.4(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@trembus/icons': 0.3.0(react@19.2.7)
+      '@trembus/tokens': 0.2.2
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
+    transitivePeerDependencies:
+      - jest-axe
+
+  '@trembus/viz@0.5.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@dagrejs/dagre': 3.0.0
-      '@trembus/icons': 0.1.0(react@19.2.7)
-      '@trembus/tokens': 0.1.0
+      '@trembus/icons': 0.2.0(react@19.2.7)
+      '@trembus/tokens': 0.2.2
       d3-hierarchy: 3.1.2
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)

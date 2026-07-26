@@ -21,6 +21,7 @@ import { Button, EmptyState, Tooltip } from '@trembus/ui';
 import { built, labs, projects } from '../labs';
 import { agoMs } from '../time';
 import { AttentionBanner, deriveAttention } from './AttentionBanner';
+import { CommandDock } from './CommandDock';
 import { ExperienceDossier } from './ExperienceDossier';
 import { ExperienceRail } from './ExperienceRail';
 import { StatusStrip } from './StatusStrip';
@@ -155,6 +156,9 @@ export function ToolsPanel() {
 
       {/* F + G — WORKBENCH · TOOLBOX · THE LOOP (sibling sections, own titles) */}
       <WorkbenchRunbook now={now} />
+
+      {/* H — COMMAND DOCK (sticky; the run-it surface stays reachable from any scroll depth) */}
+      <CommandDock />
     </div>
   );
 }

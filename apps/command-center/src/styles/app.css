@@ -1419,3 +1419,60 @@ body,
     white-space: normal;
   }
 }
+
+/* ── Tools: the command dock ──────────────────────────────────────────────────
+   FIXED, not sticky, and the distinction is forced rather than stylistic: .cc-panel sets
+   overflow:auto but never actually scrolls (.cc-app is min-height:100%, so the panel grows
+   to fit and the WINDOW is the scrollport). A sticky bottom element is additionally
+   clamped to its containing block, and the dock is .cc-explorer's last child — its natural
+   position already IS that block's bottom edge, leaving zero sticky range. Fixed sidesteps
+   both; the dock only mounts inside the Tools panel, so it cannot leak into other lenses.
+
+   __inner re-applies the 76rem section measure, and that constraint is load-bearing rather
+   than cosmetic: CommandBar measures natural group widths to decide what collapses into
+   "⋯", so a full-bleed parent would make every group "fit" and nothing would ever collapse. */
+.cc-dock {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 5;
+  padding: 0.6rem 1.75rem 0.7rem;
+  border-top: 1px solid var(--tcl-border-strong, rgba(255, 255, 255, 0.16));
+  /* The lens scrolls UNDER the dock, so the backdrop must be opaque — a translucent bar
+     would leave commands sitting on moving content and unreadable mid-scroll. */
+  background: var(--tcl-surface-raised, #16181d);
+}
+
+.cc-dock__inner {
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+/* Reserve the dock's own footprint so the Workbench's last section can still be scrolled
+   clear of it — a fixed bar takes no space in flow, so the room has to be given back. */
+.cc-explorer:has(.cc-dock) {
+  padding-bottom: 7rem;
+}
+
+.cc-dock__meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cc-dock__status code {
+  /* The readout carries a full shell line — let it wrap rather than widening the dock. */
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+@media (max-width: 720px) {
+  .cc-dock {
+    padding-inline: 1rem;
+  }
+  /* The bar wraps to more rows in a narrow column — give the reserve room to match. */
+  .cc-explorer:has(.cc-dock) {
+    padding-bottom: 10rem;
+  }
+}

@@ -6,68 +6,21 @@
 // that artifact's own inlined module — no new backend) — and the serialization loop as a
 // numbered step strip (footer-reference altitude, not document chrome).
 import { Badge, Callout, Card, IconButton, Inline, Stat, Table, Toolbar, Tooltip } from '@trembus/ui';
-import { latestReceivedAt } from '../catalog';
-import { built as packagesBuilt } from '../packages';
-import { hub } from '../contract';
-import { COLLECTOR_CMD, built as labsBuilt, fmtWhen, labs, toolchain, universe } from '../labs';
+import { fmtWhen, labs, toolchain, universe } from '../labs';
 import type { LabsRepo } from '../labs';
 import { agoMs, fmtAgo } from '../time';
 import { rojoDrift } from './AttentionBanner';
+// The generator roster lives with the rest of the command model (./commands) so the dock and
+// this table cannot disagree about what to run; the FRESHNESS pairing stays here, because
+// "how stale is what this produced" is information about an artifact, not a command.
+import { GENERATORS } from './commands';
+import type { GeneratorRow } from './commands';
 import { useCopyFlash } from './useCopyFlash';
 
 // A generator's output counts fresh for a day — same threshold as the probe-stale badge.
 const FRESH_MS = 24 * 60 * 60 * 1000;
 
-interface ToolRow {
-  id: string;
-  label: string;
-  command: string;
-  output: string;
-  /** ISO (or date-only) stamp of the artifact this tool last produced; absent → no badge. */
-  freshIso?: string;
-  freshLabel?: string;
-}
-
-// The workspace generator roster (CLAUDE.md's dashboard section, made copyable).
-const TOOLBOX: ToolRow[] = [
-  {
-    id: 'labs',
-    label: 'Labs status probe',
-    command: 'node tools/build-labs-status.mjs',
-    output: 'labs-status.json',
-    freshIso: labsBuilt,
-  },
-  {
-    id: 'packages',
-    label: 'Packages registry',
-    command: 'node tools/build-packages-registry.mjs',
-    output: 'packages.json',
-    freshIso: packagesBuilt,
-  },
-  {
-    id: 'hub',
-    label: 'Hub render',
-    command: 'node .project-system/tools/render-hub.mjs',
-    output: 'roblox-development-studio-{graph,hub}.json',
-    freshIso: (hub as { updated?: string }).updated,
-  },
-  {
-    id: 'collector',
-    label: 'Telemetry collector',
-    command: COLLECTOR_CMD,
-    output: 'ui-catalog.json + /live',
-    freshIso: latestReceivedAt,
-    freshLabel: 'last envelope',
-  },
-  {
-    id: 'bundle',
-    label: 'Explorer rebuild',
-    command: 'pnpm --dir apps/command-center build',
-    output: 'previews/app/',
-  },
-];
-
-function FreshnessBadge({ row, now }: { row: ToolRow; now: number }) {
+function FreshnessBadge({ row, now }: { row: GeneratorRow; now: number }) {
   const age = agoMs(row.freshIso, now);
   if (age === null) return <span className="cc-pkg-card__desc">—</span>;
   const stale = age > FRESH_MS;
@@ -255,7 +208,7 @@ export function WorkbenchRunbook({ now }: { now: number }) {
             </Table.Row>
           </Table.Head>
           <Table.Body>
-            {TOOLBOX.map((row) => (
+            {GENERATORS.map((row) => (
               <Table.Row key={row.id}>
                 <Table.Cell>{row.label}</Table.Cell>
                 <Table.Cell>
