@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 55,
-  "migrated": 55,
+  "entities": 57,
+  "migrated": 57,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -333,14 +333,40 @@
       "id": "2026-07-25-rojo-setup-analysis-across-the-development-space",
       "kind": "session",
       "title": "Rojo setup analysis across the development space",
-      "status": "active",
-      "updated": "2026-07-25",
+      "status": "completed",
+      "updated": "2026-07-26",
       "file": "_project/sessions/2026-07-25-rojo-setup-analysis-across-the-development-space.md",
       "tags": {
-        "last-active": "2026-07-25T06:56",
-        "kos": "decisions, soul-steel, roblox-labs, packages-mono, dashboards"
+        "last-active": "2026-07-26T04:34",
+        "kos": "decisions, soul-steel, roblox-labs, packages-mono, dashboards, studio-mcp"
       },
       "excerpt": "Produce a full analysis of the rojo setup across all five wrapped repos — every project file, its lane (syncback vs code-first), its rojo pin, its tree mappings, and its ignore boundaries — and surface where the actual…"
+    },
+    {
+      "id": "2026-07-26-incorporate-the-hex-city-center-spatial-contract-and-spatial",
+      "kind": "session",
+      "title": "Incorporate the hex city center spatial contract and Spatial lens",
+      "status": "completed",
+      "updated": "2026-07-26",
+      "file": "_project/sessions/2026-07-26-incorporate-the-hex-city-center-spatial-contract-and-spatial.md",
+      "tags": {
+        "last-active": "2026-07-26T12:33",
+        "kos": "command-center, decisions, studio-mcp, soul-steel, dashboards"
+      },
+      "excerpt": "Read the measured spatial work Codex built — the hex-city-center-grid-spec.json contract and the apps/command-center/src/spatial/ lens (~2.7k lines) — understand it end to end, and incorporate that knowledge where it du…"
+    },
+    {
+      "id": "2026-07-26-tools-lens-improvements-with-the-tcl-command-bar",
+      "kind": "session",
+      "title": "Tools lens improvements with the TCL Command Bar",
+      "status": "completed",
+      "updated": "2026-07-26",
+      "file": "_project/sessions/2026-07-26-tools-lens-improvements-with-the-tcl-command-bar.md",
+      "tags": {
+        "last-active": "2026-07-26T04:34",
+        "kos": "command-center, trembus-skills, dashboards"
+      },
+      "excerpt": "Improve the command-center's Tools section — assess what the Tools lens does today, where it falls short, and rework it around the new CommandBar component in the Trembus Component Library (@trembus/ui, already a depend…"
     },
     {
       "id": "add-a-package",
@@ -679,10 +705,9 @@
       ]
     },
     "session": {
-      "total": 12,
+      "total": 14,
       "byStatus": {
-        "completed": 11,
-        "active": 1
+        "completed": 14
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -696,7 +721,9 @@
         "2026-07-22-trim-sheet-pbr-audit-and-correction",
         "2026-07-23-rojo-packages-and-syncback-re-evaluation",
         "2026-07-24-tgl-flow-and-structure-nail-the-concepts",
-        "2026-07-25-rojo-setup-analysis-across-the-development-space"
+        "2026-07-25-rojo-setup-analysis-across-the-development-space",
+        "2026-07-26-incorporate-the-hex-city-center-spatial-contract-and-spatial",
+        "2026-07-26-tools-lens-improvements-with-the-tcl-command-bar"
       ],
       "tone": "warning",
       "statusOrder": [
