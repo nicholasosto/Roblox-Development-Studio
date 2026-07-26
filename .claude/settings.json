@@ -8,7 +8,15 @@
       "Bash(node tools/build-packages-registry.mjs:*)",
       "Bash(node tools/check-dashboard-drift.mjs:*)",
       "Bash(pnpm --dir apps/command-center run:*)",
-      "Bash(pnpm --dir apps/command-center build:*)"
+      "Bash(pnpm --dir apps/command-center build:*)",
+      "Bash(node /Users/nicholasosto/Master-Managed/Project-Spaces/Project-System/tools/check-consumer-drift.mjs:*)",
+      "Bash(node /Users/nicholasosto/Master-Managed/Project-Spaces/Project-System/tools/check-port-registry.mjs:*)"
+    ],
+    "deny": [
+      "Edit(./external-locations/**)",
+      "Write(./external-locations/**)",
+      "Edit(./.project-system/**)",
+      "Write(./.project-system/**)"
     ]
   },
   "hooks": {
