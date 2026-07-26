@@ -7,7 +7,7 @@ Planning space for the `@trembus` Roblox package platform. Wraps five code repos
 1. **Entities only via tooling** — create `_project/` files with `/new <kind> "<title>"` (or `node .project-system/tools/new-entity.mjs`). Never hand-write frontmatter; fill scaffolded sections with Edit afterward. A PreToolUse guard validates every `_project/` write.
 2. **Never edit `.project-system/`** — it is the vendored framework, drift-checked against `Project-Spaces/Project-System`. If it needs a change, change canonical and re-vendor.
 3. **Never mutate code through `external-locations/`** — those are read-through windows. Edit `roblox-packages-mono` / `roblox-labs` in their own repos/workspaces.
-4. **Decisions are serial** — `_project/decisions/0001…0010` exist; ADR 0005 is the slotable-items open-taxonomy decision cited by the repo. Do not renumber.
+4. **Decisions are serial** — `_project/decisions/0001…0012` exist; ADR 0005 is the slotable-items open-taxonomy decision cited by the repo. Do not renumber; `new-entity.mjs` derives the next serial as max+1 from the directory, so let the tool number it.
 
 ## Kinds
 
@@ -28,6 +28,16 @@ Tags: `lane: ts | luau` on package entities. The Luau lane is **reserved** — n
 - `pnpm --dir apps/command-center build` → `previews/app/` (static explorer; JSON is inlined at build time, so rebuild after regenerating)
 - Serve locally via `.claude/launch.json` → `previews-static` (port 4319) or `command-center` (vite dev, port 5176)
 - Ports (4319/4320/5176) are claimed in the cross-space port registry (`~/Master-Managed/Project-Spaces/Project-System/docs/port-registry.md`) — claim there before adding a server; 4320 is pinned (Studio senders + `live.ts` hardcode it)
+
+## Spatial contracts (the Spatial lens)
+
+A measured layout is authored as **one X/Z JSON contract** — one unit = one Roblox stud, north `-Z`, no authoritative Y — reviewed as a 2D reference and in the Command Center's **Spatial** lens, and only then handed to a gated Studio whitebox. Process: `_project/workflows/measured-spatial-grid-to-studio-blockout.md`. Concept rasters are **never** dimensional authority. Promotion gates (`promotionGates` in the JSON) all start false and each is closed separately — completing the workflow closes none of them.
+
+- **Canonical spec** — `apps/command-center/src/spatial/fixtures/<slug>-grid-spec.json`. The portable copy under `output/imagegen/<bundle>/` must stay **byte-identical**; that rule is stated in the workflow and the bundle README but **nothing enforces it** — no `--check`, no test, no hook. Verify with `shasum -a 256` before trusting either copy.
+- **Two schemas in one file.** The dimensional body carries only `revision` — *no* schema identifier. The nested `appearance` block is `trembus.spatial-appearance/v1`, matched by exact string, so any version bump discards the whole appearance block. It fails **soft**: geometry still renders, theme colors substitute, and the panel shows an `appearanceWarning` badge. No ADR governs this schema — its version policy currently lives only in a bundle README.
+- **Strictness runs backwards.** `validateGridSpec` recomputes every declared derived dimension from the apothems (`flatToFlat = 2A`, `pointToPoint = 4A/√3`, band widths = apothem deltas) and hard-rejects a mismatch over 0.001 — but it ignores unrecognized keys in the grid body, and never cross-checks the `approaches` block against the hex bands. The *cosmetic* appearance sub-schema is the only region with unknown-key rejection, id regexes, and bounded numerics.
+- **The lens** — `apps/command-center/src/spatial/`: `gridSpec.ts` (load + validate; the trust boundary) · `geometry.ts` (flat-top hex, annular bands, corridor clipping — no CSG anywhere) · `spatialScene.ts` (three.js renderer; **every Y is a hardcoded literal**, and the "Illustrative Y" slider is just `group.scale.y`) · `SpatialGridPanel.tsx` (fifth tab, `#spatial`, no env gate — it ships in `previews/app/`; loads a local JSON file ≤2 MiB, nothing uploaded or persisted).
+- Two gotchas worth knowing before you debug: `defaultGridSpecLoad` is an IIFE evaluated at **module import**, so a broken bundled fixture bricks the lens for the whole session; and the preview draws the outer sidewalk as an unbroken annulus, so each approach road's first 12 studs and its near crosswalk are **swallowed by the sidewalk ring** — the render understates the junctions, the JSON is fine.
 
 ## Wrapped repos & rojo lanes
 
