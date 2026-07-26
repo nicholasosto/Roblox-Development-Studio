@@ -1,13 +1,13 @@
 ---
 title: "Rojo setup analysis across the development space"
-status: active
-updated: 2026-07-25
-tags: { last-active: 2026-07-25T06:56, kos: "decisions, soul-steel, roblox-labs, packages-mono, dashboards" }
+status: completed
+updated: 2026-07-26
+tags: { last-active: 2026-07-26T04:34, kos: "decisions, soul-steel, roblox-labs, packages-mono, dashboards, studio-mcp" }
 ---
 
 # Rojo setup analysis across the development space
 
-> **Status:** active (2026-07-25)
+> **Status:** completed (2026-07-26)
 
 ## Goal
 
@@ -64,12 +64,6 @@ surface where the actual on-disk configuration diverges from what the decisions 
   keyed off `FX_SourceName` (the V2 authoring themes), one undo entry. Verified: 99/99 found,
   99/99 TGL attributes intact, 0 loose at root, PackageLink unchanged.
 
-## Blockers
-
-- Rule is **not yet proven to bite**: `places/hub.rbxl` predates the package insert, so the
-  dry-run had no TGL tree to exclude. Proof needs a fresh hub export, then
-  `rojo syncback hub --input places/hub.rbxl --dry-run --list`.
-
 - **Effects residue cleaned**: `Effects/00-Legacy` now quarantines the 4 attribute-less legacy
   Models (`Casts`, `HitPart`, `Environment`, `Status`) plus vestigial `Shared` and un-normalized
   `VFXParts`. The 6 light fixtures moved to `Props/Robotic` (3 renamed to break duplicate
@@ -80,6 +74,14 @@ surface where the actual on-disk configuration diverges from what the decisions 
   runtime API (consumes the `FX_Mode`/`FX_Duration`/`FX_Emit` contract the v2 pipeline stamps),
   not stray code, so it should ship with the package it drives.
 
+_(the two bullets above were misfiled under Blockers; moved at close-out, 2026-07-26)_
+
+## Blockers
+
+- Rule is **not yet proven to bite**: `places/hub.rbxl` predates the package insert, so the
+  dry-run had no TGL tree to exclude. Proof needs a fresh hub export, then
+  `rojo syncback hub --input places/hub.rbxl --dry-run --list`.
+
 ## Next Action
 
 Publish Package v16 from the hub home copy — the fold-in, theme sort, and residue cleanup are all
@@ -88,4 +90,20 @@ staged in the Workspace copy and unpublished. Before publishing, decide whether 
 
 ## Handoff Notes
 
-<what the next session needs to know>
+_(reconstructed at close-out, 2026-07-26)_
+
+- The session's stated goal — a cold inventory of every `*.project.json` across the five repos —
+  was **not** delivered; it pivoted on the first exchange into the live v16 fold-in review and
+  never came back. The rojo-lane analysis is still owed, and CLAUDE.md's lane table remains
+  unverified against on-disk config. Re-open it as its own session if it still matters.
+- What *did* land is real and unfinished downstream: `hub/default.project.json` in
+  `soul-steel-universe` carries the new `syncbackRules.ignoreTrees` and is **uncommitted**
+  (`git status` in that repo shows ` M hub/default.project.json` as of close-out). Committing it
+  is the operator's call.
+- Ordering still binds: rule → publish v16 → fresh hub export → syncback dry-run. The rule is on
+  disk but unproven, so the dry-run after the next export is what actually validates it.
+- ADR 0012 §5 is effectively satisfied by events — the fold-in was a move, so crystal-sanctum's
+  staging folder is gone and the pending `TGL-Staging` Studio rename is moot. Worth an ADR
+  amendment note if 0012 is ever revisited.
+- Three First-Principles Candidates above are unharvested (two → memory, one → decision); this
+  close-out did not run /end's Capture pass.
