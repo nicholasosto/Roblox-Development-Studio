@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "generatedBy": "tools/build-spec-registry.mjs@1",
-  "built": "2026-07-27T15:22:48.871Z",
-  "builtMs": 1785165768872,
+  "built": "2026-07-27T16:08:00.610Z",
+  "builtMs": 1785168480611,
   "counts": {
     "specs": 3,
     "loadable": 2,
@@ -15,7 +15,9 @@
       "exact": 2
     },
     "identityGroups": 1,
-    "identityMismatches": 0
+    "identityMismatches": 0,
+    "annotated": 1,
+    "openNotes": 3
   },
   "specs": [
     {
@@ -43,7 +45,15 @@
       },
       "pipelines": [
         "ancient-void-ship-arrival-environment"
-      ]
+      ],
+      "annotations": {
+        "path": "output/architecture/ancient-void-ship-arrival-environment/roblox-build-manifest.annotations.json",
+        "bytes": 1450,
+        "sha256": "f0dcff7334e50b02027bd2c460511f0d4e3edc4a54abfe3bf4b0cec8d2670372",
+        "notes": 3,
+        "open": 3,
+        "orphaned": 0
+      }
     },
     {
       "id": "hex-city-center-2floor.example",
