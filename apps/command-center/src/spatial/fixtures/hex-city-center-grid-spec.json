@@ -1,8 +1,8 @@
 {
   "title": "Hex City Center Roblox Unit Grid",
   "status": "measured-draft",
-  "revision": 1,
-  "date": "2026-07-25",
+  "revision": 2,
+  "date": "2026-07-27",
   "authority": {
     "dimensional": "This app-local JSON is the sole numeric authority; bundle JSON, SVG, and PNG are derived copies",
     "canonicalSpec": "apps/command-center/src/spatial/fixtures/hex-city-center-grid-spec.json",
@@ -76,7 +76,28 @@
     "sidewalkEachSideStuds": 12,
     "sidewalkToSidewalkWidthStuds": 56,
     "crosswalkDepthStuds": 12,
-    "crosswalkPaintHasPhysicalWidth": false
+    "crosswalkPaintHasPhysicalWidth": false,
+    "extentStuds": 256,
+    "extentBasis": "radial distance from origin to the approach terminus, measured along the face normal",
+    "roadStartApothemStuds": 124,
+    "sidewalkStartApothemStuds": 136
+  },
+  "elevation": {
+    "schema": "trembus.spatial-elevation/v1",
+    "revision": 1,
+    "datum": "road-surface",
+    "datumNote": "Y = 0 is the drivable road surface. Every value below is studs relative to that plane; positive is up.",
+    "surfaces": {
+      "ground": { "topStuds": -1, "thicknessStuds": 1 },
+      "core": { "topStuds": 2, "thicknessStuds": 3 },
+      "sidewalk.inner": { "topStuds": 1, "thicknessStuds": 2 },
+      "sidewalk.outer": { "topStuds": 1, "thicknessStuds": 2 },
+      "sidewalk.approach": { "topStuds": 1, "thicknessStuds": 2 },
+      "road.ring": { "topStuds": 0, "thicknessStuds": 1 },
+      "road.approach": { "topStuds": 0, "thicknessStuds": 1 }
+    },
+    "curbHeightStuds": 1,
+    "coreRiseAboveSidewalkStuds": 1
   },
   "appearance": {
     "schema": "trembus.spatial-appearance/v1",
@@ -213,7 +234,9 @@
   "implementationNotes": [
     "All band widths are measured perpendicular to the regular hex edges.",
     "Boundary strokes and road paint are annotations and add zero physical studs.",
-    "If one-stud curbs are added, subtract them from the sidewalk allocation unless the overall plan is deliberately enlarged.",
+    "The one-stud curb is now declared in elevation.curbHeightStuds as a vertical offset; it consumes no sidewalk width, so every X/Z band is unchanged from revision 1.",
+    "Approach roads terminate at approaches.extentStuds measured radially from the origin, not at the view boundary. All six approaches are the same length; revision 1 left this to the renderer, which clipped them to a square and made them unequal.",
+    "The approach road begins at the road band's outer edge (124) and the approach sidewalk at the outer sidewalk edge (136), so each approach road passes beneath the outer sidewalk ring for 12 studs.",
     "Do not infer dimensions from the generated concept raster."
   ],
   "promotionGates": {

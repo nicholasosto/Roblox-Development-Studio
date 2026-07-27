@@ -17,11 +17,18 @@ promoted runtime asset.
 - The optional `trembus.spatial-appearance/v1` block is viewer intent, independently versioned
   from geometry. Its bundled `_BLK` orientation diagnostic and Roblox material names do not prove
   uploaded assets, MaterialVariants, Studio application, or promotion.
+- The `trembus.spatial-elevation/v1` block added in geometry revision 2 is **dimensional, not
+  cosmetic**: unlike the appearance block it may not fail soft, because a substituted elevation
+  would silently produce a wrong build rather than a wrong colour.
 
 ## Current measured dimensions
 
-The geometry remains revision 1. Appearance revision 1 adds a 16-stud viewer-only orientation
+Geometry is at revision 2. Appearance revision 1 adds a 16-stud viewer-only orientation
 diagnostic to road top faces; it does not change dimensions or the derived REV 01 imagery.
+
+Revision 2 is **purely additive in X/Z** — every horizontal dimension below is unchanged from
+revision 1, so the derived SVG and PNG remain accurate. It adds the two quantities the plan
+previously left to the renderer to invent: surface elevations, and how far the approach roads run.
 
 | Element | Roblox studs |
 | --- | ---: |
@@ -31,10 +38,26 @@ diagnostic to road top faces; it does not change dimensions or the derived REV 0
 | Outer sidewalk | 12 edge-normal width |
 | Overall hex | 272 flat-to-flat; 314.079 point-to-point |
 | Each approach | 32 road + 12 sidewalk per side |
+| Approach extent | 256 radial from origin (all six equal) |
 | Drafting grid | 4 minor; 16 major; 64 super |
 | Visible plan window | 512 × 512 |
 
-The plan is centered at world origin. Image right is `+X`, image down is `+Z`, and north is `-Z`. The Roblox `Y` axis is intentionally not represented.
+Elevations, relative to the road surface at `Y = 0` (revision 2):
+
+| Surface | Top (studs) | Thickness |
+| --- | ---: | ---: |
+| Core | +2 | 3 |
+| Sidewalks (inner, outer, approach) | +1 | 2 |
+| Roads (ring, approach) | 0 | 1 |
+| Ground backdrop | −1 | 1 |
+
+The curb is the 1-stud step from road to sidewalk. It is a vertical offset only and consumes no
+sidewalk width, so every X/Z band is unchanged.
+
+The plan is centered at world origin. Image right is `+X`, image down is `+Z`, and north is `-Z`.
+The plan view itself remains 2D — `coordinateSystem.verticalAxisShown` stays `false` and the SVG
+and PNG show no vertical axis. Elevations live only in the `elevation` block, as a per-surface
+height table rather than as authored 3D geometry.
 
 The geometry uses regular-hex apothems, so sidewalk and road widths are true perpendicular offsets from each edge. White boundary strokes, lane paint, and crosswalk paint are annotations and add no physical width.
 
