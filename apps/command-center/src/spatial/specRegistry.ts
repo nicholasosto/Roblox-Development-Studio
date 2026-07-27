@@ -12,9 +12,20 @@
 // The content is globbed rather than embedded in the registry so a spec edit produces one diff
 // instead of two. Regenerate the facts with `node tools/build-spec-registry.mjs`.
 import specRegistry from '../../../../previews/dashboards/spatial-specs.json';
+import { sidecarPathFor } from './annotations';
 
 export type SpecFormat = 'grid-spec' | 'build-manifest';
 export type SpecPrecision = 'exact' | 'envelope';
+
+/** Registry facts about a spec's annotations sidecar — counts only; content comes from the glob. */
+export interface SpecAnnotationFacts {
+  path: string;
+  bytes: number;
+  sha256: string;
+  notes: number;
+  open: number;
+  orphaned: number;
+}
 
 export interface SpecCopy {
   path: string;
@@ -41,6 +52,7 @@ export interface SpecRegistryEntry {
   summary: Record<string, unknown>;
   pipelines: string[];
   copies?: SpecCopy[];
+  annotations?: SpecAnnotationFacts;
 }
 
 export interface SpecRegistryCounts {
@@ -50,6 +62,8 @@ export interface SpecRegistryCounts {
   byPrecision: Record<string, number>;
   identityGroups: number;
   identityMismatches: number;
+  annotated: number;
+  openNotes: number;
 }
 
 const registry = specRegistry as unknown as {
@@ -73,6 +87,20 @@ const documents = import.meta.glob<unknown>(
     './*.example.json',
     '../../../../output/architecture/*/roblox-build-manifest.json',
     '../../../../output/imagegen/*/*-grid-spec.json',
+    // Sidecars live in the same directories; keep the two maps disjoint.
+    '!**/*.annotations.json',
+  ],
+  { eager: true, import: 'default' },
+);
+
+// Annotation sidecars, same normalization, same inline-at-build-time behavior. A sidecar is keyed
+// by the spec it sits beside, joined via sidecarPathFor.
+const sidecars = import.meta.glob<unknown>(
+  [
+    './fixtures/*.annotations.json',
+    './*.annotations.json',
+    '../../../../output/architecture/*/*.annotations.json',
+    '../../../../output/imagegen/*/*.annotations.json',
   ],
   { eager: true, import: 'default' },
 );
@@ -90,9 +118,18 @@ const byPath = new Map<string, unknown>(
   Object.entries(documents).map(([key, value]) => [normalize(key), value]),
 );
 
+const sidecarByPath = new Map<string, unknown>(
+  Object.entries(sidecars).map(([key, value]) => [normalize(key), value]),
+);
+
 /** The parsed spec at a registry path, or undefined when the glob did not reach it. */
 export function specDocument(path: string): unknown | undefined {
   return byPath.get(path);
+}
+
+/** The raw sidecar value for a spec path, or undefined when none was inlined. */
+export function specSidecar(specPath: string): unknown | undefined {
+  return sidecarByPath.get(sidecarPathFor(specPath));
 }
 
 /** Registry entries the lens can actually open, in registry (id) order. */

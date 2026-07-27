@@ -1288,6 +1288,279 @@ body,
   color: var(--tcl-status-danger, #ff4444);
 }
 
+/* ── Build intent (manifest-only detail) ─────────────────────────────── */
+
+.cc-spatial__intent {
+  padding: 0.85rem 1rem 1rem;
+  border: 1px solid var(--tcl-border, rgba(255, 255, 255, 0.14));
+  border-radius: var(--tcl-radius-md, 5px);
+  background: color-mix(in oklab, var(--tcl-surface-sunken, #14181e) 88%, transparent);
+}
+
+.cc-spatial__intent-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: baseline;
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+}
+
+.cc-spatial__intent-head span {
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.62));
+  font-size: 0.72rem;
+}
+
+.cc-spatial__intent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+}
+
+.cc-spatial__intent-grid h4 {
+  margin: 0 0 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.62));
+}
+
+.cc-spatial__intent-empty {
+  margin: 0;
+  color: var(--tcl-text-faint, rgba(255, 255, 255, 0.45));
+  font-size: 0.72rem;
+}
+
+.cc-spatial__tokens,
+.cc-spatial__preserve,
+.cc-spatial__qa {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cc-spatial__qa {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.cc-spatial__tokens li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+}
+
+.cc-spatial__token-swatch {
+  flex: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 1px solid var(--tcl-border-strong, rgba(255, 255, 255, 0.3));
+  border-radius: 3px;
+}
+
+.cc-spatial__token-swatch[data-declared='false'] {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 3px,
+      color-mix(in oklab, var(--tcl-text-faint, rgba(255, 255, 255, 0.45)) 40%, transparent) 3px 5px
+    );
+}
+
+.cc-spatial__tokens code,
+.cc-spatial__preserve code,
+.cc-spatial__note-anchor code {
+  font-family: var(--tcl-font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  color: var(--tcl-text, rgba(255, 255, 255, 0.92));
+}
+
+.cc-spatial__token-material {
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.62));
+}
+
+.cc-spatial__tokens small,
+.cc-spatial__note-foot small {
+  color: var(--tcl-text-faint, rgba(255, 255, 255, 0.45));
+}
+
+.cc-spatial__caps {
+  margin: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.cc-spatial__caps div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+}
+
+.cc-spatial__caps dt {
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.62));
+}
+
+.cc-spatial__caps dd {
+  margin: 0;
+  font-family: var(--tcl-font-mono, ui-monospace, monospace);
+}
+
+.cc-spatial__preserve li {
+  overflow-wrap: anywhere;
+}
+
+/* ── Review notes (both formats) ─────────────────────────────────────── */
+
+.cc-spatial__notes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem 1rem;
+  border: 1px solid var(--tcl-border, rgba(255, 255, 255, 0.14));
+  border-radius: var(--tcl-radius-md, 5px);
+  background: color-mix(in oklab, var(--tcl-surface-sunken, #14181e) 88%, transparent);
+}
+
+.cc-spatial__notes-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.cc-spatial__notes-title {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.cc-spatial__notes-source {
+  margin: 0.15rem 0 0;
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.62));
+  font-family: var(--tcl-font-mono, ui-monospace, monospace);
+  font-size: 0.68rem;
+}
+
+.cc-spatial__notes-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.cc-spatial__notes-warnings {
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-left: 2px solid var(--tcl-status-warning, #ffaa33);
+  background: color-mix(in oklab, var(--tcl-status-warning, #ffaa33) 8%, transparent);
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.68));
+  font-size: 0.7rem;
+}
+
+.cc-spatial__notes-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.cc-spatial__notes-list li {
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--tcl-border, rgba(255, 255, 255, 0.14));
+  border-radius: var(--tcl-radius-md, 5px);
+}
+
+.cc-spatial__notes-list li[data-status='resolved'] {
+  opacity: 0.62;
+}
+
+.cc-spatial__note-anchor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.cc-spatial__note-text {
+  margin: 0.4rem 0 0.45rem;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.cc-spatial__note-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.68rem;
+}
+
+.cc-spatial__notes-empty {
+  margin: 0;
+  color: var(--tcl-text-faint, rgba(255, 255, 255, 0.45));
+  font-size: 0.74rem;
+}
+
+.cc-spatial__compose {
+  display: grid;
+  grid-template-columns: minmax(11rem, 16rem) 1fr minmax(6rem, 9rem) auto;
+  gap: 0.6rem;
+  align-items: end;
+}
+
+.cc-spatial__compose label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  color: var(--tcl-text-dim, rgba(255, 255, 255, 0.62));
+}
+
+.cc-spatial__compose select,
+.cc-spatial__compose textarea,
+.cc-spatial__compose input {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--tcl-border-strong, rgba(255, 255, 255, 0.3));
+  border-radius: var(--tcl-radius-md, 5px);
+  background: var(--tcl-surface, #1b2027);
+  color: var(--tcl-text, rgba(255, 255, 255, 0.92));
+  font: inherit;
+  font-size: 0.74rem;
+}
+
+.cc-spatial__compose textarea {
+  resize: vertical;
+  min-height: 2.4rem;
+}
+
+.cc-spatial__notes-honesty {
+  margin: 0;
+  color: var(--tcl-text-faint, rgba(255, 255, 255, 0.45));
+  font-size: 0.68rem;
+}
+
+@media (max-width: 60rem) {
+  .cc-spatial__compose {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+
 @media (max-width: 68rem) {
   .cc-spatial__metrics {
     grid-template-columns: repeat(3, minmax(0, 1fr));

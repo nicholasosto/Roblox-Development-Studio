@@ -42,6 +42,15 @@ export interface ManifestBudgets {
   scripts?: number;
 }
 
+export interface ManifestMaterialToken {
+  token: string;
+  fallbackMaterial: string;
+  /** CSS color derived from the declared `fallback_color` RGB triple, when it is a valid one. */
+  fallbackColor?: string;
+  /** The `_BLK` texture family this token is waiting on, or null when none is named. */
+  candidate: string | null;
+}
+
 export interface ManifestModel {
   kind: 'manifest';
   raw: Record<string, unknown>;
@@ -61,6 +70,8 @@ export interface ManifestModel {
   layers: ManifestLayer[];
   assemblyCount: number;
   budgets: ManifestBudgets;
+  materialTokens: ManifestMaterialToken[];
+  qaViews: string[];
   preserve: string[];
   promotionGates: Record<string, boolean>;
   /** Everything this reader could not make sense of, surfaced instead of thrown. */
@@ -187,6 +198,31 @@ export function validateBuildManifest(input: unknown): ManifestModel {
     scripts: typeof budgetsRaw.scripts_in_root_max === 'number' ? budgetsRaw.scripts_in_root_max : undefined,
   };
 
+  // Material tokens carry a fallback material/color pair plus the texture family they are waiting
+  // on. Only the fallback material is required; a bad color triple degrades to "no swatch".
+  const materialTokens: ManifestMaterialToken[] = [];
+  for (const [token, definitionRaw] of Object.entries(record(root.material_tokens))) {
+    const definition = record(definitionRaw);
+    const fallbackMaterial = text(definition.fallback_material, '');
+    if (!fallbackMaterial) {
+      warnings.push(`material_tokens.${token} declares no fallback_material and was skipped`);
+      continue;
+    }
+    const rgb = definition.fallback_color;
+    const fallbackColor =
+      Array.isArray(rgb) &&
+      rgb.length === 3 &&
+      rgb.every((n) => typeof n === 'number' && Number.isFinite(n) && n >= 0 && n <= 255)
+        ? `rgb(${rgb.map((n) => Math.round(n)).join(', ')})`
+        : undefined;
+    materialTokens.push({
+      token,
+      fallbackMaterial,
+      ...(fallbackColor ? { fallbackColor } : {}),
+      candidate: text(definition.candidate, '') || null,
+    });
+  }
+
   // The manifest tracks authorization as `*_authorized` booleans rather than a promotionGates
   // block; surface them through the same gate display so both formats read alike.
   const authorityRaw = record(root.authority);
@@ -221,6 +257,8 @@ export function validateBuildManifest(input: unknown): ManifestModel {
     layers,
     assemblyCount,
     budgets,
+    materialTokens,
+    qaViews: stringList(root.qa_views),
     preserve: stringList(root.preserve),
     promotionGates,
     warnings,

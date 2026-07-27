@@ -1,13 +1,26 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { Badge, Button, Callout, Card, Input, Switch, Toolbar } from '@trembus/ui';
 import { defaultGridSpecLoad, MAX_GRID_SPEC_BYTES, validateGridSpec } from './gridSpec';
-import { looksLikeBuildManifest, validateBuildManifest } from './buildManifest';
+import { looksLikeBuildManifest, validateBuildManifest, type ManifestModel } from './buildManifest';
 import {
   loadableSpecs,
   identityMismatches,
   specDocument,
+  specSidecar,
+  spatialSpecs,
   spatialSpecCounts,
 } from './specRegistry';
+import {
+  anchorLabel,
+  anchorOptions,
+  parseAnnotationsText,
+  parseAnnotationsValue,
+  resolvableAnchors,
+  serializeAnnotations,
+  sidecarNameForTitle,
+  sidecarPathFor,
+  type ReviewNote,
+} from './annotations';
 import {
   createSpatialScene,
   SPATIAL_LAYER_KEYS,
@@ -67,6 +80,55 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'The grid spec could not be loaded';
 }
 
+/** The registry path whose inlined document IS this model's raw input — a module-identity join. */
+function registryPathForModel(model: SpatialModel): string | undefined {
+  return loadableSpecs.find((entry) => specDocument(entry.path) === model.raw)?.path;
+}
+
+function isRegistryKey(specKey: string): boolean {
+  return !specKey.startsWith('local:') && !specKey.startsWith('bundled:');
+}
+
+/** The review-notes working set for one spec, plus where it came from and what parsing skipped. */
+interface NotesBundle {
+  notes: ReviewNote[];
+  /** JSON of the notes as loaded, so "unexported changes" is a comparison, not a guess. */
+  baseline: string;
+  source: string;
+  warnings: string[];
+}
+
+function emptyNotes(source: string): NotesBundle {
+  return { notes: [], baseline: '[]', source, warnings: [] };
+}
+
+function notesForKey(specKey: string): NotesBundle {
+  if (!isRegistryKey(specKey)) {
+    return emptyNotes('No sidecar · notes start empty for locally picked files');
+  }
+  const sidecar = specSidecar(specKey);
+  if (sidecar === undefined) {
+    const entry = spatialSpecs.find((candidate) => candidate.path === specKey);
+    if (entry?.annotations) {
+      // The glob-count lesson: the registry claims a sidecar this bundle never inlined.
+      return {
+        ...emptyNotes('No sidecar in this build'),
+        warnings: [
+          `The registry lists ${entry.annotations.path}, but this build did not inline it — regenerate the registry and rebuild the app`,
+        ],
+      };
+    }
+    return emptyNotes('No sidecar beside this spec yet — exporting creates one');
+  }
+  const parsed = parseAnnotationsValue(sidecar);
+  return {
+    notes: parsed.notes,
+    baseline: JSON.stringify(parsed.notes),
+    source: `Sidecar · ${sidecarPathFor(specKey)}`,
+    warnings: parsed.warnings,
+  };
+}
+
 function initialAppearanceState(spec: SpatialModel): SpatialAppearanceState {
   if (spec.kind === 'manifest') {
     return {
@@ -109,6 +171,96 @@ function SpatialUnavailable({ message }: { message: string }) {
   );
 }
 
+/** The manifest's non-geometric review payload — parsed since the first reader, surfaced here. */
+function ManifestDetails({ spec }: { spec: ManifestModel }) {
+  const budgetRows = [
+    { label: 'Baseparts', value: spec.budgets.baseparts },
+    { label: 'Active local lights', value: spec.budgets.localLights },
+    { label: 'Shadow-casting lights', value: spec.budgets.shadowCasters },
+    { label: 'Particle emitters', value: spec.budgets.particleEmitters },
+    { label: 'Scripts in root', value: spec.budgets.scripts },
+  ].filter((row) => row.value !== undefined);
+  return (
+    <section className="cc-spatial__intent" aria-label="Declared build intent">
+      <p className="cc-spatial__intent-head">
+        <strong>Build intent</strong>
+        <span>
+          declared by this manifest — the review content its geometry cannot carry
+        </span>
+      </p>
+      <div className="cc-spatial__intent-grid">
+        <article>
+          <h4>Material tokens · {spec.materialTokens.length}</h4>
+          {spec.materialTokens.length ? (
+            <ul className="cc-spatial__tokens">
+              {spec.materialTokens.map((token) => (
+                <li key={token.token}>
+                  <span
+                    className="cc-spatial__token-swatch"
+                    style={token.fallbackColor ? { background: token.fallbackColor } : undefined}
+                    data-declared={Boolean(token.fallbackColor)}
+                    aria-hidden="true"
+                  />
+                  <code>{token.token}</code>
+                  <span className="cc-spatial__token-material">{token.fallbackMaterial}</span>
+                  <small>{token.candidate ?? 'no candidate texture'}</small>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="cc-spatial__intent-empty">none declared</p>
+          )}
+        </article>
+        <article>
+          <h4>Budget caps</h4>
+          {budgetRows.length ? (
+            <dl className="cc-spatial__caps">
+              {budgetRows.map((row) => (
+                <div key={row.label}>
+                  <dt>{row.label}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <p className="cc-spatial__intent-empty">none declared</p>
+          )}
+        </article>
+        <article>
+          <h4>QA views · {spec.qaViews.length}</h4>
+          {spec.qaViews.length ? (
+            <ul className="cc-spatial__qa">
+              {spec.qaViews.map((view) => (
+                <li key={view}>
+                  <Badge tone="info" variant="outline" size="sm">
+                    {view}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="cc-spatial__intent-empty">none declared</p>
+          )}
+        </article>
+        <article>
+          <h4>Preserve paths · {spec.preserve.length}</h4>
+          {spec.preserve.length ? (
+            <ul className="cc-spatial__preserve">
+              {spec.preserve.map((path) => (
+                <li key={path}>
+                  <code>{path}</code>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="cc-spatial__intent-empty">none declared</p>
+          )}
+        </article>
+      </div>
+    </section>
+  );
+}
+
 function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -126,10 +278,21 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
     initialAppearanceState(initialSpec),
   );
   const [sourceLabel, setSourceLabel] = useState('Bundled measured draft');
-  const [activeSpecPath, setActiveSpecPath] = useState<string>();
+  // Which document the notes belong to. The bundled draft joins back to its registry entry by
+  // module identity, so its sidecar (and button highlight) work from the very first render.
+  const [initialKey] = useState(() => registryPathForModel(initialSpec) ?? 'bundled:initial');
+  const [activeSpecPath, setActiveSpecPath] = useState<string | undefined>(
+    isRegistryKey(initialKey) ? initialKey : undefined,
+  );
   const [status, setStatus] = useState(
     'Measured X/Z draft ready · no Studio or promotion state implied',
   );
+  const [noteState, setNoteState] = useState<NotesBundle>(() => notesForKey(initialKey));
+  const specKeyRef = useRef(initialKey);
+  const noteStashRef = useRef(new Map<string, NotesBundle>());
+  const [composeText, setComposeText] = useState('');
+  const [composeAnchor, setComposeAnchor] = useState('document');
+  const [noteAuthor, setNoteAuthor] = useState('');
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -191,11 +354,21 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
     controllerRef.current?.setYScale(value);
   };
 
-  const replaceSpec = (nextSpec: SpatialModel, source: string): void => {
+  const replaceSpec = (nextSpec: SpatialModel, source: string, specKey: string): void => {
     const controller = controllerRef.current;
     if (!controller) throw new Error('The 3D scene is not ready yet');
     controller.replaceSpec(nextSpec);
     setSpec(nextSpec);
+    // Notes follow their spec: stash the outgoing set, restore a stashed set on the way back,
+    // otherwise start from the spec's bundled sidecar. Nothing here persists past the session.
+    if (specKey !== specKeyRef.current) {
+      noteStashRef.current.set(specKeyRef.current, noteState);
+      specKeyRef.current = specKey;
+      setNoteState(noteStashRef.current.get(specKey) ?? notesForKey(specKey));
+      setComposeAnchor('document');
+      setComposeText('');
+    }
+    setActiveSpecPath(isRegistryKey(specKey) ? specKey : undefined);
     canvasRef.current?.setAttribute(
       'aria-label',
       `${nextSpec.title}, 3D X/Z preview. ${studs(nextSpec.size[0])} by ${studs(nextSpec.size[1])} studs. North is ${nextSpec.north}. Layer names and dimensions are listed beside this preview.`,
@@ -219,8 +392,7 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
       if (document === undefined) {
         throw new Error(`${id} is listed in the registry but was not inlined into this build`);
       }
-      replaceSpec(readSpatialValue(document), `Saved spec · ${id}`);
-      setActiveSpecPath(path);
+      replaceSpec(readSpatialValue(document), `Saved spec · ${id}`, path);
       setFileError(undefined);
     } catch (error) {
       setFileError(errorMessage(error));
@@ -238,7 +410,7 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
       }
       const text = await file.text();
       const nextSpec = parseSpatialDocument(text, file.size);
-      replaceSpec(nextSpec, `Local file · ${file.name}`);
+      replaceSpec(nextSpec, `Local file · ${file.name}`, `local:${file.name}`);
       setFileError(undefined);
     } catch (error) {
       setFileError(errorMessage(error));
@@ -250,7 +422,7 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
 
   const resetDraft = (): void => {
     try {
-      replaceSpec(initialSpec, 'Bundled measured draft');
+      replaceSpec(initialSpec, 'Bundled measured draft', initialKey);
       setLayers(DEFAULT_LAYERS);
       for (const key of SPATIAL_LAYER_KEYS) {
         controllerRef.current?.setLayerVisible(key, true);
@@ -265,6 +437,87 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
       setSceneError(errorMessage(error));
     }
   };
+
+  const anchors = useMemo(() => anchorOptions(spec), [spec]);
+  const anchorSet = useMemo(() => resolvableAnchors(spec), [spec]);
+
+  // Clicking geometry re-aims the compose anchor; the reviewer can still override it by hand.
+  useEffect(() => {
+    if (selection && anchorSet.has(selection.anchor)) setComposeAnchor(selection.anchor);
+  }, [selection, anchorSet]);
+
+  const addNote = (): void => {
+    const text = composeText.trim();
+    if (!text) return;
+    const note: ReviewNote = {
+      id: `note-${Date.now().toString(36)}`,
+      anchor: composeAnchor,
+      status: 'open',
+      text,
+      ...(noteAuthor.trim() ? { author: noteAuthor.trim() } : {}),
+      created: new Date().toISOString().slice(0, 10),
+    };
+    setNoteState((current) => ({ ...current, notes: [...current.notes, note] }));
+    setComposeText('');
+  };
+
+  const toggleNote = (id: string): void => {
+    setNoteState((current) => ({
+      ...current,
+      notes: current.notes.map((note) =>
+        note.id === id ? { ...note, status: note.status === 'open' ? 'resolved' : 'open' } : note,
+      ),
+    }));
+  };
+
+  const removeNote = (id: string): void => {
+    setNoteState((current) => ({
+      ...current,
+      notes: current.notes.filter((note) => note.id !== id),
+    }));
+  };
+
+  const exportNotes = (): void => {
+    const specKey = specKeyRef.current;
+    const registryKey = isRegistryKey(specKey);
+    const fileName = registryKey
+      ? (sidecarPathFor(specKey).split('/').pop() ?? 'annotations.json')
+      : sidecarNameForTitle(spec.title);
+    const blob = new Blob([serializeAnnotations(registryKey ? specKey : spec.title, noteState.notes)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+    setNoteState((current) => ({ ...current, baseline: JSON.stringify(current.notes) }));
+    setStatus(`Notes exported as ${fileName} · commit it beside the spec — this lens persists nothing`);
+  };
+
+  const onSidecarFileChange = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    if (!file) return;
+    const parsed = parseAnnotationsText(await file.text(), file.size);
+    const warnings = [...parsed.warnings];
+    const specKey = specKeyRef.current;
+    if (parsed.targetSpec && isRegistryKey(specKey) && parsed.targetSpec !== specKey) {
+      warnings.push(`This sidecar says it annotates ${parsed.targetSpec}, not the loaded spec`);
+    }
+    setNoteState({
+      notes: parsed.notes,
+      baseline: JSON.stringify(parsed.notes),
+      source: `Local sidecar · ${file.name}`,
+      warnings,
+    });
+    input.value = '';
+  };
+
+  const openNoteCount = noteState.notes.filter((note) => note.status === 'open').length;
+  const orphanedNoteCount = noteState.notes.filter((note) => !anchorSet.has(note.anchor)).length;
+  const notesDirty = JSON.stringify(noteState.notes) !== noteState.baseline;
 
   const promotionEntries = Object.entries(spec.promotionGates);
   const completedGates = promotionEntries.filter(([, complete]) => complete).length;
@@ -358,6 +611,9 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
           <span>
             {spatialSpecCounts.specs} found · {spatialSpecCounts.loadable} this lens can open ·
             registry, not a file picker
+            {spatialSpecCounts.openNotes
+              ? ` · ${spatialSpecCounts.openNotes} open review note(s) in sidecars`
+              : ''}
           </span>
         </p>
         <Toolbar aria-label="Open a saved spec">
@@ -370,7 +626,9 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
               tone={entry.path === activeSpecPath ? 'accent' : 'neutral'}
               onPress={() => openSavedSpec(entry.path, entry.id)}
             >
-              {`${entry.title} · ${entry.precision === 'exact' ? 'measured' : 'envelope'}`}
+              {`${entry.title} · ${entry.precision === 'exact' ? 'measured' : 'envelope'}${
+                entry.annotations ? ` · ${entry.annotations.notes} note(s)` : ''
+              }`}
             </Button>
           ))}
         </Toolbar>
@@ -540,6 +798,145 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
       <p className="cc-spatial__status" aria-live="polite">
         Appearance · {appearanceState.message}
       </p>
+
+      {spec.kind === 'manifest' ? <ManifestDetails spec={spec} /> : null}
+
+      <section className="cc-spatial__notes" aria-label="Review notes">
+        <div className="cc-spatial__notes-head">
+          <div>
+            <p className="cc-spatial__notes-title">Review notes</p>
+            <p className="cc-spatial__notes-source">{noteState.source}</p>
+          </div>
+          <div className="cc-spatial__notes-meta">
+            <Badge tone={openNoteCount ? 'warning' : 'success'} variant="soft" size="sm">
+              {noteState.notes.length} note(s) · {openNoteCount} open
+            </Badge>
+            {orphanedNoteCount ? (
+              <Badge tone="danger" variant="soft" size="sm">
+                {orphanedNoteCount} orphaned
+              </Badge>
+            ) : null}
+            {notesDirty ? (
+              <Badge tone="info" variant="soft" size="sm">
+                unexported changes
+              </Badge>
+            ) : null}
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              tone="neutral"
+              disabled={!noteState.notes.length}
+              onPress={exportNotes}
+            >
+              Export sidecar
+            </Button>
+          </div>
+        </div>
+
+        {noteState.warnings.length ? (
+          <ul className="cc-spatial__notes-warnings" role="status">
+            {noteState.warnings.map((warning) => (
+              <li key={warning}>{warning}</li>
+            ))}
+          </ul>
+        ) : null}
+
+        {noteState.notes.length ? (
+          <ul className="cc-spatial__notes-list">
+            {noteState.notes.map((note) => {
+              const orphaned = !anchorSet.has(note.anchor);
+              return (
+                <li key={note.id} data-status={note.status}>
+                  <div className="cc-spatial__note-anchor">
+                    <code>{anchorLabel(note.anchor, spec)}</code>
+                    <Badge tone={note.status === 'open' ? 'warning' : 'success'} variant="outline" size="sm">
+                      {note.status}
+                    </Badge>
+                    {orphaned ? (
+                      <Badge tone="danger" variant="soft" size="sm">
+                        orphaned · written against “{note.anchor}”
+                      </Badge>
+                    ) : null}
+                  </div>
+                  <p className="cc-spatial__note-text">{note.text}</p>
+                  <div className="cc-spatial__note-foot">
+                    <small>{[note.author, note.created].filter(Boolean).join(' · ') || 'unattributed'}</small>
+                    <span>
+                      <Button type="button" size="sm" variant="ghost" tone="neutral" onPress={() => toggleNote(note.id)}>
+                        {note.status === 'open' ? 'Resolve' : 'Reopen'}
+                      </Button>
+                      <Button type="button" size="sm" variant="ghost" tone="danger" onPress={() => removeNote(note.id)}>
+                        Remove
+                      </Button>
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="cc-spatial__notes-empty">
+            No notes yet — click geometry to aim the anchor, or write against the whole document.
+          </p>
+        )}
+
+        <div className="cc-spatial__compose">
+          <label className="cc-spatial__compose-anchor">
+            <span>Anchor</span>
+            <select
+              value={composeAnchor}
+              onChange={(event) => setComposeAnchor(event.currentTarget.value)}
+            >
+              {anchors.map((option) => (
+                <option key={option.anchor} value={option.anchor}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="cc-spatial__compose-text">
+            <span>Note</span>
+            <textarea
+              rows={2}
+              value={composeText}
+              placeholder="What should change, stay, or be checked before the next build pass?"
+              onChange={(event) => setComposeText(event.currentTarget.value)}
+            />
+          </label>
+          <label className="cc-spatial__compose-author">
+            <span>Author</span>
+            <input
+              type="text"
+              value={noteAuthor}
+              placeholder="optional"
+              onChange={(event) => setNoteAuthor(event.currentTarget.value)}
+            />
+          </label>
+          <Button
+            type="button"
+            size="sm"
+            tone="accent"
+            disabled={!composeText.trim()}
+            onPress={addNote}
+          >
+            Add note
+          </Button>
+        </div>
+
+        <Input
+          type="file"
+          accept="application/json,.json"
+          label="Load an annotations sidecar"
+          description="Replaces the notes above for this spec · read locally, never uploaded."
+          onChange={(event) => void onSidecarFileChange(event)}
+          containerClassName="cc-spatial__file"
+        />
+        <p className="cc-spatial__notes-honesty">
+          Notes live in this lens session until exported — the sidecar is a download you commit
+          beside the spec, where it diffs in git and can be handed to a builder.
+        </p>
+      </section>
 
       <Callout
         tone="warning"

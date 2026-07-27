@@ -1,0 +1,30 @@
+{
+  "schema": "trembus.spatial-annotations/v1",
+  "targetSpec": "output/architecture/ancient-void-ship-arrival-environment/roblox-build-manifest.json",
+  "notes": [
+    {
+      "id": "vs-001",
+      "anchor": "document",
+      "status": "open",
+      "author": "Claude (spatial lens review)",
+      "created": "2026-07-27",
+      "text": "The manifest declares forward_axis +Z and teleport_axis -Z but no north; the lens draws it under its own north = -Z convention. Confirm the orientation mapping against the hub before any rebuild places this geometry relative to hub north."
+    },
+    {
+      "id": "vs-002",
+      "anchor": "assembly:void-vignettes",
+      "status": "open",
+      "author": "Claude (spatial lens review)",
+      "created": "2026-07-27",
+      "text": "Declared temporary ('temporary porthole exterior', skybox-independent review) while the skybox asset_candidate is still 'proposed; six faces not generated'. Before any promotion gate closes, decide whether the vignettes are replaced by the real skybox family or explicitly kept."
+    },
+    {
+      "id": "vs-003",
+      "anchor": "assembly:porthole-bays",
+      "status": "open",
+      "author": "Claude (spatial lens review)",
+      "created": "2026-07-27",
+      "text": "Largest single part budget in the build (54 of 180 baseparts). If the build ever needs headroom this is the first candidate; the porthole-closeup QA view already covers regressions here."
+    }
+  ]
+}

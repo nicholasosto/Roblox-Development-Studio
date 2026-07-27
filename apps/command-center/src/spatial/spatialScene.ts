@@ -121,6 +121,10 @@ export function resolveElevation(spec: GridSpec): ResolvedElevation {
 export interface SpatialSelection {
   key: 'core' | 'sidewalks' | 'road' | 'approaches' | 'assemblies';
   detail: string;
+  /** Annotation anchor for what was clicked — `region:<key>`, or `layer:y:<y>` for a manifest plate. */
+  anchor: string;
+  /** Assembly ids sharing a clicked manifest plate, so notes can target one of them directly. */
+  assemblies?: string[];
 }
 
 export type SpatialAppearanceStatus =
@@ -383,6 +387,8 @@ function createManifestWorld(model: ManifestModel, materials: MaterialSet): Worl
       const plate = new THREE.BoxGeometry(envelopeX, PLATE_STUDS, envelopeZ);
       plate.translate(originX, layer.y, originZ);
       const mesh = meshFromGeometry(plate, materials.assemblyFace, 'assemblies', detail);
+      mesh.userData.anchor = `layer:y:${layer.y}`;
+      mesh.userData.assemblies = layer.assemblies.map((assembly) => assembly.id);
       groups.assemblies.add(mesh);
       selectables.push(mesh);
       // Outlined as well as filled: stacked translucent plates otherwise blend into one mass and
@@ -1241,8 +1247,11 @@ export function createSpatialScene(
     }
     const key = hit.object.userData.selectKey as SelectKey;
     const detail = hit.object.userData.detail as string;
+    // Grid meshes carry no explicit anchor — their select key IS the region vocabulary.
+    const anchor = (hit.object.userData.anchor as string | undefined) ?? `region:${key}`;
+    const assemblies = hit.object.userData.assemblies as string[] | undefined;
     applySelection(key);
-    callbacks.onSelection({ key, detail });
+    callbacks.onSelection({ key, detail, anchor, ...(assemblies ? { assemblies } : {}) });
   };
 
   const resize = (width: number, height: number): void => {

@@ -191,6 +191,63 @@ function summarize(format, doc) {
   return {};
 }
 
+// ── annotation sidecars ───────────────────────────────────────────────────
+// A `<spec>.annotations.json` beside a spec is its review sidecar (schema
+// trembus.spatial-annotations/v1). The registry carries COUNTS only — notes,
+// open, orphaned — never the note text; content stays in the sidecar, which
+// the lens inlines the same way it inlines specs.
+const ANNOTATIONS_SCHEMA = "trembus.spatial-annotations/v1";
+
+/** The anchors a document can resolve — mirrors annotations.ts in the lens. */
+function anchorVocabulary(format, doc) {
+  const anchors = new Set(["document"]);
+  if (format === "build-manifest") {
+    for (const a of doc.assemblies) {
+      if (a && typeof a.id === "string" && a.id.trim()) anchors.add(`assembly:${a.id.trim()}`);
+      if (a && typeof a.layer_y === "number") anchors.add(`layer:y:${a.layer_y}`);
+    }
+  } else if (format === "grid-spec") {
+    for (const region of ["core", "sidewalks", "road", "approaches"]) {
+      anchors.add(`region:${region}`);
+    }
+  }
+  return anchors;
+}
+
+function sidecarFacts(specAbs, format, doc, warnings) {
+  const abs = specAbs.replace(/\.json$/, ".annotations.json");
+  if (!existsSync(abs)) return undefined;
+  const raw = readFileSync(abs);
+  const path = rel(abs);
+  let parsed;
+  try {
+    parsed = JSON.parse(raw.toString("utf8"));
+  } catch (error) {
+    warnings.push(`${path} is not valid JSON (${error.message}) — sidecar ignored`);
+    return undefined;
+  }
+  if (parsed?.schema !== ANNOTATIONS_SCHEMA) {
+    warnings.push(
+      `${path} declares schema ${JSON.stringify(parsed?.schema ?? null)}, not ${ANNOTATIONS_SCHEMA} — sidecar ignored`,
+    );
+    return undefined;
+  }
+  const vocabulary = anchorVocabulary(format, doc);
+  const notes = (Array.isArray(parsed.notes) ? parsed.notes : []).filter(
+    (note) => note && typeof note === "object" && typeof note.text === "string" && note.text.trim(),
+  );
+  return {
+    path,
+    bytes: raw.byteLength,
+    sha256: createHash("sha256").update(raw).digest("hex"),
+    notes: notes.length,
+    open: notes.filter((note) => note.status !== "resolved").length,
+    orphaned: notes.filter(
+      (note) => typeof note.anchor === "string" && note.anchor.trim() && !vocabulary.has(note.anchor.trim()),
+    ).length,
+  };
+}
+
 // ── pipeline edges ────────────────────────────────────────────────────────
 function pipelineIndex() {
   return listFiles(PIPELINE_DIR, (n) => n.endsWith(".md")).map((p) => ({
@@ -257,6 +314,9 @@ function buildPayload() {
         typeof doc.authority?.canonicalSpec === "string" ? doc.authority.canonicalSpec : null,
       summary: summarize(format, doc),
       pipelines: pipelinesFor(path, pipelines),
+      ...((annotations) => (annotations ? { annotations } : {}))(
+        sidecarFacts(abs, format, doc, warnings),
+      ),
     });
   }
 
@@ -267,6 +327,12 @@ function buildPayload() {
   for (const entry of entries) {
     const canonical = entry.canonicalSpec;
     if (canonical && canonical !== entry.path && byPathIndex.has(canonical)) {
+      if (entry.annotations) {
+        warnings.push(
+          `${entry.annotations.path} sits beside a portable COPY and is ignored — annotate the canonical ${canonical}`,
+        );
+        delete entry.annotations;
+      }
       const target = byPathIndex.get(canonical);
       target.copies = target.copies ?? [];
       target.copies.push({
@@ -314,6 +380,8 @@ function buildPayload() {
       byPrecision: tally(specs, (s) => s.precision),
       identityGroups,
       identityMismatches,
+      annotated: specs.filter((s) => s.annotations).length,
+      openNotes: specs.reduce((sum, s) => sum + (s.annotations?.open ?? 0), 0),
     },
     specs,
   };
@@ -381,6 +449,7 @@ function main() {
   console.log(
     `  identity:    ${c.identityGroups} canonical/copy group(s) · ${c.identityMismatches} mismatch(es)`,
   );
+  console.log(`  annotations: ${c.annotated} spec(s) with sidecars · ${c.openNotes} open note(s)`);
   for (const spec of payload.specs) {
     if (!spec.loadable) console.log(`  NOT LOADABLE: ${spec.path} — ${spec.reason}`);
   }
