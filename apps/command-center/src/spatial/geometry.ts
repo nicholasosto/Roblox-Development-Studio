@@ -161,6 +161,82 @@ export function hexRingGeometry(
   return finalizeSurfaceGeometry(indexed, topIndexCount);
 }
 
+export interface RingGap {
+  /** Face-normal angle, degrees from +X — the same convention approaches use. */
+  angleDegrees: number;
+  /** Half the gap measured along the hex edge, so a 32-stud road passes 16. */
+  halfWidth: number;
+}
+
+/**
+ * The band of a hex ring, cut wherever something crosses it, returned as CCW X/Z quads.
+ *
+ * An unbroken annulus swallows whatever passes beneath it — for the outer sidewalk that means
+ * each approach road's first band-width of travel and its near crosswalk, the junction being
+ * the very thing a blockout review needs to see. A pedestrian ring genuinely stops at a
+ * roadway, so cutting it is what the plan already describes rather than a rendering trick.
+ *
+ * Callers extrude each quad separately, which also yields the cut cross-section at every gap.
+ */
+export function hexRingSegments(
+  innerApothem: number,
+  outerApothem: number,
+  origin: StudPair,
+  gaps: readonly RingGap[] = [],
+): XzPoint[][] {
+  if (!(innerApothem < outerApothem)) {
+    throw new Error('A hex ring needs an inner apothem smaller than its outer apothem');
+  }
+  const innerHalfSpan = innerApothem / Math.sqrt(3);
+  const outerHalfSpan = outerApothem / Math.sqrt(3);
+  const normalized = (angle: number): number => ((angle % 360) + 360) % 360;
+
+  const segments: XzPoint[][] = [];
+  for (let edge = 0; edge < 6; edge += 1) {
+    // Flat-top faces sit at 30° + 60°·edge, matching the approach angles the spec declares.
+    const angleDegrees = 30 + 60 * edge;
+    const radians = (angleDegrees * Math.PI) / 180;
+    const normal: XzPoint = [Math.cos(radians), Math.sin(radians)];
+    const tangent: XzPoint = [-Math.sin(radians), Math.cos(radians)];
+    const at = (apothem: number, lateral: number): XzPoint => [
+      origin[0] + normal[0] * apothem + tangent[0] * lateral,
+      origin[1] + normal[1] * apothem + tangent[1] * lateral,
+    ];
+
+    const gap = gaps.find(
+      (candidate) =>
+        Math.abs(normalized(candidate.angleDegrees) - angleDegrees) < 0.000001,
+    );
+    if (!gap || gap.halfWidth <= 0) {
+      segments.push([
+        at(innerApothem, -innerHalfSpan),
+        at(outerApothem, -outerHalfSpan),
+        at(outerApothem, outerHalfSpan),
+        at(innerApothem, innerHalfSpan),
+      ]);
+      continue;
+    }
+    if (gap.halfWidth >= innerHalfSpan) {
+      throw new Error(
+        'A ring gap may not span the whole hex edge it is cut from',
+      );
+    }
+    segments.push([
+      at(innerApothem, -innerHalfSpan),
+      at(outerApothem, -outerHalfSpan),
+      at(outerApothem, -gap.halfWidth),
+      at(innerApothem, -gap.halfWidth),
+    ]);
+    segments.push([
+      at(innerApothem, gap.halfWidth),
+      at(outerApothem, gap.halfWidth),
+      at(outerApothem, outerHalfSpan),
+      at(innerApothem, innerHalfSpan),
+    ]);
+  }
+  return segments;
+}
+
 export function quadFromApproach(
   origin: StudPair,
   angleDegrees: number,
@@ -255,9 +331,11 @@ export function rayExitDistance(
   return Math.min(...distances);
 }
 
+/** Takes only the reference-grid fields, so the build manifest can draw the same grid. */
 export function gridLineGeometry(
-  spec: GridSpec,
+  spec: Pick<GridSpec, 'grid' | 'boundsX' | 'boundsZ' | 'origin'>,
   level: GridLevel,
+  y: number,
 ): THREE.BufferGeometry {
   const positions: number[] = [];
   const { minor, major, super: superStep } = spec.grid;
@@ -275,7 +353,7 @@ export function gridLineGeometry(
   for (let index = xStart; index <= xEnd; index += 1) {
     if (classify(index) !== level) continue;
     const x = originX + index * minor;
-    positions.push(x, -0.06, spec.boundsZ[0], x, -0.06, spec.boundsZ[1]);
+    positions.push(x, y, spec.boundsZ[0], x, y, spec.boundsZ[1]);
   }
 
   const zStart = Math.ceil((spec.boundsZ[0] - originZ) / minor);
@@ -283,7 +361,7 @@ export function gridLineGeometry(
   for (let index = zStart; index <= zEnd; index += 1) {
     if (classify(index) !== level) continue;
     const z = originZ + index * minor;
-    positions.push(spec.boundsX[0], -0.06, z, spec.boundsX[1], -0.06, z);
+    positions.push(spec.boundsX[0], y, z, spec.boundsX[1], y, z);
   }
 
   const geometry = new THREE.BufferGeometry();

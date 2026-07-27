@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "tools/build-spec-registry.mjs@1",
+  "built": "2026-07-27T15:22:48.871Z",
+  "builtMs": 1785165768872,
+  "counts": {
+    "specs": 3,
+    "loadable": 2,
+    "byFormat": {
+      "build-manifest": 1,
+      "grid-spec": 2
+    },
+    "byPrecision": {
+      "envelope": 1,
+      "exact": 2
+    },
+    "identityGroups": 1,
+    "identityMismatches": 0
+  },
+  "specs": [
+    {
+      "id": "ancient-void-ship-arrival-environment",
+      "path": "output/architecture/ancient-void-ship-arrival-environment/roblox-build-manifest.json",
+      "format": "build-manifest",
+      "precision": "envelope",
+      "title": "ancient-void-ship-arrival-environment",
+      "status": "reversible-edit-mode-blockout",
+      "revision": "0.1",
+      "date": "2026-07-22",
+      "bytes": 9460,
+      "sha256": "587f70ac49a360a59f978b121d38c6a27e2acda559113cc46da695fa4e37bec5",
+      "loadable": true,
+      "summary": {
+        "assemblies": 7,
+        "layers": 6,
+        "envelopeStuds": [
+          74,
+          38,
+          76
+        ],
+        "partBudget": 180,
+        "preservePaths": 11
+      },
+      "pipelines": [
+        "ancient-void-ship-arrival-environment"
+      ]
+    },
+    {
+      "id": "hex-city-center-2floor.example",
+      "path": "apps/command-center/src/spatial/hex-city-center-2floor.example.json",
+      "format": "grid-spec",
+      "precision": "exact",
+      "title": "Hex City Center — Ground + Mezzanine",
+      "status": "measured-draft",
+      "revision": "2",
+      "date": "2026-07-26",
+      "bytes": 5870,
+      "sha256": "be25432c17f1e6678ee4715f24d05b085d49fa94fbf9a0336d76f08191feeff4",
+      "loadable": false,
+      "reason": "multi-level levels[] body is not implemented",
+      "summary": {
+        "hexBands": 0,
+        "approaches": 0,
+        "levels": 2,
+        "declaresElevation": false,
+        "declaresAppearance": true,
+        "viewStuds": [
+          512,
+          512
+        ]
+      },
+      "pipelines": []
+    },
+    {
+      "id": "hex-city-center-grid-spec",
+      "path": "apps/command-center/src/spatial/fixtures/hex-city-center-grid-spec.json",
+      "format": "grid-spec",
+      "precision": "exact",
+      "title": "Hex City Center Roblox Unit Grid",
+      "status": "measured-draft",
+      "revision": "2",
+      "date": "2026-07-27",
+      "bytes": 7735,
+      "sha256": "9ee8b3ee9dc2d42b61d4661982a0095788a3b9b818bb32a75a883581562f1630",
+      "loadable": true,
+      "summary": {
+        "hexBands": 5,
+        "approaches": 6,
+        "levels": 1,
+        "declaresElevation": true,
+        "declaresAppearance": true,
+        "viewStuds": [
+          512,
+          512
+        ]
+      },
+      "pipelines": [
+        "hex-city-center-spatial-lab-rev01"
+      ],
+      "copies": [
+        {
+          "path": "output/imagegen/hex-city-center-grid-2026-07-25/hex-city-center-grid-spec.json",
+          "sha256": "9ee8b3ee9dc2d42b61d4661982a0095788a3b9b818bb32a75a883581562f1630",
+          "bytes": 7735,
+          "matches": true
+        }
+      ]
+    }
+  ]
+}

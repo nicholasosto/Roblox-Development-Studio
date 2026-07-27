@@ -1,20 +1,45 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { Badge, Button, Callout, Card, Input, Switch, Toolbar } from '@trembus/ui';
+import { defaultGridSpecLoad, MAX_GRID_SPEC_BYTES, validateGridSpec } from './gridSpec';
+import { looksLikeBuildManifest, validateBuildManifest } from './buildManifest';
 import {
-  defaultGridSpecLoad,
-  MAX_GRID_SPEC_BYTES,
-  parseGridSpecText,
-  type GridSpec,
-} from './gridSpec';
+  loadableSpecs,
+  identityMismatches,
+  specDocument,
+  spatialSpecCounts,
+} from './specRegistry';
 import {
   createSpatialScene,
   SPATIAL_LAYER_KEYS,
   type SpatialLayerKey,
   type SpatialAppearanceState,
+  type SpatialModel,
   type SpatialSceneController,
   type SpatialSelection,
   type SpatialViewMode,
 } from './spatialScene';
+
+/**
+ * Either format, already parsed. The manifest is tried first when it declares assemblies, so a
+ * build manifest never fails with a confusing "hex must be a JSON object" from the grid reader.
+ */
+function readSpatialValue(value: unknown): SpatialModel {
+  return looksLikeBuildManifest(value) ? validateBuildManifest(value) : validateGridSpec(value);
+}
+
+/** The local-file path: size-capped, JSON-parsed, then dispatched by format. */
+function parseSpatialDocument(text: string, byteLength: number): SpatialModel {
+  if (byteLength > MAX_GRID_SPEC_BYTES) {
+    throw new Error('Spatial document exceeds the 2 MiB local-file limit');
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    throw new Error('That file is not valid JSON');
+  }
+  return readSpatialValue(parsed);
+}
 
 const LAYER_META: Record<
   SpatialLayerKey,
@@ -26,6 +51,8 @@ const LAYER_META: Record<
   road: { label: 'Ring road', detail: 'two-lane band', tone: 'road' },
   approaches: { label: 'Six approaches', detail: 'road + walks', tone: 'approach' },
   annotations: { label: 'Plan marks', detail: 'centerlines + crossings', tone: 'annotation' },
+  envelope: { label: 'Declared envelope', detail: 'build bounds', tone: 'annotation' },
+  assemblies: { label: 'Assembly layers', detail: 'envelope precision', tone: 'approach' },
 };
 
 const DEFAULT_LAYERS = Object.fromEntries(
@@ -40,7 +67,17 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'The grid spec could not be loaded';
 }
 
-function initialAppearanceState(spec: GridSpec): SpatialAppearanceState {
+function initialAppearanceState(spec: SpatialModel): SpatialAppearanceState {
+  if (spec.kind === 'manifest') {
+    return {
+      status: 'fallback',
+      message:
+        'Build manifests declare material tokens, not a preview appearance; using theme materials.',
+      requestedMaps: 0,
+      loadedMaps: 0,
+      fallbackMaps: 0,
+    };
+  }
   if (spec.appearance) {
     return {
       status: 'loading',
@@ -72,7 +109,7 @@ function SpatialUnavailable({ message }: { message: string }) {
   );
 }
 
-function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
+function SpatialGridWorkspace({ initialSpec }: { initialSpec: SpatialModel }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const controllerRef = useRef<SpatialSceneController | null>(null);
@@ -89,6 +126,7 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
     initialAppearanceState(initialSpec),
   );
   const [sourceLabel, setSourceLabel] = useState('Bundled measured draft');
+  const [activeSpecPath, setActiveSpecPath] = useState<string>();
   const [status, setStatus] = useState(
     'Measured X/Z draft ready · no Studio or promotion state implied',
   );
@@ -153,7 +191,7 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
     controllerRef.current?.setYScale(value);
   };
 
-  const replaceSpec = (nextSpec: GridSpec, source: string): void => {
+  const replaceSpec = (nextSpec: SpatialModel, source: string): void => {
     const controller = controllerRef.current;
     if (!controller) throw new Error('The 3D scene is not ready yet');
     controller.replaceSpec(nextSpec);
@@ -162,9 +200,32 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
       'aria-label',
       `${nextSpec.title}, 3D X/Z preview. ${studs(nextSpec.size[0])} by ${studs(nextSpec.size[1])} studs. North is ${nextSpec.north}. Layer names and dimensions are listed beside this preview.`,
     );
+    // A manifest declares real stud heights spanning tens of studs, so exaggerating them only
+    // pushes the stack out of frame. The slider exists for grid specs, whose elevations are a
+    // couple of studs against a several-hundred-stud plan.
+    const nextYScale = nextSpec.kind === 'manifest' ? 1 : 4;
+    setYScale(nextYScale);
+    controller.setYScale(nextYScale);
     setSelection(null);
     setSourceLabel(source);
     setStatus(`${nextSpec.title} loaded locally · nothing was uploaded or persisted`);
+  };
+
+  // The registry half of "load specs and view saved specs easy": contents are inlined at build
+  // time, so opening one is a parse, not a fetch — and works the same in the static bundle.
+  const openSavedSpec = (path: string, id: string): void => {
+    try {
+      const document = specDocument(path);
+      if (document === undefined) {
+        throw new Error(`${id} is listed in the registry but was not inlined into this build`);
+      }
+      replaceSpec(readSpatialValue(document), `Saved spec · ${id}`);
+      setActiveSpecPath(path);
+      setFileError(undefined);
+    } catch (error) {
+      setFileError(errorMessage(error));
+      setStatus('Saved spec rejected · the last valid scene is still active');
+    }
   };
 
   const onFileChange = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
@@ -176,7 +237,7 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
         throw new Error('Grid spec exceeds the 2 MiB local-file limit');
       }
       const text = await file.text();
-      const nextSpec = parseGridSpecText(text, file.size);
+      const nextSpec = parseSpatialDocument(text, file.size);
       replaceSpec(nextSpec, `Local file · ${file.name}`);
       setFileError(undefined);
     } catch (error) {
@@ -207,8 +268,37 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
 
   const promotionEntries = Object.entries(spec.promotionGates);
   const completedGates = promotionEntries.filter(([, complete]) => complete).length;
-  const innerSidewalkWidth = spec.hex.innerA - spec.hex.coreA;
-  const roadWidth = spec.hex.roadOuterA - spec.hex.innerA;
+  const elevationDeclared = spec.kind === 'grid' && spec.elevation != null;
+  // Each format gets the metrics it can actually state. A manifest has no bands or approaches;
+  // what it does declare is an envelope, a layer stack, and a part budget.
+  const metrics: { label: string; value: string }[] =
+    spec.kind === 'grid'
+      ? [
+          { label: 'Measured view', value: `${studs(spec.size[0])} × ${studs(spec.size[1])} studs` },
+          { label: 'Core', value: `${studs(spec.hex.coreA * 2)} studs flat-to-flat` },
+          { label: 'Ring road', value: `${studs(spec.hex.roadOuterA - spec.hex.innerA)} studs edge-normal` },
+          { label: 'Sidewalk', value: `${studs(spec.hex.innerA - spec.hex.coreA)} studs per band` },
+          {
+            label: 'Approach',
+            value: `${studs(spec.approaches.roadWidth)} road + ${studs(spec.approaches.sidewalkWidth)} each side`,
+          },
+        ]
+      : [
+          {
+            label: 'Declared envelope',
+            value: `${studs(spec.envelope[0])} × ${studs(spec.envelope[1])} × ${studs(spec.envelope[2])} studs`,
+          },
+          { label: 'Layers', value: `${spec.layers.length} declared` },
+          { label: 'Assemblies', value: `${spec.assemblyCount} across those layers` },
+          {
+            label: 'Vertical span',
+            value: `${studs(spec.layers[0].y)} → ${studs(spec.layers[spec.layers.length - 1].y)} studs`,
+          },
+          {
+            label: 'Part budget',
+            value: spec.budgets.baseparts ? `${spec.budgets.baseparts} baseparts max` : 'not declared',
+          },
+        ];
   const appearanceBadge =
     appearanceState.status === 'ready'
       ? `appearance ${appearanceState.loadedMaps}/${appearanceState.requestedMaps}`
@@ -253,33 +343,44 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
         </div>
       </div>
 
-      <dl className="cc-spatial__metrics" aria-label="Measured dimensions">
-        <div>
-          <dt>Measured view</dt>
-          <dd>
-            {studs(spec.size[0])} × {studs(spec.size[1])} studs
-          </dd>
-        </div>
-        <div>
-          <dt>Core</dt>
-          <dd>{studs(spec.hex.coreA * 2)} studs flat-to-flat</dd>
-        </div>
-        <div>
-          <dt>Ring road</dt>
-          <dd>{studs(roadWidth)} studs edge-normal</dd>
-        </div>
-        <div>
-          <dt>Sidewalk</dt>
-          <dd>{studs(innerSidewalkWidth)} studs per band</dd>
-        </div>
-        <div>
-          <dt>Approach</dt>
-          <dd>
-            {studs(spec.approaches.roadWidth)} road +{' '}
-            {studs(spec.approaches.sidewalkWidth)} each side
-          </dd>
-        </div>
+      <dl className="cc-spatial__metrics" aria-label="Declared dimensions">
+        {metrics.map((metric) => (
+          <div key={metric.label}>
+            <dt>{metric.label}</dt>
+            <dd>{metric.value}</dd>
+          </div>
+        ))}
       </dl>
+
+      <div className="cc-spatial__library" aria-label="Saved spatial specs">
+        <p className="cc-spatial__library-head">
+          <strong>Saved specs</strong>
+          <span>
+            {spatialSpecCounts.specs} found · {spatialSpecCounts.loadable} this lens can open ·
+            registry, not a file picker
+          </span>
+        </p>
+        <Toolbar aria-label="Open a saved spec">
+          {loadableSpecs.map((entry) => (
+            <Button
+              key={entry.id}
+              type="button"
+              size="sm"
+              variant={entry.path === activeSpecPath ? 'solid' : 'outline'}
+              tone={entry.path === activeSpecPath ? 'accent' : 'neutral'}
+              onPress={() => openSavedSpec(entry.path, entry.id)}
+            >
+              {`${entry.title} · ${entry.precision === 'exact' ? 'measured' : 'envelope'}`}
+            </Button>
+          ))}
+        </Toolbar>
+        {identityMismatches.length ? (
+          <p className="cc-spatial__library-warn" role="status">
+            {identityMismatches.length} portable copy/copies have drifted from their canonical spec —
+            byte-identity is reported here, never enforced.
+          </p>
+        ) : null}
+      </div>
 
       <div className="cc-spatial__commandbar">
         <Input
@@ -382,7 +483,11 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
                 value={yScale}
                 onChange={(event) => changeYScale(Number(event.currentTarget.value))}
               />
-              <p>Separates layers visually. It does not define Roblox height.</p>
+              <p>
+                {elevationDeclared
+                  ? 'Multiplies the contract’s declared elevations. ×1 is true vertical scale.'
+                  : 'Separates layers visually. It does not define Roblox height.'}
+              </p>
             </div>
           </aside>
 
@@ -436,10 +541,22 @@ function SpatialGridWorkspace({ initialSpec }: { initialSpec: GridSpec }) {
         Appearance · {appearanceState.message}
       </p>
 
-      <Callout tone="warning" title="Measured footprint; illustrative height">
-        Y extrusion is a readability aid only. This lens does not import, save, publish, upload,
-        register, or commit anything in Roblox Studio. Appearance maps are viewer-only `_BLK`
-        diagnostics and do not imply Roblox asset IDs or Studio materials.{' '}
+      <Callout
+        tone="warning"
+        title={
+          elevationDeclared
+            ? 'Measured footprint and measured height; the Y slider still exaggerates'
+            : 'Measured footprint; illustrative height'
+        }
+      >
+        {elevationDeclared
+          ? `Surface heights come from this contract's elevation block and are real studs. The Y
+            slider multiplies them for readability, so nothing on screen is at true vertical scale
+            unless it reads ×1.`
+          : `Y extrusion is a readability aid only — this contract declares no elevations.`}{' '}
+        This lens does not import, save, publish, upload, register, or commit anything in Roblox
+        Studio. Appearance maps are viewer-only `_BLK` diagnostics and do not imply Roblox asset
+        IDs or Studio materials.{' '}
         {promotionEntries.length
           ? `${completedGates} of ${promotionEntries.length} recorded promotion gates are complete.`
           : 'This loaded file declares no promotion gates.'}

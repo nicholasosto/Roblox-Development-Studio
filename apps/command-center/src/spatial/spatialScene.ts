@@ -6,6 +6,7 @@ import {
   clipPolygonToBounds,
   gridLineGeometry,
   hexRingGeometry,
+  hexRingSegments,
   hexVertices,
   lineGeometry,
   lineLoopGeometry,
@@ -14,6 +15,7 @@ import {
   rayExitDistance,
   type XzPoint,
 } from './geometry';
+import type { ManifestModel } from './buildManifest';
 import {
   SPATIAL_SURFACE_TARGETS,
   type AppearanceSpec,
@@ -35,13 +37,89 @@ export const SPATIAL_LAYER_KEYS = [
   'road',
   'approaches',
   'annotations',
+  'envelope',
+  'assemblies',
 ] as const;
 
 export type SpatialLayerKey = (typeof SPATIAL_LAYER_KEYS)[number];
 export type SpatialViewMode = 'perspective' | 'top';
 
+interface SurfaceSpan {
+  top: number;
+  bottom: number;
+}
+
+export interface ResolvedElevation {
+  /** True when these came from the contract's elevation block rather than the fallback. */
+  declared: boolean;
+  surfaces: Record<SurfaceRole, SurfaceSpan>;
+  annotations: {
+    grid: number;
+    axis: number;
+    laneMark: number;
+    crosswalk: number;
+    boundary: number;
+  };
+}
+
+/**
+ * The heights this renderer used before contracts could declare their own (decision 0013).
+ * They are presentation values chosen to separate layers on screen, not buildable studs, and
+ * they remain the fallback for any revision-1 contract that carries no elevation block.
+ */
+const ILLUSTRATIVE_SURFACES: Record<SurfaceRole, SurfaceSpan> = {
+  ground: { top: -0.12, bottom: -0.12 },
+  core: { top: 1.35, bottom: 0 },
+  'sidewalk.inner': { top: 0.88, bottom: 0 },
+  'sidewalk.outer': { top: 0.88, bottom: 0 },
+  'sidewalk.approach': { top: 0.88, bottom: 0 },
+  'road.ring': { top: 0.14, bottom: -0.02 },
+  'road.approach': { top: 0.14, bottom: -0.02 },
+};
+
+// Annotations float just clear of whichever surface they mark, so they survive a change of
+// datum without z-fighting. The offsets reproduce the spacing the illustrative set used.
+const ANNOTATION_LIFT = {
+  grid: 0.06,
+  axis: 0.085,
+  laneMark: 0.05,
+  crosswalk: 0.06,
+  boundary: 0.02,
+} as const;
+
+export function resolveElevation(spec: GridSpec): ResolvedElevation {
+  const declared = spec.elevation != null;
+  const surfaces = spec.elevation
+    ? (Object.fromEntries(
+        SPATIAL_SURFACE_TARGETS.map((role) => [
+          role,
+          {
+            top: spec.elevation!.surfaces[role].topStuds,
+            bottom: spec.elevation!.surfaces[role].bottomStuds,
+          },
+        ]),
+      ) as Record<SurfaceRole, SurfaceSpan>)
+    : ILLUSTRATIVE_SURFACES;
+
+  const groundTop = surfaces.ground.top;
+  const roadTop = surfaces['road.ring'].top;
+  const sidewalkTop = surfaces['sidewalk.outer'].top;
+
+  return {
+    declared,
+    surfaces,
+    annotations: {
+      grid: groundTop + ANNOTATION_LIFT.grid,
+      axis: groundTop + ANNOTATION_LIFT.axis,
+      laneMark: roadTop + ANNOTATION_LIFT.laneMark,
+      crosswalk: roadTop + ANNOTATION_LIFT.crosswalk,
+      boundary: sidewalkTop + ANNOTATION_LIFT.boundary,
+    },
+  };
+}
+
 export interface SpatialSelection {
-  key: 'core' | 'sidewalks' | 'road' | 'approaches';
+  key: 'core' | 'sidewalks' | 'road' | 'approaches' | 'assemblies';
   detail: string;
 }
 
@@ -66,7 +144,7 @@ export interface SpatialSceneCallbacks {
 }
 
 export interface SpatialSceneController {
-  replaceSpec: (spec: GridSpec) => void;
+  replaceSpec: (spec: SpatialModel) => void;
   setLayerVisible: (key: SpatialLayerKey, visible: boolean) => void;
   setView: (mode: SpatialViewMode) => void;
   setYScale: (scale: number) => void;
@@ -96,6 +174,9 @@ interface MaterialSet {
   gridSuper: THREE.LineBasicMaterial;
   axisX: THREE.LineBasicMaterial;
   axisZ: THREE.LineBasicMaterial;
+  /** Envelope-precision surfaces are translucent so they can never read as measurement. */
+  assemblyFace: THREE.MeshStandardMaterial;
+  envelopeLine: THREE.LineBasicMaterial;
 }
 
 interface WorldBundle {
@@ -148,6 +229,18 @@ function materialSet(): MaterialSet {
     axisZ: new THREE.LineBasicMaterial({
       transparent: true,
       opacity: 0.92,
+    }),
+    assemblyFace: new THREE.MeshStandardMaterial({
+      roughness: 0.9,
+      metalness: 0,
+      transparent: true,
+      opacity: 0.34,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    }),
+    envelopeLine: new THREE.LineBasicMaterial({
+      transparent: true,
+      opacity: 0.55,
     }),
   };
 }
@@ -218,7 +311,95 @@ function approachPoint(
   ];
 }
 
-function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
+/**
+ * The two spatial documents this lens reads. They share only what the scene machinery needs —
+ * bounds, size, origin, a reference grid — and diverge entirely in what they can describe.
+ */
+export type SpatialModel = GridSpec | ManifestModel;
+
+function createWorld(model: SpatialModel, materials: MaterialSet): WorldBundle {
+  return model.kind === 'manifest'
+    ? createManifestWorld(model, materials)
+    : createGridWorld(model, materials);
+}
+
+/**
+ * Draws a build manifest as declared *layers*, not as individual assemblies.
+ *
+ * The manifest gives every assembly a `layer_y` and no X/Z whatsoever, so two assemblies sharing
+ * a layer share the only footprint the document actually states — one translucent plate per
+ * distinct Y, listing what lives there. Drawing them apart would be inventing geometry, which is
+ * the one thing a review surface for an envelope-precision document must not do.
+ */
+function createManifestWorld(model: ManifestModel, materials: MaterialSet): WorldBundle {
+  const group = new THREE.Group();
+  group.name = 'spatial-manifest-world';
+  const groups = Object.fromEntries(
+    SPATIAL_LAYER_KEYS.map((key) => {
+      const layer = new THREE.Group();
+      layer.name = key;
+      group.add(layer);
+      return [key, layer];
+    }),
+  ) as Record<SpatialLayerKey, THREE.Group>;
+  const selectables: THREE.Mesh[] = [];
+
+  try {
+    const [envelopeX, envelopeY, envelopeZ] = model.envelope;
+    const [originX, originZ] = model.origin;
+    // The manifest never says where its envelope sits vertically, so it is anchored to the lowest
+    // declared layer — the reading that keeps every declared element inside the box.
+    const floorY = model.layers[0].y;
+
+    for (const level of ['minor', 'major', 'super'] as const) {
+      groups.grid.add(
+        new THREE.LineSegments(
+          gridLineGeometry(model, level, floorY - 0.05),
+          level === 'minor'
+            ? materials.gridMinor
+            : level === 'major'
+              ? materials.gridMajor
+              : materials.gridSuper,
+        ),
+      );
+    }
+
+    const envelopeBox = new THREE.BoxGeometry(envelopeX, envelopeY, envelopeZ);
+    envelopeBox.translate(originX, floorY + envelopeY / 2, originZ);
+    const edges = new THREE.EdgesGeometry(envelopeBox);
+    envelopeBox.dispose();
+    groups.envelope.add(new THREE.LineSegments(edges, materials.envelopeLine));
+
+    // Nominal — the manifest declares no thickness for anything. Enough to read as a solid at a
+    // glance, thin enough that it never suggests a measured slab depth.
+    const PLATE_STUDS = 0.6;
+    for (const layer of model.layers) {
+      const names = layer.assemblies.map((a) => a.id).join(' + ');
+      const jobs = layer.assemblies.flatMap((a) => a.jobs);
+      const detail =
+        `Layer y=${layer.y} · ${names} · ${layer.partBudget} parts budgeted` +
+        (jobs.length ? ` · ${jobs.join('; ')}` : '');
+
+      const plate = new THREE.BoxGeometry(envelopeX, PLATE_STUDS, envelopeZ);
+      plate.translate(originX, layer.y, originZ);
+      const mesh = meshFromGeometry(plate, materials.assemblyFace, 'assemblies', detail);
+      groups.assemblies.add(mesh);
+      selectables.push(mesh);
+      // Outlined as well as filled: stacked translucent plates otherwise blend into one mass and
+      // the layer count — the document's only real structure — stops being readable.
+      groups.assemblies.add(
+        new THREE.LineSegments(new THREE.EdgesGeometry(plate), materials.envelopeLine),
+      );
+    }
+
+    return { group, groups, selectables };
+  } catch (error) {
+    disposeObjectGeometries(group);
+    throw error;
+  }
+}
+
+function createGridWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
   const group = new THREE.Group();
   group.name = 'spatial-grid-world';
   const groups = Object.fromEntries(
@@ -232,13 +413,14 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
   const selectables: THREE.Mesh[] = [];
 
   try {
+    const elevation = resolveElevation(spec);
     const width = spec.boundsX[1] - spec.boundsX[0];
     const depth = spec.boundsZ[1] - spec.boundsZ[0];
     const groundGeometry = new THREE.PlaneGeometry(width, depth);
     groundGeometry.rotateX(-Math.PI / 2);
     groundGeometry.translate(
       (spec.boundsX[0] + spec.boundsX[1]) / 2,
-      -0.12,
+      elevation.surfaces.ground.top,
       (spec.boundsZ[0] + spec.boundsZ[1]) / 2,
     );
     applyWorldStudUvs(groundGeometry);
@@ -253,7 +435,10 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
     };
     for (const level of ['minor', 'major', 'super'] as const) {
       groups.grid.add(
-        new THREE.LineSegments(gridLineGeometry(spec, level), gridMaterials[level]),
+        new THREE.LineSegments(
+          gridLineGeometry(spec, level, elevation.annotations.grid),
+          gridMaterials[level],
+        ),
       );
     }
     groups.grid.add(
@@ -263,7 +448,7 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
             [spec.boundsX[0], spec.origin[1]],
             [spec.boundsX[1], spec.origin[1]],
           ],
-          -0.035,
+          elevation.annotations.axis,
         ),
         materials.axisX,
       ),
@@ -273,7 +458,7 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
             [spec.origin[0], spec.boundsZ[0]],
             [spec.origin[0], spec.boundsZ[1]],
           ],
-          -0.035,
+          elevation.annotations.axis,
         ),
         materials.axisZ,
       ),
@@ -281,7 +466,11 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
 
     const coreDetail = `Core · ${(spec.hex.coreA * 2).toFixed(0)} studs flat-to-flat`;
     const coreMesh = meshFromGeometry(
-      prismGeometry(hexVertices(spec.hex.coreA, spec.origin), 0, 1.35),
+      prismGeometry(
+        hexVertices(spec.hex.coreA, spec.origin),
+        elevation.surfaces.core.bottom,
+        elevation.surfaces.core.top,
+      ),
       [
         materials.surfaces.core.top,
         materials.surfaces.core.solid,
@@ -294,7 +483,13 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
 
     const sidewalkDetail = `Sidewalks · ${(spec.hex.innerA - spec.hex.coreA).toFixed(0)} studs edge-normal`;
     const innerSidewalk = meshFromGeometry(
-      hexRingGeometry(spec.hex.coreA, spec.hex.innerA, spec.origin, 0, 0.88),
+      hexRingGeometry(
+        spec.hex.coreA,
+        spec.hex.innerA,
+        spec.origin,
+        elevation.surfaces['sidewalk.inner'].bottom,
+        elevation.surfaces['sidewalk.inner'].top,
+      ),
       [
         materials.surfaces['sidewalk.inner'].top,
         materials.surfaces['sidewalk.inner'].solid,
@@ -302,21 +497,49 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
       'sidewalks',
       sidewalkDetail,
     );
-    const outerSidewalk = meshFromGeometry(
-      hexRingGeometry(spec.hex.roadOuterA, spec.hex.outerA, spec.origin, 0, 0.88),
-      [
-        materials.surfaces['sidewalk.outer'].top,
-        materials.surfaces['sidewalk.outer'].solid,
-      ],
-      'sidewalks',
-      sidewalkDetail,
-    );
-    groups.sidewalks.add(innerSidewalk, outerSidewalk);
-    selectables.push(innerSidewalk, outerSidewalk);
+    groups.sidewalks.add(innerSidewalk);
+    selectables.push(innerSidewalk);
+
+    // The outer ring is the one the approaches cross, so it is cut at each of them rather
+    // than drawn as an annulus that hides the junctions beneath itself.
+    const outerSidewalkDetail =
+      `Outer sidewalk · ${(spec.hex.outerA - spec.hex.roadOuterA).toFixed(0)} studs edge-normal · ` +
+      `open at ${spec.approaches.angles.length} approaches`;
+    for (const segment of hexRingSegments(
+      spec.hex.roadOuterA,
+      spec.hex.outerA,
+      spec.origin,
+      spec.approaches.angles.map((angleDegrees) => ({
+        angleDegrees,
+        halfWidth: spec.approaches.roadWidth / 2,
+      })),
+    )) {
+      const outerSidewalk = meshFromGeometry(
+        prismGeometry(
+          segment,
+          elevation.surfaces['sidewalk.outer'].bottom,
+          elevation.surfaces['sidewalk.outer'].top,
+        ),
+        [
+          materials.surfaces['sidewalk.outer'].top,
+          materials.surfaces['sidewalk.outer'].solid,
+        ],
+        'sidewalks',
+        outerSidewalkDetail,
+      );
+      groups.sidewalks.add(outerSidewalk);
+      selectables.push(outerSidewalk);
+    }
 
     const roadDetail = `Ring road · ${(spec.hex.roadOuterA - spec.hex.innerA).toFixed(0)} studs total`;
     const ringRoad = meshFromGeometry(
-      hexRingGeometry(spec.hex.innerA, spec.hex.roadOuterA, spec.origin, -0.02, 0.14),
+      hexRingGeometry(
+        spec.hex.innerA,
+        spec.hex.roadOuterA,
+        spec.origin,
+        elevation.surfaces['road.ring'].bottom,
+        elevation.surfaces['road.ring'].top,
+      ),
       [
         materials.surfaces['road.ring'].top,
         materials.surfaces['road.ring'].solid,
@@ -334,7 +557,10 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
       const radians = (angle * Math.PI) / 180;
       const normal: XzPoint = [Math.cos(radians), Math.sin(radians)];
       const rayExit = rayExitDistance(spec.origin, normal, spec.boundsX, spec.boundsZ);
-      const far = rayExit + spec.approaches.totalWidth * 2;
+      // A declared extent is the terminus. Without one, fall back to running off the view
+      // edge — which is what made revision-1 approaches unequal, since a square boundary
+      // clips a hexagonal arrangement at different radii.
+      const far = spec.approaches.extent ?? rayExit + spec.approaches.totalWidth * 2;
       const halfRoad = spec.approaches.roadWidth / 2;
 
       const roadQuad = clipPolygonToBounds(
@@ -350,7 +576,11 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
         spec.boundsZ,
       );
       const roadMesh = meshFromGeometry(
-        prismGeometry(roadQuad, -0.02, 0.14),
+        prismGeometry(
+          roadQuad,
+          elevation.surfaces['road.approach'].bottom,
+          elevation.surfaces['road.approach'].top,
+        ),
         [
           materials.surfaces['road.approach'].top,
           materials.surfaces['road.approach'].solid,
@@ -380,7 +610,11 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
           spec.boundsZ,
         );
         const approachSidewalk = meshFromGeometry(
-          prismGeometry(sidewalkQuad, 0, 0.88),
+          prismGeometry(
+            sidewalkQuad,
+            elevation.surfaces['sidewalk.approach'].bottom,
+            elevation.surfaces['sidewalk.approach'].top,
+          ),
           [
             materials.surfaces['sidewalk.approach'].top,
             materials.surfaces['sidewalk.approach'].solid,
@@ -396,9 +630,9 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
         lineGeometry(
           [
             approachPoint(spec.origin, angle, spec.hex.roadOuterA, 0),
-            approachPoint(spec.origin, angle, rayExit, 0),
+            approachPoint(spec.origin, angle, far, 0),
           ],
-          0.19,
+          elevation.annotations.laneMark,
         ),
         materials.annotation,
       );
@@ -414,7 +648,7 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
                 approachPoint(spec.origin, angle, distance, -halfRoad),
                 approachPoint(spec.origin, angle, distance, halfRoad),
               ],
-              0.2,
+              elevation.annotations.crosswalk,
             ),
             materials.annotationSolid,
           ),
@@ -423,11 +657,19 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
     }
 
     const ringCenterline = dashedLine(
-      lineLoopGeometry(hexVertices(spec.hex.centerA, spec.origin), 0.2),
+      lineLoopGeometry(
+        hexVertices(spec.hex.centerA, spec.origin),
+        elevation.annotations.crosswalk,
+      ),
       materials.annotation,
     );
+    // Anchored to the sidewalk it outlines. The illustrative set put this at 0.21, partway up
+    // the sidewalk's outer wall rather than on its top face.
     const outsideBoundary = new THREE.Line(
-      lineLoopGeometry(hexVertices(spec.hex.outerA, spec.origin), 0.21),
+      lineLoopGeometry(
+        hexVertices(spec.hex.outerA, spec.origin),
+        elevation.annotations.boundary,
+      ),
       materials.annotationSolid,
     );
     groups.annotations.add(ringCenterline, outsideBoundary);
@@ -442,7 +684,7 @@ function createWorld(spec: GridSpec, materials: MaterialSet): WorldBundle {
 export function createSpatialScene(
   canvas: HTMLCanvasElement,
   host: HTMLElement,
-  initialSpec: GridSpec,
+  initialSpec: SpatialModel,
   callbacks: SpatialSceneCallbacks,
 ): SpatialSceneController {
   const renderer = new THREE.WebGLRenderer({
@@ -476,29 +718,42 @@ export function createSpatialScene(
   ) as Record<SpatialLayerKey, boolean>;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  const centerOf = (spec: GridSpec): THREE.Vector3 =>
+  // A grid spec is essentially flat, so y = 0 frames it. A manifest is a vertical stack — the
+  // Void Ship spans -6 to +26 — and targeting the floor would put the camera inside the geometry.
+  const centerOf = (spec: SpatialModel): THREE.Vector3 =>
     new THREE.Vector3(
       (spec.boundsX[0] + spec.boundsX[1]) / 2,
-      0,
+      spec.kind === 'manifest'
+        ? (spec.layers[0].y + spec.layers[spec.layers.length - 1].y) / 2
+        : 0,
       (spec.boundsZ[0] + spec.boundsZ[1]) / 2,
     );
 
-  const configurePerspective = (spec: GridSpec): void => {
+  const extentOf = (spec: SpatialModel): number =>
+    spec.kind === 'manifest'
+      ? Math.max(spec.size[0], spec.size[1], spec.envelope[1])
+      : Math.max(spec.size[0], spec.size[1]);
+
+  const configurePerspective = (spec: SpatialModel): void => {
     const center = centerOf(spec);
-    const extent = Math.max(spec.size[0], spec.size[1]);
+    const extent = extentOf(spec);
+    // A grid spec's geometry occupies roughly half its declared view, so these multipliers frame
+    // it well. A manifest fills its envelope edge to edge, so the same numbers put the camera
+    // inside the box — it needs pulling back by about the ratio of those two situations.
+    const pull = spec.kind === 'manifest' ? 1.9 : 1;
     perspectiveCamera.near = Math.max(0.05, extent / 20000);
-    perspectiveCamera.far = extent * 12;
+    perspectiveCamera.far = extent * 12 * pull;
     perspectiveCamera.position.set(
-      center.x + extent * 0.65,
-      extent * 0.58,
-      center.z + extent * 0.78,
+      center.x + extent * 0.65 * pull,
+      center.y + extent * 0.58 * pull,
+      center.z + extent * 0.78 * pull,
     );
     perspectiveCamera.up.set(0, 1, 0);
     perspectiveCamera.lookAt(center);
     perspectiveCamera.updateProjectionMatrix();
   };
 
-  const updateTopFrustum = (spec: GridSpec): void => {
+  const updateTopFrustum = (spec: SpatialModel): void => {
     const halfHeight =
       Math.max(spec.size[1] / 2, spec.size[0] / (2 * viewportAspect)) * 1.08;
     topCamera.left = -halfHeight * viewportAspect;
@@ -508,9 +763,9 @@ export function createSpatialScene(
     topCamera.updateProjectionMatrix();
   };
 
-  const configureTop = (spec: GridSpec): void => {
+  const configureTop = (spec: SpatialModel): void => {
     const center = centerOf(spec);
-    const extent = Math.max(spec.size[0], spec.size[1]);
+    const extent = extentOf(spec);
     topCamera.near = Math.max(0.05, extent / 20000);
     topCamera.far = extent * 6;
     topCamera.zoom = 1;
@@ -530,7 +785,7 @@ export function createSpatialScene(
     next.enablePan = true;
     next.screenSpacePanning = true;
     if (camera === perspectiveCamera) {
-      const extent = Math.max(currentSpec.size[0], currentSpec.size[1]);
+      const extent = extentOf(currentSpec);
       next.minDistance = extent * 0.14;
       next.maxDistance = extent * 4;
       next.maxPolarAngle = Math.PI * 0.49;
@@ -561,6 +816,8 @@ export function createSpatialScene(
     sidewalks: surfaceMaterialList('sidewalk.inner', 'sidewalk.outer'),
     road: surfaceMaterialList('road.ring'),
     approaches: surfaceMaterialList('road.approach', 'sidewalk.approach'),
+    // Manifest layer plates share one translucent material rather than a top/solid pair.
+    assemblies: [materials.assemblyFace],
   };
   let selectedKey: SelectKey | null = null;
   const applySelection = (key: SelectKey | null): void => {
@@ -734,18 +991,23 @@ export function createSpatialScene(
     }
   };
 
-  const beginAppearance = (spec: GridSpec): void => {
+  const beginAppearance = (spec: SpatialModel): void => {
     const generation = ++appearanceGeneration;
     releaseActiveTextures();
-    const appearance = spec.appearance;
+    // A build manifest declares `material_tokens` rather than an appearance block; the lens does
+    // not read them yet, so it falls through to theme materials like any spec without appearance.
+    const appearance = spec.kind === 'grid' ? spec.appearance : undefined;
     hasDeclaredAppearance = Boolean(appearance);
     if (!appearance) {
       applyThemeSurfaceStyles();
+      const warning = spec.kind === 'grid' ? spec.appearanceWarning : undefined;
       callbacks.onAppearanceState({
-        status: spec.appearanceWarning ? 'warning' : 'fallback',
+        status: warning ? 'warning' : 'fallback',
         message:
-          spec.appearanceWarning ??
-          'No preview appearance is declared; using theme fallback materials.',
+          warning ??
+          (spec.kind === 'manifest'
+            ? 'Build manifests declare material tokens, not a preview appearance; using theme materials.'
+            : 'No preview appearance is declared; using theme fallback materials.'),
         requestedMaps: 0,
         loadedMaps: 0,
         fallbackMaps: 0,
@@ -862,6 +1124,8 @@ export function createSpatialScene(
     materials.gridSuper.color.copy(themeColor('--tcl-status-info', '#44ddff'));
     materials.axisX.color.copy(themeColor('--tcl-status-danger', '#ff4444'));
     materials.axisZ.color.copy(themeColor('--tcl-status-info', '#44ddff'));
+    materials.assemblyFace.color.copy(themeColor('--tcl-status-info', '#44ddff'));
+    materials.envelopeLine.color.copy(themeColor('--tcl-border-strong', '#3a4350'));
     const selectionColor = themeColor('--tcl-text', '#e6edf3');
     for (const candidateMaterials of Object.values(selectionMaterials)) {
       for (const material of candidateMaterials) {
@@ -898,6 +1162,7 @@ export function createSpatialScene(
       sidewalks: 'sidewalks',
       road: 'road',
       approaches: 'approaches',
+      assemblies: 'assemblies',
     };
     if (selectedKey && selectionLayer[selectedKey] === key) {
       applySelection(null);
@@ -905,7 +1170,7 @@ export function createSpatialScene(
     }
   };
 
-  const replaceSpec = (nextSpec: GridSpec): void => {
+  const replaceSpec = (nextSpec: SpatialModel): void => {
     if (disposed) return;
     // Build completely before touching the current scene. An incompatible or unexpectedly
     // expensive spec can never erase the last valid world.

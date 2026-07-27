@@ -11,6 +11,8 @@ export type StudPair = readonly [number, number];
 
 export const SPATIAL_APPEARANCE_SCHEMA = 'trembus.spatial-appearance/v1' as const;
 
+export const SPATIAL_ELEVATION_SCHEMA = 'trembus.spatial-elevation/v1' as const;
+
 export const SPATIAL_SURFACE_TARGETS = [
   'ground',
   'core',
@@ -72,7 +74,31 @@ export interface AppearanceSpec {
   surfaceBindings: SpatialSurfaceBinding[];
 }
 
+export interface SpatialSurfaceElevation {
+  /** Studs above the datum plane; the walkable or drivable face. */
+  topStuds: number;
+  thicknessStuds: number;
+  /** Derived: topStuds - thicknessStuds. */
+  bottomStuds: number;
+}
+
+/**
+ * Dimensional, not cosmetic — decision 0013. Unlike the appearance block this may not fail
+ * soft: a substituted elevation is a wrong build rather than a wrong colour, so a malformed
+ * block is a hard load error. Absence is still fine; the renderer keeps its illustrative Y.
+ */
+export interface ElevationSpec {
+  schema: typeof SPATIAL_ELEVATION_SCHEMA;
+  revision: number;
+  datum: 'road-surface';
+  surfaces: Record<SurfaceRole, SpatialSurfaceElevation>;
+  curbHeightStuds: number;
+  coreRiseAboveSidewalkStuds: number;
+}
+
 export interface GridSpec {
+  /** Discriminates this from the envelope-precision build manifest the lens also reads. */
+  kind: 'grid';
   raw: Record<string, unknown>;
   title: string;
   status: string;
@@ -103,10 +129,13 @@ export interface GridSpec {
     sidewalkWidth: number;
     totalWidth: number;
     crosswalkDepth: number;
+    /** Radial studs from the origin to the approach terminus; undefined before revision 2. */
+    extent?: number;
   };
   promotionGates: Record<string, boolean>;
   appearance?: AppearanceSpec;
   appearanceWarning?: string;
+  elevation?: ElevationSpec;
 }
 
 export type DefaultGridSpecLoad =
@@ -168,10 +197,30 @@ function checkDeclaredDimension(
   value: unknown,
   expected: number,
   name: string,
+  conflictsWith = 'the apothem geometry',
 ): void {
   if (value != null && !closeEnough(finite(value, name), expected)) {
-    throw new Error(`${name} conflicts with the apothem geometry`);
+    throw new Error(`${name} conflicts with ${conflictsWith}`);
   }
+}
+
+/**
+ * A flag whose whole job is to be refused when set. Comparing `=== true` would let
+ * `"true"`, `1`, or any other truthy non-boolean walk straight past the guard meant to stop
+ * it, so an unusable type is rejected as firmly as the forbidden value.
+ */
+function refusedFlag(value: unknown, name: string, refusal: string): void {
+  if (value == null) return;
+  if (typeof value !== 'boolean') {
+    throw new Error(`${name} must be a boolean`);
+  }
+  if (value) throw new Error(refusal);
+}
+
+function wholeMultiple(total: number, part: number): boolean {
+  if (!(part > 0) || !(total > 0)) return false;
+  const ratio = total / part;
+  return closeEnough(ratio, Math.round(ratio)) && Math.round(ratio) >= 1;
 }
 
 const STRICT_ID = /^[a-z][a-z0-9._-]{0,63}$/;
@@ -181,6 +230,8 @@ const MAX_TEXTURE_ASSETS = 16;
 const MAX_SURFACE_DEFINITIONS = 32;
 const MAX_SURFACE_BINDINGS = 16;
 const MAX_APPEARANCE_COORDINATE = 8192;
+const MAX_ELEVATION_STUDS = 8192;
+const MIN_SLAB_THICKNESS_STUDS = 0.125;
 
 function assertOnlyKeys(
   record: UnknownRecord,
@@ -520,15 +571,150 @@ function validateSpatialAppearance(input: unknown): AppearanceSpec {
   };
 }
 
+/**
+ * Strict throughout, and the caller must not swallow what it throws — see decision 0013.
+ * Every geometry role must carry an elevation: a partial table would leave the renderer
+ * silently mixing declared heights with its own illustrative literals.
+ */
+function validateSpatialElevation(input: unknown): ElevationSpec {
+  const elevation = asRecord(input, 'elevation');
+  assertOnlyKeys(
+    elevation,
+    [
+      'schema',
+      'revision',
+      'datum',
+      'datumNote',
+      'surfaces',
+      'curbHeightStuds',
+      'coreRiseAboveSidewalkStuds',
+    ],
+    'elevation',
+  );
+  if (elevation.schema !== SPATIAL_ELEVATION_SCHEMA) {
+    throw new Error(`elevation.schema must be ${SPATIAL_ELEVATION_SCHEMA}`);
+  }
+  const revision = boundedNumber(elevation.revision, 'elevation.revision', 1, 9999);
+  if (!Number.isInteger(revision)) {
+    throw new Error('elevation.revision must be an integer');
+  }
+  if (elevation.datum !== 'road-surface') {
+    throw new Error('elevation.datum must be road-surface');
+  }
+  if (elevation.datumNote != null && typeof elevation.datumNote !== 'string') {
+    throw new Error('elevation.datumNote must be a string');
+  }
+
+  const surfacesRaw = asRecord(elevation.surfaces, 'elevation.surfaces');
+  assertOnlyKeys(surfacesRaw, SPATIAL_SURFACE_TARGETS, 'elevation.surfaces');
+  const surfaces = {} as Record<SurfaceRole, SpatialSurfaceElevation>;
+  for (const role of SPATIAL_SURFACE_TARGETS) {
+    const name = `elevation.surfaces["${role}"]`;
+    if (surfacesRaw[role] == null) {
+      throw new Error(`elevation.surfaces is missing geometry role "${role}"`);
+    }
+    const surface = asRecord(surfacesRaw[role], name);
+    assertOnlyKeys(surface, ['topStuds', 'thicknessStuds'], name);
+    const topStuds = boundedNumber(
+      surface.topStuds,
+      `${name}.topStuds`,
+      -MAX_ELEVATION_STUDS,
+      MAX_ELEVATION_STUDS,
+    );
+    const thicknessStuds = boundedNumber(
+      surface.thicknessStuds,
+      `${name}.thicknessStuds`,
+      MIN_SLAB_THICKNESS_STUDS,
+      MAX_ELEVATION_STUDS,
+    );
+    surfaces[role] = {
+      topStuds,
+      thicknessStuds,
+      bottomStuds: topStuds - thicknessStuds,
+    };
+  }
+
+  // Roads and sidewalks each have to be coplanar across their variants, or the ring and the
+  // approaches meet at a step instead of a junction.
+  const coplanar = (roles: readonly SurfaceRole[], label: string): void => {
+    const [first, ...rest] = roles;
+    for (const role of rest) {
+      if (!closeEnough(surfaces[role].topStuds, surfaces[first].topStuds)) {
+        throw new Error(
+          `${label} must be coplanar: "${role}" and "${first}" declare different topStuds`,
+        );
+      }
+    }
+  };
+  coplanar(['road.ring', 'road.approach'], 'Road surfaces');
+  coplanar(
+    ['sidewalk.inner', 'sidewalk.outer', 'sidewalk.approach'],
+    'Sidewalk surfaces',
+  );
+
+  const groundTop = surfaces.ground.topStuds;
+  const roadTop = surfaces['road.ring'].topStuds;
+  const sidewalkTop = surfaces['sidewalk.inner'].topStuds;
+  const coreTop = surfaces.core.topStuds;
+  if (!(groundTop <= roadTop && roadTop <= sidewalkTop && sidewalkTop <= coreTop)) {
+    throw new Error(
+      'Elevations must not decrease from ground through road and sidewalk to core',
+    );
+  }
+
+  const curbHeightStuds = sidewalkTop - roadTop;
+  const coreRiseAboveSidewalkStuds = coreTop - sidewalkTop;
+  checkDeclaredDimension(
+    elevation.curbHeightStuds,
+    curbHeightStuds,
+    'elevation.curbHeightStuds',
+    'the declared road and sidewalk elevations',
+  );
+  checkDeclaredDimension(
+    elevation.coreRiseAboveSidewalkStuds,
+    coreRiseAboveSidewalkStuds,
+    'elevation.coreRiseAboveSidewalkStuds',
+    'the declared sidewalk and core elevations',
+  );
+
+  return {
+    schema: SPATIAL_ELEVATION_SCHEMA,
+    revision,
+    datum: 'road-surface',
+    surfaces,
+    curbHeightStuds,
+    coreRiseAboveSidewalkStuds,
+  };
+}
+
 export function validateGridSpec(input: unknown): GridSpec {
   const root = asRecord(input, 'Grid spec');
+
+  // Say plainly when a contract is a shape this reader does not implement. Without these two
+  // checks the multi-level draft fails several checks later on `hex`, reporting a missing key
+  // rather than the reason the key is missing.
+  if (root.levels != null) {
+    throw new Error(
+      'Multi-level grid specs are not supported by this reader; it reads a single level with ' +
+        'top-level hex and approaches blocks',
+    );
+  }
+  if (root.schema != null) {
+    throw new Error(
+      `This reader implements the single-level grid body, which declares no schema identifier — ` +
+        `"${String(root.schema)}" is not supported`,
+    );
+  }
+
   const coordinateSystem = asRecord(root.coordinateSystem, 'coordinateSystem');
   if (coordinateSystem.plane !== 'X/Z') {
     throw new Error('Only X/Z grid specs are supported');
   }
-  if (coordinateSystem.verticalAxisShown === true) {
-    throw new Error('Authoritative Y geometry is not supported by this renderer');
-  }
+  refusedFlag(
+    coordinateSystem.verticalAxisShown,
+    'coordinateSystem.verticalAxisShown',
+    'Authoritative Y geometry is not supported by this renderer',
+  );
   const north = textOr(coordinateSystem.north, '-Z');
   if (north !== '-Z') {
     throw new Error('Only grid specs with north = -Z are supported');
@@ -694,6 +880,19 @@ export function validateGridSpec(input: unknown): GridSpec {
     outerA - roadOuterA,
     'hex.outerSidewalkOuterEdge.bandWidthStuds',
   );
+  // The ring road's own lane width was previously declared and never read at all. Lanes have
+  // to tile the carriageway they divide, or the band is not the road the spec says it is.
+  if (roadOuter.laneWidthStuds != null) {
+    const ringLaneWidth = finite(
+      roadOuter.laneWidthStuds,
+      'hex.roadOuterEdge.laneWidthStuds',
+    );
+    if (!wholeMultiple(roadOuterA - innerA, ringLaneWidth)) {
+      throw new Error(
+        'hex.roadOuterEdge.laneWidthStuds must divide the ring road band into whole lanes',
+      );
+    }
+  }
 
   const approaches = asRecord(root.approaches, 'approaches');
   if (
@@ -761,14 +960,64 @@ export function validateGridSpec(input: unknown): GridSpec {
   ) {
     throw new Error('Approach dimensions must remain within the declared view extent');
   }
-  if (approaches.crosswalkPaintHasPhysicalWidth === true) {
-    throw new Error('Crosswalk paint must remain a zero-width annotation');
+  if (!wholeMultiple(roadWidth, laneWidth)) {
+    throw new Error(
+      'approaches.laneWidthStuds must divide the approach road into whole lanes',
+    );
   }
+  // Each approach is cut through the outer sidewalk ring, so it has to fit the hex face it
+  // crosses. A half-edge at apothem A spans A/√3; exceed it and the gap would consume the
+  // whole face and swallow its neighbours. Checked here rather than left to the renderer,
+  // which discovers the same impossibility only once it tries to build the ring.
+  if (roadWidth / 2 >= roadOuterA / Math.sqrt(3)) {
+    throw new Error(
+      'approaches.roadWidthStuds is too wide for the hex face it crosses',
+    );
+  }
+  if (totalWidth / 2 > outerA / Math.sqrt(3)) {
+    throw new Error(
+      'The approach corridor is wider than the outer hex face it departs from',
+    );
+  }
+  refusedFlag(
+    approaches.crosswalkPaintHasPhysicalWidth,
+    'approaches.crosswalkPaintHasPhysicalWidth',
+    'Crosswalk paint must remain a zero-width annotation',
+  );
   checkDeclaredDimension(
     approaches.sidewalkToSidewalkWidthStuds,
     roadWidth + 2 * sidewalkWidth,
     'approaches.sidewalkToSidewalkWidthStuds',
   );
+  // Where each approach begins is fixed by the ring: the road leaves the road band's outer
+  // edge, the flanking sidewalk the outer sidewalk's. Declaring them is optional, but a
+  // declaration that disagrees with the apothems would move the junction.
+  checkDeclaredDimension(
+    approaches.roadStartApothemStuds,
+    roadOuterA,
+    'approaches.roadStartApothemStuds',
+  );
+  checkDeclaredDimension(
+    approaches.sidewalkStartApothemStuds,
+    outerA,
+    'approaches.sidewalkStartApothemStuds',
+  );
+  let extent: number | undefined;
+  if (approaches.extentStuds != null) {
+    extent = boundedNumber(
+      approaches.extentStuds,
+      'approaches.extentStuds',
+      0,
+      MAX_ELEVATION_STUDS,
+    );
+    // Deliberately not required to fit the view: a contract may build further than it frames,
+    // and the renderer clips for display. It must still clear the ring it departs from.
+    if (extent <= outerA) {
+      throw new Error(
+        'approaches.extentStuds must reach past the outer sidewalk apothem',
+      );
+    }
+  }
 
   const promotionGatesRaw = optionalRecord(root.promotionGates);
   const promotionGates = Object.fromEntries(
@@ -789,7 +1038,15 @@ export function validateGridSpec(input: unknown): GridSpec {
     }
   }
 
+  // No try/catch here, unlike appearance directly above — decision 0013. Elevation is
+  // dimensional, so there is no honest value to fall back to; the load fails instead.
+  let elevation: ElevationSpec | undefined;
+  if (Object.prototype.hasOwnProperty.call(root, 'elevation')) {
+    elevation = validateSpatialElevation(root.elevation);
+  }
+
   return {
+    kind: 'grid',
     raw: root,
     title: textOr(root.title, 'Untitled grid spec'),
     status: textOr(root.status, 'draft'),
@@ -810,10 +1067,12 @@ export function validateGridSpec(input: unknown): GridSpec {
       sidewalkWidth,
       totalWidth,
       crosswalkDepth,
+      ...(extent == null ? {} : { extent }),
     },
     promotionGates,
     appearance,
     appearanceWarning,
+    elevation,
   };
 }
 
