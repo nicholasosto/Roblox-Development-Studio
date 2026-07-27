@@ -7,7 +7,7 @@ Planning space for the `@trembus` Roblox package platform. Wraps `roblox-package
 1. **Entities only via tooling** — create `_project/` files with `/new <kind> "<title>"` (or `node .project-system/tools/new-entity.mjs`). Never hand-write frontmatter; fill scaffolded sections with Edit afterward. A PreToolUse guard validates every `_project/` write.
 2. **Never edit `.project-system/`** — it is the vendored framework, drift-checked against `Project-Spaces/Project-System`. If it needs a change, change canonical and re-vendor.
 3. **Never mutate code through `external-locations/`** — those are read-through windows. Edit `roblox-packages-mono` in its own repo/workspace.
-4. **Decisions are serial** — `_project/decisions/0001…0007` exist; ADR 0005 is the slotable-items open-taxonomy decision cited by the repo. Do not renumber.
+4. **Decisions are serial** — `_project/decisions/` numbers from `0001` with no gaps; ADR 0005 is the slotable-items open-taxonomy decision cited by the repo. Do not renumber, and do not restate the current maximum here — a count rots on the next ADR; `ls _project/decisions/` is the answer.
 
 ## Kinds
 
