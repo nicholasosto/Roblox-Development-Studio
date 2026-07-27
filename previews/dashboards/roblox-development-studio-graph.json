@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 63,
-  "migrated": 63,
+  "entities": 69,
+  "migrated": 69,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -128,6 +128,33 @@
       "updated": "2026-07-24",
       "file": "_project/decisions/0012-tgl-grand-package-model-and-satellite-naming.md",
       "excerpt": "A live Studio probe (2026-07-24, hub place 102596975485791) found that TGL is not what the planning docs recorded. The actual package — Workspace.Trembus-Game-Library, PackageLink intact, rbxassetid://119571962868471, a…"
+    },
+    {
+      "id": "0013-spatial-elevation-is-a-hard-validated-dimensional-sub-schema",
+      "kind": "decision",
+      "title": "Spatial elevation is a hard-validated dimensional sub-schema",
+      "status": "accepted",
+      "updated": "2026-07-27",
+      "file": "_project/decisions/0013-spatial-elevation-is-a-hard-validated-dimensional-sub-schema.md",
+      "excerpt": "The measured-spatial pipeline authors a layout as one X/Z contract with no authoritative Y, then hands it to a gated Studio whitebox. That worked as far as the whitebox and then stopped: the hex-city-center contract sat…"
+    },
+    {
+      "id": "0014-multi-level-spatial-contracts-compose-level-bases-with-per-s",
+      "kind": "decision",
+      "title": "Multi-level spatial contracts compose level bases with per-surface elevations",
+      "status": "proposed",
+      "updated": "2026-07-27",
+      "file": "_project/decisions/0014-multi-level-spatial-contracts-compose-level-bases-with-per-s.md",
+      "excerpt": "[[0013-spatial-elevation-is-a-hard-validated-dimensional-sub-schema]] settled elevation as a hard-validated per-surface table over a single road-surface datum, and named its own reopen trigger: \"a second spatial contrac…"
+    },
+    {
+      "id": "0015-converge-the-grid-spec-and-build-manifest-into-one-tiered-pr",
+      "kind": "decision",
+      "title": "Converge the grid spec and build manifest into one tiered-precision spatial contract",
+      "status": "accepted",
+      "updated": "2026-07-27",
+      "file": "_project/decisions/0015-converge-the-grid-spec-and-build-manifest-into-one-tiered-pr.md",
+      "excerpt": "This planning space already holds two machine-readable spatial config formats, built for the same job, that do not know about each other:"
     },
     {
       "id": "2026-07-19-studio-labs-audit",
@@ -414,6 +441,45 @@
       "excerpt": "Improve the command-center's Tools section — assess what the Tools lens does today, where it falls short, and rework it around the new CommandBar component in the Trembus Component Library (@trembus/ui, already a depend…"
     },
     {
+      "id": "2026-07-27-correct-the-stale-spatial-lens-claims-in-claude-md",
+      "kind": "session",
+      "title": "Correct the stale Spatial-lens claims in CLAUDE.md",
+      "status": "completed",
+      "updated": "2026-07-27",
+      "file": "_project/sessions/2026-07-27-correct-the-stale-spatial-lens-claims-in-claude-md.md",
+      "tags": {
+        "last-active": "2026-07-27T10:13",
+        "kos": "command-center, decisions, dashboards, memory"
+      },
+      "excerpt": "Bring the ## Spatial contracts (the Spatial lens) section of the root CLAUDE.md back into agreement with the code as it stands after the 2026-07-27 spatial work — every claim re-verified against source, not against the…"
+    },
+    {
+      "id": "2026-07-27-rebuild-the-spatial-lens-around-the-review-loop",
+      "kind": "session",
+      "title": "Rebuild the spatial lens around the review loop",
+      "status": "active",
+      "updated": "2026-07-27",
+      "file": "_project/sessions/2026-07-27-rebuild-the-spatial-lens-around-the-review-loop.md",
+      "tags": {
+        "last-active": "2026-07-27T11:27",
+        "kos": "command-center, decisions, dashboards"
+      },
+      "excerpt": "Re-aim the Spatial lens at the loop the operator actually described — visualise a spec quickly, comment on refinement areas, see the improvements, and reopen saved specs — rather than at the dimensional-precision thesis…"
+    },
+    {
+      "id": "2026-07-27-review-the-latest-spatial-builder-config",
+      "kind": "session",
+      "title": "Review the latest spatial builder config",
+      "status": "completed",
+      "updated": "2026-07-27",
+      "file": "_project/sessions/2026-07-27-review-the-latest-spatial-builder-config.md",
+      "tags": {
+        "last-active": "2026-07-27T09:49",
+        "kos": "command-center, decisions, dashboards, memory"
+      },
+      "excerpt": "Review the latest spatial builder config — hex-city-center-grid-spec.json (rev 2026-07-25, the only contract in apps/command-center/src/spatial/fixtures/) — and say what it actually declares, where it is internally inco…"
+    },
+    {
       "id": "add-a-package",
       "kind": "workflow",
       "title": "Add a package",
@@ -677,9 +743,10 @@
   ],
   "byKind": {
     "decision": {
-      "total": 12,
+      "total": 15,
       "byStatus": {
-        "accepted": 12
+        "accepted": 14,
+        "proposed": 1
       },
       "ids": [
         "0001-pnpm-monorepo-founding",
@@ -693,7 +760,10 @@
         "0009-soul-steel-universe-topology",
         "0010-session-lifecycle-activation",
         "0011-tgl-package-vs-syncback-boundary",
-        "0012-tgl-grand-package-model-and-satellite-naming"
+        "0012-tgl-grand-package-model-and-satellite-naming",
+        "0013-spatial-elevation-is-a-hard-validated-dimensional-sub-schema",
+        "0014-multi-level-spatial-contracts-compose-level-bases-with-per-s",
+        "0015-converge-the-grid-spec-and-build-manifest-into-one-tiered-pr"
       ],
       "tone": "info",
       "statusOrder": [
@@ -765,9 +835,10 @@
       ]
     },
     "session": {
-      "total": 15,
+      "total": 18,
       "byStatus": {
-        "completed": 15
+        "completed": 17,
+        "active": 1
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -784,7 +855,10 @@
         "2026-07-25-rojo-setup-analysis-across-the-development-space",
         "2026-07-26-incorporate-the-hex-city-center-spatial-contract-and-spatial",
         "2026-07-26-soul-steel-shardhold-game-design-document-seed",
-        "2026-07-26-tools-lens-improvements-with-the-tcl-command-bar"
+        "2026-07-26-tools-lens-improvements-with-the-tcl-command-bar",
+        "2026-07-27-correct-the-stale-spatial-lens-claims-in-claude-md",
+        "2026-07-27-rebuild-the-spatial-lens-around-the-review-loop",
+        "2026-07-27-review-the-latest-spatial-builder-config"
       ],
       "tone": "warning",
       "statusOrder": [
