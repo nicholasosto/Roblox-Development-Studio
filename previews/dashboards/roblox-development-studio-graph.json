@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 57,
-  "migrated": 57,
+  "entities": 63,
+  "migrated": 63,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -139,6 +139,24 @@
       "excerpt": "What shipped"
     },
     {
+      "id": "2026-07-26-soul-steel-shardhold-game-design-document",
+      "kind": "report",
+      "title": "Soul Steel: Shardhold game design document",
+      "status": "draft",
+      "updated": "2026-07-26",
+      "file": "_project/reports/2026-07-26-soul-steel-shardhold-game-design-document.md",
+      "excerpt": "What shipped"
+    },
+    {
+      "id": "2026-07-26-soul-steel-shardhold-mobile-live-ux-specification",
+      "kind": "report",
+      "title": "Soul Steel: Shardhold mobile live UX specification",
+      "status": "draft",
+      "updated": "2026-07-26",
+      "file": "_project/reports/2026-07-26-soul-steel-shardhold-mobile-live-ux-specification.md",
+      "excerpt": "What shipped"
+    },
+    {
       "id": "ancient-void-ship-arrival-environment",
       "kind": "pipeline",
       "title": "Ancient Void Ship Arrival Environment",
@@ -175,6 +193,15 @@
       "excerpt": "ADR [[0005-open-taxonomy-slotable-items]] shipped the open-taxonomy rebuild as @trembus/slotable-items-dissolved (0.2.0-rc.0) on branch feat/slotable-items-open-taxonomy. The platform is in a temporary dual-package stat…"
     },
     {
+      "id": "soul-steel-shardhold-content-and-simulation-pipeline",
+      "kind": "pipeline",
+      "title": "Soul Steel: Shardhold content and simulation pipeline",
+      "status": "design",
+      "updated": "2026-07-26",
+      "file": "_project/pipeline/soul-steel-shardhold-content-and-simulation-pipeline.md",
+      "excerpt": "Shardhold depends on two systems that can easily drift apart:"
+    },
+    {
       "id": "studio-telemetry-modernization",
       "kind": "pipeline",
       "title": "studio-telemetry modernization",
@@ -209,6 +236,15 @@
       "updated": "2026-07-19",
       "file": "_project/roadmap/package-platform-roadmap.md",
       "excerpt": "The package platform now has a planning layer (this space). This roadmap is the ordered spine for its first phase: the founding, the in-flight slotable-items cutover, the packages-explorer dashboard, and the reserved Lu…"
+    },
+    {
+      "id": "soul-steel-shardhold-vertical-slice-roadmap",
+      "kind": "roadmap",
+      "title": "Soul Steel: Shardhold vertical slice roadmap",
+      "status": "proposed",
+      "updated": "2026-07-26",
+      "file": "_project/roadmap/soul-steel-shardhold-vertical-slice-roadmap.md",
+      "excerpt": "The working design is intentionally not canon-gated. The immediate question is whether a Soul Steel refuge-management game can produce an understandable, emotionally specific loop on Roblox mobile before content, produc…"
     },
     {
       "id": "2026-07-19-roblox-labs-setup",
@@ -356,6 +392,15 @@
       "excerpt": "Read the measured spatial work Codex built — the hex-city-center-grid-spec.json contract and the apps/command-center/src/spatial/ lens (~2.7k lines) — understand it end to end, and incorporate that knowledge where it du…"
     },
     {
+      "id": "2026-07-26-soul-steel-shardhold-game-design-document-seed",
+      "kind": "session",
+      "title": "Soul Steel: Shardhold game design document seed",
+      "status": "completed",
+      "updated": "2026-07-26",
+      "file": "_project/sessions/2026-07-26-soul-steel-shardhold-game-design-document-seed.md",
+      "excerpt": "Create a realistic, internally consistent Project-System planning pack for a non-canon-gated Soul Steel refuge-management game inspired by the identity- critical structure of the original mobile Fallout Shelter."
+    },
+    {
       "id": "2026-07-26-tools-lens-improvements-with-the-tcl-command-bar",
       "kind": "session",
       "title": "Tools lens improvements with the TCL Command Bar",
@@ -394,6 +439,15 @@
       "updated": "2026-07-25",
       "file": "_project/workflows/measured-spatial-grid-to-studio-blockout.md",
       "excerpt": "Turn a proposed environment layout into one measured X/Z JSON contract, inspect that same contract as a dimensioned 2D reference and a Command Center 3D spatial preview, and hand it to a reversible Roblox Studio whitebo…"
+    },
+    {
+      "id": "soul-steel-shardhold-live-ux-playtest-loop",
+      "kind": "workflow",
+      "title": "Soul Steel: Shardhold live UX playtest loop",
+      "status": "draft",
+      "updated": "2026-07-26",
+      "file": "_project/workflows/soul-steel-shardhold-live-ux-playtest-loop.md",
+      "excerpt": "Turn one uncertain Shardhold interaction into reproducible evidence and a bounded design decision."
     },
     {
       "id": "ui-component-promotion",
@@ -650,12 +704,15 @@
       ]
     },
     "report": {
-      "total": 1,
+      "total": 3,
       "byStatus": {
-        "complete": 1
+        "complete": 1,
+        "draft": 2
       },
       "ids": [
-        "2026-07-19-studio-labs-audit"
+        "2026-07-19-studio-labs-audit",
+        "2026-07-26-soul-steel-shardhold-game-design-document",
+        "2026-07-26-soul-steel-shardhold-mobile-live-ux-specification"
       ],
       "tone": "warning",
       "statusOrder": [
@@ -664,9 +721,9 @@
       ]
     },
     "pipeline": {
-      "total": 7,
+      "total": 8,
       "byStatus": {
-        "design": 2,
+        "design": 3,
         "build": 5
       },
       "ids": [
@@ -674,6 +731,7 @@
         "crystal-sanctum",
         "hex-city-center-spatial-lab-rev01",
         "slotable-items-cutover",
+        "soul-steel-shardhold-content-and-simulation-pipeline",
         "studio-telemetry-modernization",
         "traversal-testing-utility-blk-rev01",
         "v2-effects-library-normalization"
@@ -689,12 +747,14 @@
       ]
     },
     "roadmap": {
-      "total": 1,
+      "total": 2,
       "byStatus": {
-        "active": 1
+        "active": 1,
+        "proposed": 1
       },
       "ids": [
-        "package-platform-roadmap"
+        "package-platform-roadmap",
+        "soul-steel-shardhold-vertical-slice-roadmap"
       ],
       "tone": "accent",
       "statusOrder": [
@@ -705,9 +765,9 @@
       ]
     },
     "session": {
-      "total": 14,
+      "total": 15,
       "byStatus": {
-        "completed": 14
+        "completed": 15
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -723,6 +783,7 @@
         "2026-07-24-tgl-flow-and-structure-nail-the-concepts",
         "2026-07-25-rojo-setup-analysis-across-the-development-space",
         "2026-07-26-incorporate-the-hex-city-center-spatial-contract-and-spatial",
+        "2026-07-26-soul-steel-shardhold-game-design-document-seed",
         "2026-07-26-tools-lens-improvements-with-the-tcl-command-bar"
       ],
       "tone": "warning",
@@ -735,15 +796,16 @@
       ]
     },
     "workflow": {
-      "total": 4,
+      "total": 5,
       "byStatus": {
         "active": 3,
-        "draft": 1
+        "draft": 2
       },
       "ids": [
         "add-a-package",
         "concept-to-studio-architectural-build",
         "measured-spatial-grid-to-studio-blockout",
+        "soul-steel-shardhold-live-ux-playtest-loop",
         "ui-component-promotion"
       ],
       "tone": "neutral",
@@ -828,6 +890,12 @@
       "target": "decisions/0008-studio-native-lab-lane"
     },
     {
+      "from": "2026-07-26-soul-steel-shardhold-mobile-live-ux-specification",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "reports/2026-07-26-soul-steel-shardhold-game-design-document"
+    },
+    {
       "from": "ancient-void-ship-arrival-environment",
       "fromKind": "pipeline",
       "rel": "references",
@@ -864,6 +932,18 @@
       "target": "decisions/0005-open-taxonomy-slotable-items"
     },
     {
+      "from": "soul-steel-shardhold-content-and-simulation-pipeline",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "reports/2026-07-26-soul-steel-shardhold-game-design-document"
+    },
+    {
+      "from": "soul-steel-shardhold-content-and-simulation-pipeline",
+      "fromKind": "pipeline",
+      "rel": "references",
+      "target": "roadmap/soul-steel-shardhold-vertical-slice-roadmap"
+    },
+    {
       "from": "studio-telemetry-modernization",
       "fromKind": "pipeline",
       "rel": "references",
@@ -888,6 +968,18 @@
       "target": "decisions/0008-studio-native-lab-lane"
     },
     {
+      "from": "soul-steel-shardhold-vertical-slice-roadmap",
+      "fromKind": "roadmap",
+      "rel": "references",
+      "target": "reports/2026-07-26-soul-steel-shardhold-game-design-document"
+    },
+    {
+      "from": "soul-steel-shardhold-vertical-slice-roadmap",
+      "fromKind": "roadmap",
+      "rel": "references",
+      "target": "reports/2026-07-26-soul-steel-shardhold-mobile-live-ux-specification"
+    },
+    {
       "from": "2026-07-19-roblox-labs-setup",
       "fromKind": "session",
       "rel": "references",
@@ -910,6 +1002,36 @@
       "fromKind": "session",
       "rel": "references",
       "target": "pipeline/studio-telemetry-modernization"
+    },
+    {
+      "from": "2026-07-26-soul-steel-shardhold-game-design-document-seed",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "reports/2026-07-26-soul-steel-shardhold-game-design-document"
+    },
+    {
+      "from": "2026-07-26-soul-steel-shardhold-game-design-document-seed",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "reports/2026-07-26-soul-steel-shardhold-mobile-live-ux-specification"
+    },
+    {
+      "from": "2026-07-26-soul-steel-shardhold-game-design-document-seed",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "roadmap/soul-steel-shardhold-vertical-slice-roadmap"
+    },
+    {
+      "from": "2026-07-26-soul-steel-shardhold-game-design-document-seed",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "pipeline/soul-steel-shardhold-content-and-simulation-pipeline"
+    },
+    {
+      "from": "2026-07-26-soul-steel-shardhold-game-design-document-seed",
+      "fromKind": "session",
+      "rel": "references",
+      "target": "workflows/soul-steel-shardhold-live-ux-playtest-loop"
     },
     {
       "from": "add-a-package",
@@ -940,6 +1062,18 @@
       "fromKind": "workflow",
       "rel": "references",
       "target": "decisions/0008-studio-native-lab-lane"
+    },
+    {
+      "from": "soul-steel-shardhold-live-ux-playtest-loop",
+      "fromKind": "workflow",
+      "rel": "references",
+      "target": "reports/2026-07-26-soul-steel-shardhold-mobile-live-ux-specification"
+    },
+    {
+      "from": "soul-steel-shardhold-live-ux-playtest-loop",
+      "fromKind": "workflow",
+      "rel": "references",
+      "target": "pipeline/soul-steel-shardhold-content-and-simulation-pipeline"
     },
     {
       "from": "ui-component-promotion",
@@ -973,7 +1107,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 25,
+    "references": 37,
     "decided-in": 4,
     "supersedes": 1
   },
@@ -1553,6 +1687,177 @@
           "label": "Declare the next lifecycle state",
           "detail": "Remain a prototype, revise the contract, or separately authorize save, publish, upload, registry, syncback, and commit gates",
           "note": "Each gate is independent; completing this workflow never closes an unperformed gate.",
+          "to": []
+        }
+      ]
+    },
+    "soul-steel-shardhold-live-ux-playtest-loop": {
+      "view": "swimlane",
+      "title": "Soul Steel: Shardhold live UX playtest loop",
+      "code": "workflow.soul-steel-shardhold-live-ux-playtest-loop",
+      "caption": "One Shardhold UX uncertainty becomes reproducible evidence and an explicit next decision.",
+      "lanes": [
+        {
+          "id": "design",
+          "label": "Designer",
+          "kind": "human"
+        },
+        {
+          "id": "prototype",
+          "label": "UX Prototype",
+          "kind": "tool"
+        },
+        {
+          "id": "simulation",
+          "label": "Simulation and Server",
+          "kind": "system"
+        },
+        {
+          "id": "player",
+          "label": "Player or QA",
+          "kind": "human"
+        },
+        {
+          "id": "planning",
+          "label": "Project System",
+          "kind": "tool"
+        }
+      ],
+      "steps": [
+        {
+          "id": "question",
+          "lane": "design",
+          "label": "Choose one falsifiable question",
+          "status": "done",
+          "detail": "Name the behavior, target player, and observable pass or fail condition.",
+          "note": "Examples: Can a new player locate the threatened room in two seconds? Can a controller user assign a resident without coaching?",
+          "to": [
+            "scenario"
+          ]
+        },
+        {
+          "id": "scenario",
+          "lane": "design",
+          "label": "Bind a deterministic scenario",
+          "status": "done",
+          "detail": "Select fixture, build, content set, balance version, device, viewport, and input.",
+          "outputs": [
+            {
+              "label": "_project/reports/2026-07-26-soul-steel-shardhold-mobile-live-ux-specification.md",
+              "op": "modify"
+            }
+          ],
+          "to": [
+            "instrument"
+          ]
+        },
+        {
+          "id": "instrument",
+          "lane": "prototype",
+          "label": "Instrument only the question",
+          "status": "pending",
+          "detail": "Capture the path and result without recording unnecessary identity or free-form text.",
+          "note": "Event names and payloads are versioned. A measure must map to a stated product question.",
+          "to": [
+            "seed"
+          ]
+        },
+        {
+          "id": "seed",
+          "lane": "simulation",
+          "label": "Load known state and expected ledger",
+          "status": "pending",
+          "detail": "Use a deterministic fixture and confirm the server result before inviting a tester.",
+          "to": [
+            "input_qa"
+          ]
+        },
+        {
+          "id": "input_qa",
+          "lane": "prototype",
+          "label": "Check input and degraded states",
+          "status": "pending",
+          "detail": "Verify touch, mouse or keyboard, controller, reduced motion, pending, rejection, and Back behavior in scope.",
+          "note": "A broken required input path blocks the session. Cosmetic incompleteness does not.",
+          "to": [
+            "observe"
+          ]
+        },
+        {
+          "id": "observe",
+          "lane": "player",
+          "label": "Attempt the task without coaching",
+          "status": "pending",
+          "detail": "Think aloud only if the study calls for it; the facilitator records behavior before interpretation.",
+          "to": [
+            "capture"
+          ]
+        },
+        {
+          "id": "capture",
+          "lane": "design",
+          "label": "Capture evidence and comprehension",
+          "status": "pending",
+          "detail": "Record completion, path, time band, wrong turns, explanation in the player's words, and notable surprise.",
+          "to": [
+            "classify"
+          ]
+        },
+        {
+          "id": "classify",
+          "lane": "design",
+          "label": "Classify the failure or success",
+          "status": "pending",
+          "detail": "Choose interaction, content, tuning, technical, expectation, or no-action-yet.",
+          "note": "Do not repair a simulation problem with copy or a comprehension problem with more rewards.",
+          "to": [
+            "decide"
+          ]
+        },
+        {
+          "id": "decide",
+          "lane": "planning",
+          "label": "Choose accept, revise, or shelve",
+          "status": "pending",
+          "detail": "Tie the decision to observed evidence and keep unresolved questions explicit.",
+          "outputs": [
+            {
+              "label": "_project/reports/2026-07-26-soul-steel-shardhold-mobile-live-ux-specification.md",
+              "op": "modify"
+            },
+            {
+              "label": "_project/roadmap/soul-steel-shardhold-vertical-slice-roadmap.md",
+              "op": "modify"
+            }
+          ],
+          "to": [
+            "revise",
+            "qualify"
+          ]
+        },
+        {
+          "id": "revise",
+          "lane": "prototype",
+          "label": "Change the smallest relevant variable",
+          "status": "pending",
+          "detail": "Revise interaction, content, tuning, or implementation according to the classification.",
+          "note": "Start a new loop with a new build or configuration identifier; never overwrite the evidence context.",
+          "to": [
+            "scenario"
+          ]
+        },
+        {
+          "id": "qualify",
+          "lane": "planning",
+          "label": "Record qualified result and handoff",
+          "status": "pending",
+          "detail": "Preserve build context, observations, surprises, limits, and the next concrete question.",
+          "outputs": [
+            {
+              "label": "_project/reports/<date>-soul-steel-shardhold-ux-qualification.md",
+              "op": "create"
+            }
+          ],
           "to": []
         }
       ]

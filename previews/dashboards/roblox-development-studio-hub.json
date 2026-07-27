@@ -12,7 +12,7 @@
   "stats": [
     {
       "label": "entities",
-      "value": 57
+      "value": 63
     },
     {
       "label": "kinds",
@@ -25,19 +25,19 @@
     },
     {
       "label": "edges",
-      "value": 30
+      "value": 42
     }
   ],
   "scopeTitle": "Contract · coverage",
   "scope": [
     {
       "label": "Entities",
-      "num": "57",
+      "num": "63",
       "value": "across 7 kinds"
     },
     {
       "label": "Conformant",
-      "num": "57/57",
+      "num": "63/63",
       "value": "carry frontmatter · 0 pending"
     },
     {
@@ -47,7 +47,7 @@
     },
     {
       "label": "Edges",
-      "num": "30",
+      "num": "42",
       "value": "typed links · decided-in · references · supersedes"
     },
     {
@@ -70,7 +70,7 @@
       "tag": "Contract",
       "name": "ProjectEntity",
       "sub": "3 primitives · 1 shape",
-      "status": "57/57",
+      "status": "63/63",
       "dot": "#44DDFF",
       "note": "One non-optional contract every _project/ file derives from — Identity (kind·id·title) · State (status·updated) · Relation (links). kind & id are loader-derived from the path; the authored surface is just title/status/updated (+links/tags). The validator, scaffolder, guard, and this dashboard all read this single source.",
       "sources": [
@@ -113,9 +113,9 @@
       "tag": "Pipelines",
       "name": "Pipeline log",
       "sub": "pipeline/ · per-kind status enum",
-      "status": "7",
+      "status": "8",
       "dot": "#7BD88F",
-      "note": "7 pipeline entities — status over the per-kind enum (5 build · 2 design). 12 typed links touch this kind.",
+      "note": "8 pipeline entities — status over the per-kind enum (5 build · 3 design). 16 typed links touch this kind.",
       "sources": [
         "_project/pipeline/"
       ]
@@ -127,9 +127,9 @@
       "tag": "Workflows",
       "name": "Workflow log",
       "sub": "workflows/ · per-kind status enum",
-      "status": "4",
+      "status": "5",
       "dot": "#B884FF",
-      "note": "4 workflow entities — status over the per-kind enum (3 active · 1 draft). 9 typed links touch this kind.",
+      "note": "5 workflow entities — status over the per-kind enum (3 active · 2 draft). 12 typed links touch this kind.",
       "sources": [
         "_project/workflows/"
       ]
