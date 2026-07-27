@@ -1,13 +1,13 @@
 ---
 title: "Rebuild the spatial lens around the review loop"
-status: active
+status: completed
 updated: 2026-07-27
 tags: { last-active: 2026-07-27T11:27, kos: "command-center, decisions, dashboards" }
 ---
 
 # Rebuild the spatial lens around the review loop
 
-> **Status:** active (2026-07-27)
+> **Status:** completed (2026-07-27)
 
 ## Goal
 
@@ -152,3 +152,7 @@ now, so the design has to survive a rename: anchor by id and record the id it wa
   swaps the scene with no file picker, and switching back to the hex spec restores Y×4, its five
   measured metrics, and `appearance 1/1`. All five validator harnesses still pass; `--check` reports
   in sync.
+- _(reconstructed at close-out, 2026-07-27)_ One success criterion did not land: the ADR edits —
+  0013 scoped to the build boundary, 0015 §8 re-ordered for viewability — were never made; 0013's
+  only amendment notes are 0014/0015's from the morning session. Carried into the follow-on review
+  session.

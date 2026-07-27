@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 69,
-  "migrated": 69,
+  "entities": 70,
+  "migrated": 70,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -457,7 +457,7 @@
       "id": "2026-07-27-rebuild-the-spatial-lens-around-the-review-loop",
       "kind": "session",
       "title": "Rebuild the spatial lens around the review loop",
-      "status": "active",
+      "status": "completed",
       "updated": "2026-07-27",
       "file": "_project/sessions/2026-07-27-rebuild-the-spatial-lens-around-the-review-loop.md",
       "tags": {
@@ -478,6 +478,19 @@
         "kos": "command-center, decisions, dashboards, memory"
       },
       "excerpt": "Review the latest spatial builder config — hex-city-center-grid-spec.json (rev 2026-07-25, the only contract in apps/command-center/src/spatial/fixtures/) — and say what it actually declares, where it is internally inco…"
+    },
+    {
+      "id": "2026-07-27-review-the-void-ship-and-hex-city-specs-in-the-spatial-lens",
+      "kind": "session",
+      "title": "Review the void ship and hex city specs in the Spatial lens",
+      "status": "completed",
+      "updated": "2026-07-27",
+      "file": "_project/sessions/2026-07-27-review-the-void-ship-and-hex-city-specs-in-the-spatial-lens.md",
+      "tags": {
+        "last-active": "2026-07-27T12:59",
+        "kos": "command-center, dashboards, decisions, memory"
+      },
+      "excerpt": "Open both registered specs — the hex city center grid spec and the Void Ship build manifest — in the Command Center's Spatial lens, judge whether what renders is trustworthy and review-ready, and produce a prioritized n…"
     },
     {
       "id": "add-a-package",
@@ -835,10 +848,9 @@
       ]
     },
     "session": {
-      "total": 18,
+      "total": 19,
       "byStatus": {
-        "completed": 17,
-        "active": 1
+        "completed": 19
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -858,7 +870,8 @@
         "2026-07-26-tools-lens-improvements-with-the-tcl-command-bar",
         "2026-07-27-correct-the-stale-spatial-lens-claims-in-claude-md",
         "2026-07-27-rebuild-the-spatial-lens-around-the-review-loop",
-        "2026-07-27-review-the-latest-spatial-builder-config"
+        "2026-07-27-review-the-latest-spatial-builder-config",
+        "2026-07-27-review-the-void-ship-and-hex-city-specs-in-the-spatial-lens"
       ],
       "tone": "warning",
       "statusOrder": [
