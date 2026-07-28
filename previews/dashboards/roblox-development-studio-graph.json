@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 70,
-  "migrated": 70,
+  "entities": 71,
+  "migrated": 71,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -441,6 +441,19 @@
       "excerpt": "Improve the command-center's Tools section — assess what the Tools lens does today, where it falls short, and rework it around the new CommandBar component in the Trembus Component Library (@trembus/ui, already a depend…"
     },
     {
+      "id": "2026-07-27-a-third-roadway-design-that-can-link-to-the-hex-city-center-",
+      "kind": "session",
+      "title": "A third roadway design that can link to the hex city center visually",
+      "status": "blocked",
+      "updated": "2026-07-27",
+      "file": "_project/sessions/2026-07-27-a-third-roadway-design-that-can-link-to-the-hex-city-center-.md",
+      "tags": {
+        "last-active": "2026-07-27T15:10",
+        "kos": "command-center, dashboards"
+      },
+      "excerpt": "Design a third roadway type for the hex city center — beyond the two the contract already declares (the ring road band and the six-approach corridor family) — that links to the hex city center visually: it must render i…"
+    },
+    {
       "id": "2026-07-27-correct-the-stale-spatial-lens-claims-in-claude-md",
       "kind": "session",
       "title": "Correct the stale Spatial-lens claims in CLAUDE.md",
@@ -848,9 +861,10 @@
       ]
     },
     "session": {
-      "total": 19,
+      "total": 20,
       "byStatus": {
-        "completed": 19
+        "completed": 19,
+        "blocked": 1
       },
       "ids": [
         "2026-07-19-roblox-labs-setup",
@@ -868,6 +882,7 @@
         "2026-07-26-incorporate-the-hex-city-center-spatial-contract-and-spatial",
         "2026-07-26-soul-steel-shardhold-game-design-document-seed",
         "2026-07-26-tools-lens-improvements-with-the-tcl-command-bar",
+        "2026-07-27-a-third-roadway-design-that-can-link-to-the-hex-city-center-",
         "2026-07-27-correct-the-stale-spatial-lens-claims-in-claude-md",
         "2026-07-27-rebuild-the-spatial-lens-around-the-review-loop",
         "2026-07-27-review-the-latest-spatial-builder-config",
