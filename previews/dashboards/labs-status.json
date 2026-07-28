@@ -1,8 +1,8 @@
 {
   "generatedBy": "tools/build-labs-status.mjs",
   "schemaVersion": 2,
-  "built": "2026-07-26T16:34:05.187Z",
-  "builtMs": 189,
+  "built": "2026-07-28T11:44:37.381Z",
+  "builtMs": 201,
   "labs": {
     "name": "roblox-labs",
     "path": "external-locations/code/roblox-labs",
@@ -38,12 +38,17 @@
     "present": true,
     "branch": "main",
     "head": {
-      "sha": "6e629c8",
-      "when": "2026-07-26T12:29:34-04:00",
-      "subject": "Syncback ignore boundaries for linked package copies"
+      "sha": "59265fa",
+      "when": "2026-07-28T05:07:03-04:00",
+      "subject": "Hub: ignore StarterGui/User-Interface-Development-Lab in syncback"
     },
     "dirty": 0,
     "recentCommits": [
+      {
+        "sha": "59265fa",
+        "when": "2026-07-28T05:07:03-04:00",
+        "subject": "Hub: ignore StarterGui/User-Interface-Development-Lab in syncback"
+      },
       {
         "sha": "6e629c8",
         "when": "2026-07-26T12:29:34-04:00",
@@ -63,11 +68,6 @@
         "sha": "c86a3ee",
         "when": "2026-07-21T09:29:00-04:00",
         "subject": "First syncback: serialize all four places from Studio snapshots"
-      },
-      {
-        "sha": "77747d1",
-        "when": "2026-07-21T08:48:18-04:00",
-        "subject": "README: Download a Copy is the save-to-file menu item"
       }
     ]
   },
@@ -209,9 +209,9 @@
           "other": 0
         },
         "lastSync": {
-          "sha": "6e629c8",
-          "when": "2026-07-26T12:29:34-04:00",
-          "subject": "Syncback ignore boundaries for linked package copies"
+          "sha": "59265fa",
+          "when": "2026-07-28T05:07:03-04:00",
+          "subject": "Hub: ignore StarterGui/User-Interface-Development-Lab in syncback"
         }
       },
       "sync": "in-sync",
