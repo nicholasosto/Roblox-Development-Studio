@@ -41,6 +41,9 @@ is actually built and published, and reconcile documentation that has diverged f
   **Wrapped repos & rojo lanes** table (lane · rojo pin · role); the 7.7.0/7.6.1 split documented as
   intentional (syncback needs 7.7); TGL documented as a Roblox Package; `packages.json` line corrected
   to say it scans the mono **+ soul-steel-official + roblox-testing-environment**
+  _(Correction 2026-07-28: the user refuted the "intentional" framing — the split is historical
+  accumulation, not intent; CLAUDE.md re-corrected in
+  [[2026-07-27-ui-development-flow-and-package-analysis]].)_
 - TGL is a **Roblox Package** (asset id, v15/v16, edited live in Studio) — not an `@trembus` npm
   package; absent from `packages.json` by design. Its contents are fragmented across two repos under
   the `ServerStorage/TrembusGameLibrary` namespace (effects → universe/crystal-sanctum; props+rigs →
