@@ -10,8 +10,8 @@
     "workflow": "workflows",
     "package": "packages"
   },
-  "entities": 72,
-  "migrated": 72,
+  "entities": 75,
+  "migrated": 75,
   "counts": {
     "error": 0,
     "warning": 0,
@@ -182,6 +182,15 @@
       "updated": "2026-07-26",
       "file": "_project/reports/2026-07-26-soul-steel-shardhold-mobile-live-ux-specification.md",
       "excerpt": "What shipped"
+    },
+    {
+      "id": "2026-07-29-bridge-review-0846",
+      "kind": "report",
+      "title": "Bridge review — 2026-07-21..2026-07-28",
+      "status": "complete",
+      "updated": "2026-07-29",
+      "file": "_project/reports/2026-07-29-bridge-review-0846.md",
+      "excerpt": "cursor: 2026-07-28T08:00"
     },
     {
       "id": "ancient-void-ship-arrival-environment",
@@ -519,6 +528,19 @@
       "excerpt": "Map the UI development flow end-to-end across the platform (authoring in the @trembus packages → labs/testing-environment exercise → TGL distribution → ui-catalog telemetry) and analyze the current package set, so the f…"
     },
     {
+      "id": "2026-07-30-port-the-studio-ui-lab-features-into-the-rbx-ui-typescript-s",
+      "kind": "session",
+      "title": "Port the Studio UI lab features into the rbx-ui TypeScript system",
+      "status": "completed",
+      "updated": "2026-07-30",
+      "file": "_project/sessions/2026-07-30-port-the-studio-ui-lab-features-into-the-rbx-ui-typescript-s.md",
+      "tags": {
+        "last-active": "2026-07-30T06:31",
+        "kos": "packages-mono, roblox-labs, decisions, studio-mcp, dashboards, memory"
+      },
+      "excerpt": "Bring the features developed in the Studio UI lab (roblox-labs/user-interface-development) into the TypeScript UI system (@trembus/rbx-ui), so that lab work reaches consumers as versioned, typed, reviewable package code…"
+    },
+    {
       "id": "add-a-package",
       "kind": "workflow",
       "title": "Add a package",
@@ -622,6 +644,18 @@
         "lane": "ts"
       },
       "excerpt": "Multi-device input architecture — Actions, priority-stacked Contexts, and a signal-based Bus; KBM + gamepad + touch with chord support."
+    },
+    {
+      "id": "inventory-model",
+      "kind": "package",
+      "title": "inventory-model",
+      "status": "incubating",
+      "updated": "2026-07-30",
+      "file": "_project/packages/inventory-model.md",
+      "tags": {
+        "lane": "ts"
+      },
+      "excerpt": "Positional backpack state — ordered slots addressed by 1-based slot number, with catalog-driven reconcile of untrusted storage and pure move/swap transactions. Ported from the Studio UI lab's InventoryModel.luau (roblox…"
     },
     {
       "id": "logger",
@@ -813,15 +847,16 @@
       ]
     },
     "report": {
-      "total": 3,
+      "total": 4,
       "byStatus": {
-        "complete": 1,
+        "complete": 2,
         "draft": 2
       },
       "ids": [
         "2026-07-19-studio-labs-audit",
         "2026-07-26-soul-steel-shardhold-game-design-document",
-        "2026-07-26-soul-steel-shardhold-mobile-live-ux-specification"
+        "2026-07-26-soul-steel-shardhold-mobile-live-ux-specification",
+        "2026-07-29-bridge-review-0846"
       ],
       "tone": "warning",
       "statusOrder": [
@@ -874,9 +909,9 @@
       ]
     },
     "session": {
-      "total": 21,
+      "total": 22,
       "byStatus": {
-        "completed": 20,
+        "completed": 21,
         "blocked": 1
       },
       "ids": [
@@ -900,7 +935,8 @@
         "2026-07-27-rebuild-the-spatial-lens-around-the-review-loop",
         "2026-07-27-review-the-latest-spatial-builder-config",
         "2026-07-27-review-the-void-ship-and-hex-city-specs-in-the-spatial-lens",
-        "2026-07-27-ui-development-flow-and-package-analysis"
+        "2026-07-27-ui-development-flow-and-package-analysis",
+        "2026-07-30-port-the-studio-ui-lab-features-into-the-rbx-ui-typescript-s"
       ],
       "tone": "warning",
       "statusOrder": [
@@ -932,10 +968,10 @@
       ]
     },
     "package": {
-      "total": 18,
+      "total": 19,
       "byStatus": {
         "active": 14,
-        "incubating": 3,
+        "incubating": 4,
         "proposed": 1
       },
       "ids": [
@@ -944,6 +980,7 @@
         "camera",
         "currency",
         "input-actions",
+        "inventory-model",
         "logger",
         "persistent-data",
         "pets-and-mounts",
@@ -1010,6 +1047,84 @@
       "fromKind": "report",
       "rel": "references",
       "target": "reports/2026-07-26-soul-steel-shardhold-game-design-document"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-21-start-command-and-session-lifecycle"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-22-current-status-report"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-22-trim-sheet-pbr-audit-and-correction"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-23-rojo-packages-and-syncback-re-evaluation"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-24-tgl-flow-and-structure-nail-the-concepts"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-25-rojo-setup-analysis-across-the-development-space"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-26-incorporate-the-hex-city-center-spatial-contract-and-spatial"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-26-tools-lens-improvements-with-the-tcl-command-bar"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-27-correct-the-stale-spatial-lens-claims-in-claude-md"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-27-rebuild-the-spatial-lens-around-the-review-loop"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-27-review-the-latest-spatial-builder-config"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-27-review-the-void-ship-and-hex-city-specs-in-the-spatial-lens"
+    },
+    {
+      "from": "2026-07-29-bridge-review-0846",
+      "fromKind": "report",
+      "rel": "references",
+      "target": "sessions/2026-07-27-ui-development-flow-and-package-analysis"
     },
     {
       "from": "ancient-void-ship-arrival-environment",
@@ -1223,7 +1338,7 @@
     }
   ],
   "edgesByRel": {
-    "references": 37,
+    "references": 50,
     "decided-in": 4,
     "supersedes": 1
   },

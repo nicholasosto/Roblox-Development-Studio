@@ -1,8 +1,8 @@
 {
   "generatedBy": "tools/build-packages-registry.mjs@1",
   "schemaVersion": 1,
-  "built": "2026-07-20",
-  "builtMs": 1784573638394,
+  "built": "2026-07-30",
+  "builtMs": 1785406056048,
   "monorepo": {
     "name": "roblox-packages-mono",
     "path": "external-locations/code/roblox-packages-mono",
@@ -10,15 +10,15 @@
     "scope": "@trembus"
   },
   "counts": {
-    "packages": 17,
+    "packages": 18,
     "byStatus": {
       "rc": 1,
-      "stable": 16
+      "stable": 17
     },
     "byTier": {
       "composite": 8,
       "foundation": 6,
-      "standalone": 3
+      "standalone": 4
     },
     "internalEdges": 12,
     "optionalEdges": 4,
@@ -202,6 +202,34 @@
       },
       "inClaudeTable": true,
       "npmUrl": "https://www.npmjs.com/package/@trembus/input-actions"
+    },
+    {
+      "id": "inventory-model",
+      "name": "@trembus/inventory-model",
+      "version": "0.1.0",
+      "description": "Positional backpack model — ordered slots, catalog-driven reconcile, and pure move/swap transactions with a stable result-code vocabulary",
+      "dir": "packages/inventory-model",
+      "status": "stable",
+      "tier": "standalone",
+      "internalDeps": [],
+      "externalPeerDeps": [],
+      "runtimeDeps": [],
+      "consumedBy": {
+        "internal": [],
+        "external": [
+          "roblox-testing-environment"
+        ]
+      },
+      "flags": {
+        "built": true,
+        "flamework": false,
+        "rojo": false,
+        "react": false,
+        "examples": false,
+        "readme": false
+      },
+      "inClaudeTable": true,
+      "npmUrl": "https://www.npmjs.com/package/@trembus/inventory-model"
     },
     {
       "id": "logger",
@@ -693,6 +721,7 @@
       "linkStyle": "link:",
       "uses": [
         "audio",
+        "inventory-model",
         "logger",
         "persistent-data",
         "rbx-ui",
